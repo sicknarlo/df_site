@@ -1,14 +1,73 @@
 {
   "name": "simple-todos",
-  "private": true,
   "scripts": {
-    "start": "meteor run"
+    "start": "meteor run",
+    "pretest": "npm run lint --silent",
+    "test": "meteor test --once --driver-package dispatch:mocha-phantomjs",
+    "test-watch": "meteor test --driver-package practicalmeteor:mocha",
+    "test-app-watch": "meteor test --full-app --driver-package practicalmeteor:mocha",
+    "lint": "eslint .",
+    "chimp-watch": "chimp --ddp=http://localhost:3000 --watch --mocha --path=tests"
   },
   "dependencies": {
-    "classnames": "^2.2.3",
+    "autoprefixer": "^6.3.1",
+    "bootstrap": "^3.3.6",
+    "chart.js": "^1.1.1",
+    "classnames": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz",
+    "highcharts": "^4.2.5",
+    "icheck": "^1.0.2",
+    "jquery": "^3.0.0",
     "meteor-node-stubs": "~0.2.0",
-    "react": "^15.1.0",
-    "react-addons-pure-render-mixin": "^15.1.0",
-    "react-dom": "^15.1.0"
+    "react": "https://registry.npmjs.org/react/-/react-15.1.0.tgz",
+    "react-addons-css-transition-group": "https://registry.npmjs.org/react-addons-css-transition-group/-/react-addons-css-transition-group-15.1.0.tgz",
+    "react-addons-pure-render-mixin": "^15.0.0",
+    "react-addons-test-utils": "^15.0.0",
+    "react-chartjs": "^0.7.3",
+    "react-dom": "https://registry.npmjs.org/react-dom/-/react-dom-15.1.0.tgz",
+    "react-highcharts": "^8.3.3",
+    "react-icheck": "^0.3.3",
+    "react-router": "https://registry.npmjs.org/react-router/-/react-router-2.4.1.tgz"
+  },
+  "devDependencies": {
+    "enzyme": "^2.3.0",
+    "eslint": "^2.3.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "eslint-plugin-meteor": "^3.0.1",
+    "eslint-plugin-react": "^4.0.0",
+    "meteor-node-stubs": "^0.2.3"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "meteor"
+    ],
+    "extends": [
+      "airbnb",
+      "plugin:meteor/recommended"
+    ],
+    "rules": {
+      "meteor/eventmap-params": [
+        2,
+        {
+          "eventParamName": "event",
+          "templateInstanceParamName": "instance"
+        }
+      ],
+      "meteor/template-names": [
+        0
+      ]
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
+        ]
+      }
+    }
   }
 }

@@ -4,6 +4,38 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
+# standard libraries
+underscore
+less
+
+# data
+aldeed:simple-schema
+aldeed:collection2
+dburles:collection-helpers
+reywood:publish-composite
+mdg:validated-method
+mdg:validation-error
+
+# i18n
+tap:i18n
+
+# mobile
+crosswalk
+chriswessels:hammer
+
+# production
+ddp-rate-limiter
+
+# rest apis
+simple:rest-accounts-password
+simple:rest
+
+# testing
+xolvio:cleaner
+dispatch:mocha-phantomjs
+hwillson:stub-collections
+
+
 meteor-base             # Packages every Meteor app needs to have
 mobile-experience       # Packages for a great mobile UX
 mongo                   # The database Meteor supports right now

@@ -2,14 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 
-// Task component - represents a single todo item
-export default class Task extends Component {
+// Player component - represents a Player profile
+export default class Player extends Component {
   toggleChecked() {
     // Set the checked property to the opposite of its current value
     Meteor.call('tasks.setChecked', this.props.task._id, !this.props.task.checked);
   }
 
-  deleteThisTask() {
+  deleteThisPlayer() {
     Meteor.call('tasks.remove', this.props.task._id);
   }
 
@@ -27,7 +27,7 @@ export default class Task extends Component {
 
     return (
       <li className={taskClassName}>
-        <button className="delete" onClick={this.deleteThisTask.bind(this)}>
+        <button className="delete" onClick={this.deleteThisPlayer.bind(this)}>
           &times;
         </button>
 
@@ -52,7 +52,7 @@ export default class Task extends Component {
   }
 }
 
-Task.propTypes = {
+Player.propTypes = {
   // This component gets the task to display through a React prop.
   // We can use propTypes to indicate it is required
   task: PropTypes.object.isRequired,
