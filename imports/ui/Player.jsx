@@ -88,12 +88,7 @@ export default class Player extends Component {
                   </div>
                   <div className="ibox-content profile-content">
                     <div className="player-badges">
-                      <span className="badge badge-primary playerBadge">Writer's BUY</span>
-                      <span className="badge badge-info playerBadge">Top 10 Riser</span>
-                      <span className="badge badge-danger playerBadge">Injured</span>
-                      <span className="badge badge-primary playerBadge">Writer's BUY</span>
-                      <span className="badge badge-info playerBadge">Top 10 Riser</span>
-                      <span className="badge badge-danger playerBadge">Injured</span>
+                      <div className="badge badge-primary playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>BUY</strong></div>
                     </div>
                     <table className="table">
                       <tbody>
