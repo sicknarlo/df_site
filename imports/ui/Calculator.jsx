@@ -130,7 +130,7 @@ export default class Calculator extends Component {
             </div>
             <div className="ibox-content">
               <h2 >
-                This is standard IN+ Panel<br />
+                The Dynasty Fantasy Football Trade Calculator<br />
               </h2>
               <p>
                 <strong>Lorem ipsum dolor</strong>

@@ -13,10 +13,9 @@ export default class Footer extends React.Component {
     return (
       <div className="footer">
         <div className="pull-right">
-          10GB of <strong>250GB</strong> Free.
         </div>
         <div>
-            <strong>Copyright</strong> Dynasty Fantasy HQ &copy; 2016
+            <strong>Copyright</strong> Stuff &copy; 2016
         </div>
     </div>
     );
