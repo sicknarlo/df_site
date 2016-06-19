@@ -53,7 +53,7 @@ export default class ADPGraph extends Component {
       title: {
         text: 'Average Draft Position',
       },
-      colors: ['rgba(26,179,148,0.5)'],
+      colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565'],
       xAxis: {
         categories: chartLabels,
       },

@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 
 const currentMonthADP = 'may_16';
 const previousMonthADP = 'apr_16';
@@ -32,15 +33,56 @@ const _calculateHeight = function(inches) {
 // Player component - represents a Player profile
 export default class Player extends Component {
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
+  componentWillUpdate() {
+    window.scrollTo(0, 0);
+  }
+
   render() {
     const player = this.props.players.find((p) => {
       return p._id._str === this.props.params.playerID;
     });
 
     if (!player) {
-      console.log(player);
       return <div>Loading</div>;
     }
+
+    // const this.props.players = this.props.players.sort(function(a, b) {
+    //   if (a[currentMonthADP] > b[currentMonthADP]) {
+    //     return 1;
+    //   }
+    //   if (a[currentMonthADP] < b[currentMonthADP]) {
+    //     return -1;
+    //   }
+    //   // a must be equal to b
+    //   return 0;
+    // });
+
+    const playerADPRank = this.props.players.indexOf(player);
+
+    const previous5 = [];
+
+    let i = playerADPRank - 1;
+    let n = 0;
+    while (i >= 0 && n < 5) {
+      previous5.unshift(this.props.players[i]);
+      i--;
+      n++;
+    }
+
+    const next5 = [];
+    i = playerADPRank + 1;
+    n = 0;
+    while (i <= this.props.players.length && n < 5) {
+      next5.push(this.props.players[i]);
+      i++;
+      n++;
+    }
+
+    const similarPlayers = previous5.concat([player], next5);
 
     const imgLoc = player.position === 'PICK' ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
                                                : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.espn_id}.png&w=350&h=254`;
@@ -87,9 +129,9 @@ export default class Player extends Component {
                     <img alt="image" className="img-responsive playerImg" src={imgLoc} />
                   </div>
                   <div className="ibox-content profile-content">
-                    <div className="player-badges">
+                    {/*<div className="player-badges">
                       <div className="badge badge-primary playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>BUY</strong></div>
-                    </div>
+                    </div>*/}
                     <table className="table">
                       <tbody>
                         <tr>
@@ -166,6 +208,11 @@ export default class Player extends Component {
                   <ADPGraph players={[player]} />
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} />
             </div>
           </div>
         </div>

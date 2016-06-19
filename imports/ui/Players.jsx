@@ -379,7 +379,7 @@ export default class Players extends Component {
                     {tableHeader}
                     <tbody>
                       {filteredSortedSearchedData && filteredSortedSearchedData.map((player, i) =>
-                        <PlayerRow key={i} player={player} sortGrp={this.state.sortGrp._str}/>
+                        <PlayerRow key={i} player={player} sortGrp={this.state.sortGrp._str} />
                       )}
                     </tbody>
                   </table>

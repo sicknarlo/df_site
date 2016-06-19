@@ -87,15 +87,15 @@ class App extends Component {
     // console.log(this.props.players);
     return (
       <div id="wrapper">
-            <Navigation />
-            <div id="page-wrapper" className="gray-bg">
-              <TopNav />
-              {this.props.children && React.cloneElement(this.props.children, {
-                players: this.props.players
-              })}
-              <Footer />
-            </div>
-          </div>
+        <Navigation />
+        <div id="page-wrapper" className="gray-bg">
+          <TopNav />
+          {this.props.children && React.cloneElement(this.props.children, {
+            players: this.props.players
+          })}
+          <Footer />
+        </div>
+      </div>
     );
   }
 }
@@ -109,7 +109,7 @@ export default createContainer(() => {
   Meteor.subscribe('players');
 
   return {
-    players: Players.find({}).fetch(),
+    players: Players.find({}, { sort: { may_16: 1 } }).fetch(),
     currentUser: Meteor.user(),
   };
 }, App);
