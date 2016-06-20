@@ -8,11 +8,15 @@ import Player from '../ui/Player.jsx';
 import Compare from '../ui/Compare.jsx';
 import Calculator from '../ui/Calculator.jsx';
 import Dashboard from '../ui/Dashboard.jsx';
+import Login from '../ui/Login.jsx';
+import SignUp from '../ui/SignUp.jsx';
 
 export const renderRoutes = () => (
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={SignUp} />
       <Route path="/players" component={Players} />
       <Route path="/players/:playerID" component={Player} />
       <Route path="/compare" component={Compare} />

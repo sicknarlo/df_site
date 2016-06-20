@@ -321,43 +321,48 @@ export default class Players extends Component {
         <PageHeading current="Players" />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
-            <div className="col-xs-12 players-positionFilters">
-              <h3>Filter: </h3>
-              <Checkbox
-                checkboxClass="icheckbox_flat-green positionFilter"
-                increaseArea="20%"
-                label="QB"
-                onChange={this.toggleFilter.bind(this, 'QB')}
-              />
-              <Checkbox
-                checkboxClass="icheckbox_flat-green positionFilter"
-                increaseArea="20%"
-                label="WR"
-                onChange={this.toggleFilter.bind(this, 'WR')}
-              />
-              <Checkbox
-                checkboxClass="icheckbox_flat-green positionFilter"
-                increaseArea="20%"
-                label="RB"
-                onChange={this.toggleFilter.bind(this, 'RB')}
-              />
-              <Checkbox
-                checkboxClass="icheckbox_flat-green positionFilter"
-                increaseArea="20%"
-                label="TE"
-                onChange={this.toggleFilter.bind(this, 'TE')}
-              />
-              <Checkbox
-                checkboxClass="icheckbox_flat-green positionFilter"
-                increaseArea="20%"
-                label="PICK"
-                onChange={this.toggleFilter.bind(this, 'PICK')}
-              />
-              {/*<button className={qbCls} onClick={this.toggleFilter.bind(this, 'QB')}>QB</button>
-              <button className={wrCls} onClick={this.toggleFilter.bind(this, 'WR')}>WR</button>
-              <button className={rbCls} onClick={this.toggleFilter.bind(this, 'RB')}>RB</button>
-              <button className={teCls} onClick={this.toggleFilter.bind(this, 'TE')}>TE</button>
-              <button className={pickCls} onClick={this.toggleFilter.bind(this, 'PICK')}>PICK</button>*/}
+            <div className="col-lg-12">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Filters</h5>
+                </div>
+                <div className="ibox-content">
+                  <div className="row">
+                    <div className="col-xs-12 players-positionFilters">
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="QB"
+                        onChange={this.toggleFilter.bind(this, 'QB')}
+                      />
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="WR"
+                        onChange={this.toggleFilter.bind(this, 'WR')}
+                      />
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="RB"
+                        onChange={this.toggleFilter.bind(this, 'RB')}
+                      />
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="TE"
+                        onChange={this.toggleFilter.bind(this, 'TE')}
+                      />
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="PICK"
+                        onChange={this.toggleFilter.bind(this, 'PICK')}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="row">
@@ -389,7 +394,6 @@ export default class Players extends Component {
           </div>
         </div>
       </div>
-
     );
   }
 }

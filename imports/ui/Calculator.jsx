@@ -133,19 +133,22 @@ export default class Calculator extends Component {
                 The Dynasty Fantasy Football Trade Calculator<br />
               </h2>
               <p>
-                <strong>Lorem ipsum dolor</strong>
-                Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-                penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-                Nulla consequat massa quis enim.
+                Not sure if a trade is fair? The Dynasty Hub's Trade Calculator was
+                created to help players make informed trade decisions based on
+                Average Draft Position. Simply add the players being exchanged and
+                get an in depth look at the players being exchanged.
               </p>
               <p>
-                <small>
-                  Donec pede justo, fringilla vel, aliquet nec, vulputate eget,
-                  arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae,
-                  justo. Nullam dictum felis eu pede mollis pretium. Integer
-                  tincidunt. Cras dapibus. Vivamus elementum semper nisi.
-                </small>
+                The values in the database are based on Average Draft Position, which
+                means it represents where people are actually taking players in mock
+                startup drafts. That means the numbers are based on people having to
+                put their money where their mouths are.
+              </p>
+              <p>
+                The Trade Calculator is not inteded to be the sole resource in any
+                trade decision. While it can give some quick insight into whats being
+                exchanged, real trade considerations should go much deeper than just
+                this, or any single, tool.
               </p>
             </div>
                 {/*<div className="ibox-footer">

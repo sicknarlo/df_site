@@ -1,18 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import $ from 'jquery';
+import { Meteor } from 'meteor/meteor';
 
 export default class TopNav extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     open: false,
-  //   };
-  //   this.toggle = this.toggle.bind(this);
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+    };
+    this.handleLogout = this.handleLogout.bind(this);
+  }
   componentWillMount() {
     // $('body').addClass('fixed-nav');
     // $('.navbar-static-top').removeClass('navbar-static-top').addClass('navbar-fixed-top');
+  }
+
+  handleLogout() {
+    Meteor.logout(function(err) {
+      console.log(err);
+    })
+    browserHistory.push('/dashboard');
   }
 
   toggleSideNav() {
@@ -44,6 +52,19 @@ export default class TopNav extends React.Component {
     }
   }
 
+  renderLogoutButton() {
+    return (
+      <ul className="nav navbar-top-links navbar-right">
+        <li>
+          <a href="#" onClick={this.handleLogout}>
+            <i className="fa fa-sign-out"></i> Log out
+          </a>
+        </li>
+
+      </ul>
+    )
+  }
+
   render() {
     return (
       <div className="row border-bottom">
@@ -68,14 +89,7 @@ export default class TopNav extends React.Component {
               </div>
             </form>
           </div>
-          <ul className="nav navbar-top-links navbar-right">
-            <li>
-              <a href="#">
-                <i className="fa fa-sign-out"></i> Log out
-              </a>
-            </li>
-
-          </ul>
+          {this.props.currentUser && this.renderLogoutButton()}
 
         </nav>
     </div>
@@ -84,6 +98,6 @@ export default class TopNav extends React.Component {
 }
 
 TopNav.propTypes = {
-  user: React.PropTypes.object,
+  currentUser: React.PropTypes.object,
   logout: React.PropTypes.func,
 };

@@ -6,8 +6,6 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Players } from '../api/players.js';
 import Player from './Player.jsx'
 
-// import Task from './Task.jsx';
-import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import Navigation from './Navigation.jsx';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
@@ -87,11 +85,12 @@ class App extends Component {
     // console.log(this.props.players);
     return (
       <div id="wrapper">
-        <Navigation />
+        <Navigation currentUser = {this.props.currentUser} />
         <div id="page-wrapper" className="gray-bg">
-          <TopNav />
+          <TopNav currentUser = {this.props.currentUser} />
           {this.props.children && React.cloneElement(this.props.children, {
-            players: this.props.players
+            players: this.props.players,
+            currentUser: this.props.currentUser,
           })}
           <Footer />
         </div>
