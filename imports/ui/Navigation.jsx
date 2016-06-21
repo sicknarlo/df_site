@@ -392,7 +392,7 @@ export default class Navigation extends React.Component {
   }
 
   handleNavClick() {
-    $('body').addClass('mini-navbar');
+    // $('body').addClass('mini-navbar');
   }
 
 

@@ -7,6 +7,7 @@ import $ from 'jquery';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
+import DashboardLoggedOut from './DashboardLoggedOut.jsx';
 
 const currentMonthADP = 'may_16';
 const currentMonthValue = 'may_16_value';
@@ -41,10 +42,9 @@ export default class Dashboard extends Component {
   // }
 
   render() {
-    return (
-      <div>
-      </div>
-    );
+    return this.props.currentUser
+      ? this.renderLoggedIn()
+      : <DashboardLoggedOut players={this.props.players} newsAlerts={this.props.newsAlerts} />;
   }
 }
 

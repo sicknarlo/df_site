@@ -21,7 +21,11 @@ class App extends Component {
       playersReady: false,
       menuOpen: false,
       showConnectionIssue: false,
+      rotoData: null,
+      alertIDs: null,
     };
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.render = this.render.bind(this);
   }
   componentDidMount() {
     setTimeout(() => {
@@ -79,10 +83,50 @@ class App extends Component {
     // BOXED LAYOUT
     // Uncomment this if you want to have boxed layout
     // $('body').addClass('boxed-layout');
+    const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
+    let result = [];
+    $.ajax({
+      url: document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=13&callback=?&q=' + encodeURIComponent(feed),
+      dataType: 'json',
+      context: this,
+      success(data) {
+        if (data.responseData.feed && data.responseData.feed.entries) {
+          result = data.responseData.feed.entries;
+          // const alertIDs = result.map((item) => item.link.split('/')[5]);
+          this.setState({
+            rotoData: result,
+            // alertIDs
+          });
+        }
+      },
+    });
   }
 
+  // componentWillUpdate() {
+  //   const alerts = this.state.rotoData.map(function(item) {
+  //     const playerID = item.link.split('/')[5];
+  //     const player = this.props.players.find((p) => p._id._str === playerID);
+  //     return {
+  //       player,
+  //       content: $.parseHTML(item.content)[0].data,
+  //       link: item.link,
+  //     }
+  //   })
+  // }
+
   render() {
-    // console.log(this.props.players);
+    let newsAlerts = [];
+    if (this.state.rotoData && this.props.players) {
+      newsAlerts = this.state.rotoData.map(function(item) {
+        const p = this.props.players.filter(function(player) {
+          return player.rotoworld_id.toString() === item.link.split('/')[5];
+        });
+        return {
+          player: p[0],
+          content: item,
+        };
+      }, this);
+    }
     return (
       <div id="wrapper">
         <Navigation currentUser = {this.props.currentUser} />
@@ -91,6 +135,7 @@ class App extends Component {
           {this.props.children && React.cloneElement(this.props.children, {
             players: this.props.players,
             currentUser: this.props.currentUser,
+            newsAlerts,
           })}
           <Footer />
         </div>
