@@ -45,7 +45,7 @@ export default class DashboardLoggedOut extends Component {
   // }
 
   render() {
-    const filteredTrenders = this.props.players.filter((p) => Math.abs(p.trend) < 151);
+    const filteredTrenders = this.props.players.filter((p) => p[currentMonthADP] < 151);
     const sortedTrenders = filteredTrenders.sort(function(a, b) {
       if (a.trend > b.trend) {
         return -1;
@@ -84,7 +84,7 @@ export default class DashboardLoggedOut extends Component {
                     <tbody>
                       {risers.map((player) =>
                         <tr>
-                          <td>{player.name}</td>
+                          <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player[currentMonthADP]}</td>
                           <td>{player.trend}</td>
                         </tr>
@@ -109,7 +109,7 @@ export default class DashboardLoggedOut extends Component {
                   <tbody>
                     {fallers.map((player) =>
                       <tr>
-                        <td>{player.name}</td>
+                        <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
                         <td>{player[currentMonthADP]}</td>
                         <td>{player.trend}</td>
                       </tr>
