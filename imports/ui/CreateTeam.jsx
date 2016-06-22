@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
+import Select from 'react-select';
 import $ from 'jquery';
 import { Link, browserHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
@@ -27,7 +28,7 @@ export default class CreateTeam extends Component {
       user: props.currentUser,
       teamName: null,
       teamCount: 12,
-      rosterSize: 0,
+      roster: [],
       isPPR: false,
       is2QB: false,
       isIDP: false,
@@ -38,10 +39,25 @@ export default class CreateTeam extends Component {
     this.toggle2QB = this.toggle2QB.bind(this);
     this.toggleIDP = this.toggleIDP.bind(this);
     this.createTeam = this.createTeam.bind(this);
+    this.removeFromRoster = this.removeFromRoster.bind(this);
+    this.addPlayer = this.addPlayer.bind(this);
   }
 
-  componentDidMount() {
+  removeFromRoster(player) {
+    const oldRoster = this.state.roster;
+    const index = oldRoster.indexOf(player);
+    if (index > -1) {
+      const newRoster = oldRoster.splice(index, 1);
+      this.setState({ roster: newRoster });
+    }
+  }
 
+  addPlayer(p) {
+    if (!this.state.roster.indexOf(p.val) > -1) {
+      const newRoster = this.state.roster;
+      newRoster.push(p.val);
+      this.setState({ roster: newRoster });
+    }
   }
 
   togglePPR() {
@@ -63,21 +79,23 @@ export default class CreateTeam extends Component {
     const team = {
       teamName: this.state.teamName,
       teamCount: this.state.teamCount,
+      players: this.state.roster,
       isPPR: this.state.isPPR,
       is2QB: this.state.is2QB,
       isIDP: this.state.isIDP,
     };
-    console.log('team');
+    console.log(team);
     Meteor.call('teams.create', team);
-    console.log('success');
     browserHistory.push('/dashboard');
   }
   render() {
-    console.log(this.props.currentUser);
     // if (! this.props.currentUser) {
     //   browserHistory.push('/login');
     // }
-    const submitButton = this.state.teamName
+    const options = this.props.players.map(function(player) {
+      return { val: player, label: player.name };
+    });
+    const submitButton = this.state.teamName && this.state.roster.length > 0
       ? <Button
           className="tradeButton"
           bsStyle="primary"
@@ -92,17 +110,17 @@ export default class CreateTeam extends Component {
           disabled
           bsSize="large">
             <i className="fa fa-times"></i>&nbsp;
-            Team Name Required
+            Team Name & Players Required
           </Button>;
     return (
       <div>
         <PageHeading current="Create Team" />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
-            <div className="col-lg-12">
+            <div className="col-md-8">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>All form elements <small>With custom checbox and radion elements.</small></h5>
+                  <h5>Team Settings</h5>
                 </div>
                 <div className="ibox-content">
                   <form method="get" className="form-horizontal">
@@ -173,6 +191,45 @@ export default class CreateTeam extends Component {
                       </div>
                     </div>
                   </form>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4 col-sm-12">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Add Players</h5>
+                </div>
+                <div className="ibox-content">
+                  <form role="form" className="form-inline">
+                    <div className="form-group compareSearch">
+                    {this.props.players &&
+                      <Select
+                        name="form-field-name"
+                        value="one"
+                        options={options}
+                        onChange={this.addPlayer}
+                      />
+                    }
+                    </div>
+                  </form>
+                  {this.state.roster.length > 0 &&
+                    <table className="table">
+                      <thead>
+                      </thead>
+                      <tbody>
+                        {this.state.roster.length > 0 && this.state.roster.map((player) =>
+                          <tr className="removePlayerRow">
+                            <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                            <td>
+                              <div className="removePlayer" onClick={() => { this.removeFromRoster(player); } }>
+                                <i className="fa fa-times-circle-o"></i>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  }
                 </div>
               </div>
             </div>
