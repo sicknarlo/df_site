@@ -84,7 +84,7 @@ export default class Compare extends Component {
         <PageHeading current="Player Comparison Tool" />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
-            <div className="col-lg-4 col-sm-12">
+            <div className="col-md-4 col-sm-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
                   <h5>Add Players</h5>
@@ -123,7 +123,7 @@ export default class Compare extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-lg-8 col-sm-12">
+            <div className="col-md-8 col-sm-12">
               {this.state.playersToCompare.length > 0
                 ? this.renderResults()
                 : this.renderInstructions()}

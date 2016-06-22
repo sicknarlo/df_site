@@ -234,7 +234,7 @@ export default class Calculator extends Component {
         {this.state.showInstructions && this.renderInstructions()}
         <div className="wrapper wrapper-content animated fadeIn">
           <div className="row">
-            <div className="col-lg-6 col-sm-12">
+            <div className="col-md-6 col-sm-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
                   <h5>Team 1 Sends</h5>
@@ -273,7 +273,7 @@ export default class Calculator extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-lg-6 col-sm-12">
+            <div className="col-md-6 col-sm-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
                   <h5>Team 2 Sends</h5>

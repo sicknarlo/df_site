@@ -4,6 +4,8 @@ import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 
 import { Players } from '../api/players.js';
+import { Teams } from '../api/teams.js';
+
 import Player from './Player.jsx'
 
 import Navigation from './Navigation.jsx';
@@ -127,6 +129,7 @@ class App extends Component {
         };
       }, this);
     }
+    console.log(this.props);
     return (
       <div id="wrapper">
         <Navigation currentUser = {this.props.currentUser} />
@@ -151,9 +154,11 @@ App.propTypes = {
 
 export default createContainer(() => {
   Meteor.subscribe('players');
+  Meteor.subscribe('teams');
 
   return {
     players: Players.find({}, { sort: { may_16: 1 } }).fetch(),
+    teams: Teams.find({}).fetch(),
     currentUser: Meteor.user(),
   };
 }, App);

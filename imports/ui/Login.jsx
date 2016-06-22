@@ -32,11 +32,9 @@ export default class Login extends Component {
   }
 
   updateUsername(e) {
-    console.log(this.state);
     this.setState({ username: e.target.value });
   }
   updatePassword(e) {
-    console.log(this.state);
     this.setState({ password: e.target.value });
   }
   handleSubmit(e) {

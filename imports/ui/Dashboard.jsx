@@ -3,11 +3,13 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
+import { Link } from 'react-router';
 import $ from 'jquery';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import DashboardLoggedOut from './DashboardLoggedOut.jsx';
+import DashboardLoggedIn from './DashboardLoggedIn.jsx';
 
 const currentMonthADP = 'may_16';
 const currentMonthValue = 'may_16_value';
@@ -42,9 +44,86 @@ export default class Dashboard extends Component {
   // }
 
   render() {
-    return this.props.currentUser
-      ? this.renderLoggedIn()
-      : <DashboardLoggedOut players={this.props.players} newsAlerts={this.props.newsAlerts} />;
+    const filteredTrenders = this.props.players.filter((p) => p[currentMonthADP] < 151);
+    const sortedTrenders = filteredTrenders.sort(function(a, b) {
+      if (a.trend > b.trend) {
+        return -1;
+      }
+      if (a.trend < b.trend) {
+        return 1;
+      }
+      // a must be equal to b
+        return 0;
+    });
+    const risers = sortedTrenders.slice(0, 10);
+    const fallers = sortedTrenders.slice(sortedTrenders.length - 10, sortedTrenders.length).reverse();
+    const dashboard = this.props.currentUser
+    ? <DashboardLoggedIn
+        players={this.props.players}
+        newsAlerts={this.props.newsAlerts}
+        currentUser={this.props.currentUser} />
+    : <DashboardLoggedOut
+        players={this.props.players}
+        newsAlerts={this.props.newsAlerts} />
+    return (
+      <div>
+        {dashboard}
+        <div className="wrapper wrapper-content">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Top 3 Month Risers</h5>
+                </div>
+                <div className="ibox-content">
+                  <table className="table">
+                    <thead>
+                      <th>Name</th>
+                      <th>ADP</th>
+                      <th>Trend</th>
+                    </thead>
+                    <tbody>
+                      {risers.map((player) =>
+                        <tr>
+                          <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td>{player[currentMonthADP]}</td>
+                          <td>{player.trend}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Top 3 Month Fallers</h5>
+                </div>
+                <div className="ibox-content">
+                <table className="table">
+                  <thead>
+                    <th>Name</th>
+                    <th>ADP</th>
+                    <th>Trend</th>
+                  </thead>
+                  <tbody>
+                    {fallers.map((player) =>
+                      <tr>
+                        <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                        <td>{player[currentMonthADP]}</td>
+                        <td>{player.trend}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  );
   }
 }
 

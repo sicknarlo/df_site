@@ -19,7 +19,7 @@ const ageCalc = function(birthdate) {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
-export default class DashboardLoggedOut extends Component {
+export default class DashboardLoggedIn extends Component {
   // constructor(props) {
   //   super(props);
   //   this.state = {
@@ -45,12 +45,59 @@ export default class DashboardLoggedOut extends Component {
   // }
 
   render() {
+    const user = this.props.currentUser
     return (
       <div>
         <div className="row  border-bottom white-bg dashboard-header">
-          <div className="col-sm-12 text-center">
-            <h1>You are not logged in.</h1>
-            <h3><Link to="/login">Log In</Link> or <Link to="/signup">Sign Up</Link> to use the dashboard. It's free!</h3>
+          <div className="col-sm-3">
+            <h2>Welcome {user.username}</h2>
+            <small>You have 42 messages and 6 notifications.</small>
+          </div>
+          <div className="col-sm-6">
+            <div className="flot-chart dashboard-chart">
+              <div className="flot-chart-content" id="flot-dashboard-chart"></div>
+            </div>
+            <div className="row text-left">
+              <div className="col-xs-4">
+                <div className=" m-l-md">
+                  <span className="h4 font-bold m-t block">$ 406,100</span>
+                  <small className="text-muted m-b block">Sales marketing report</small>
+                </div>
+              </div>
+              <div className="col-xs-4">
+              <span className="h4 font-bold m-t block">$ 150,401</span>
+                  <small className="text-muted m-b block">Annual sales revenue</small>
+              </div>
+              <div className="col-xs-4">
+                <span className="h4 font-bold m-t block">$ 16,822</span>
+                <small className="text-muted m-b block">Half-year revenue margin</small>
+              </div>
+            </div>
+          </div>
+          <div className="col-sm-3">
+            <div className="statistic-box">
+              <h4>
+                  Project Beta progress
+              </h4>
+
+              <p>
+                  You have two project with not compleated task.
+              </p>
+
+              <div className="row text-center">
+                <div className="col-lg-6">
+                  <canvas id="polarChart" width="80" height="80"></canvas>
+                  <h5>Kolter</h5>
+                </div>
+                <div className="col-lg-6">
+                  <canvas id="doughnutChart" width="78" height="78"></canvas>
+                  <h5>Maxtor</h5>
+                </div>
+              </div>
+              <div className="m-t">
+                <small>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -58,7 +105,7 @@ export default class DashboardLoggedOut extends Component {
   }
 }
 
-DashboardLoggedOut.propTypes = {
+DashboardLoggedIn.propTypes = {
   // This component gets the task to display through a React prop.
   // We can use propTypes to indicate it is required
   players: PropTypes.array.isRequired,
