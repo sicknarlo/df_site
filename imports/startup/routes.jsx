@@ -11,6 +11,7 @@ import Dashboard from '../ui/Dashboard.jsx';
 import Login from '../ui/Login.jsx';
 import SignUp from '../ui/SignUp.jsx';
 import CreateTeam from '../ui/CreateTeam.jsx';
+import Team from '../ui/Team.jsx';
 
 export const renderRoutes = () => (
   <Router history={browserHistory}>
@@ -22,6 +23,8 @@ export const renderRoutes = () => (
       <Route path="/players/:playerID" component={Player} />
       <Route path="/compare" component={Compare} />
       <Route path="/calculator" component={Calculator} />
+      {/*<Route path="/teams" component={Teams} />*/}
+      <Route path="/teams/:teamID" component={Team} />
       <Route path="/createteam" component={CreateTeam} />
     </Route>
   </Router>

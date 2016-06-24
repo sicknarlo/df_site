@@ -83,6 +83,7 @@ export default class CreateTeam extends Component {
       isPPR: this.state.isPPR,
       is2QB: this.state.is2QB,
       isIDP: this.state.isIDP,
+      valueMonth: currentMonthValue,
     };
     console.log(team);
     Meteor.call('teams.create', team);

@@ -17,47 +17,60 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      password: '',
-      invalid: false,
-      error: false,
-      usernameRequired: false,
-      sent: false,
-      menuOpen: false,
-      showConnectionIssue: false,
+      errors: {},
+      // username: '',
+      // password: '',
+      // invalid: false,
+      // error: false,
+      // usernameRequired: false,
+      // sent: false,
+      // menuOpen: false,
+      // showConnectionIssue: false,
     };
-    this.updateUsername = this.updateUsername.bind(this);
-    this.updatePassword = this.updatePassword.bind(this);
+    // this.updateUsername = this.updateUsername.bind(this);
+    // this.updatePassword = this.updatePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  updateUsername(e) {
-    this.setState({ username: e.target.value });
-  }
-  updatePassword(e) {
-    this.setState({ password: e.target.value });
-  }
+  // updateUsername(e) {
+  //   this.setState({ username: e.target.value });
+  // }
+  // updatePassword(e) {
+  //   this.setState({ password: e.target.value });
+  // }
   handleSubmit(e) {
     e.preventDefault();
+    const username = this.refs.username.value;
+    const password = this.refs.password.value;
+    const errors = {}
 
-    if (!this.state.username || !this.state.password) {
-      this.setState({ invalid: true, usernameRequired: false, error: false, sent: false });
-      return;
-    } else {
-      this.setState({ invalid: false, usernameRequired: false, error: false, sent: false });
+    if (!username) {
+      errors.username = 'Username required';
+    }
+    if (!password) {
+      errors.password = 'Password required';
     }
 
-    Meteor.loginWithPassword(this.state.username, this.state.password, err => {
+    this.setState({ errors });
+    if (Object.keys(errors).length) {
+      return;
+    }
+
+    Meteor.loginWithPassword(username, password, err => {
       if (err) {
-        this.setState({ invalid: false, usernameRequired: false, error: true, sent: false });
-        console.log(err);
-      } else {
-        console.log('sucksess');
-        browserHistory.push('/dashboard');
+        this.setState({
+          errors: { none: err.reason },
+        });
+        return;
       }
+      browserHistory.push('/dashboard');
     });
   }
   render() {
+    const { errors } = this.state;
+    const errorMessages = Object.keys(errors).map(key => errors[key]);
+    const errorClass = key => errors[key] && 'error';
+
     return (
       <div className="middle-box text-center loginscreen animated fadeInDown">
         <div>
@@ -68,13 +81,17 @@ export default class Login extends Component {
           <p>Login to add your teams, watch your players, and customize your experience.
           </p>
           <form className="m-t" role="form" onSubmit={this.handleSubmit}>
+            <div className="list-errors">
+              {errorMessages.map(msg => (
+                <div className="list-item alert alert-danger" key={msg}>{msg}</div>
+              ))}
+            </div>
             <div className="form-group">
               <input
                 type="text"
                 className="form-control"
                 placeholder="Username"
-                onChange={this.updateUsername}
-                value={this.state.username}
+                ref="username"
                 required="" />
             </div>
             <div className="form-group">
@@ -82,8 +99,7 @@ export default class Login extends Component {
                 type="password"
                 className="form-control"
                 placeholder="Password"
-                value={this.state.password}
-                onChange={this.updatePassword}
+                ref="password"
                 required="" />
             </div>
               <button type="submit" className="btn btn-primary block full-width m-b">Login</button>

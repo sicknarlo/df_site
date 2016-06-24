@@ -23,12 +23,26 @@ Meteor.methods({
     }
     console.log(team);
     const initialAdd = {};
-    initialAdd.add = team.players.map((p) => p._id._str);
+    initialAdd.add = team.players;
     initialAdd.remove = [];
-    initialAdd.type = 'initial',
+    initialAdd.type = 'initial';
+    initialAdd.date = new Date();
+    initialAdd.valueMonth = team.valueMonth;
+
+    let initialValue = 0;
+
+    for (var i=0; i< team.players.length; i++) {
+      initialValue += team.players[i][team.valueMonth];
+      console.log(initialValue);
+    }
+
+    const initVal = {
+      value: initialValue,
+      date: new Date(),
+    }
 
     Teams.insert({
-      teamName: team.teamName,
+      name: team.teamName,
       teamCount: team.teamCount,
       isPPR: team.isPPR,
       is2QB: team.is2QB,
@@ -36,6 +50,7 @@ Meteor.methods({
       owner: this.userId,
       players: team.players,
       transactions: [initialAdd],
+      values: [initVal],
       username: Meteor.users.findOne(this.userId).username,
     });
   },
@@ -48,5 +63,5 @@ Meteor.methods({
 
   'teams.get'() {
     Teams.find({ userId: this.userId });
-  }
+  },
 });

@@ -45,7 +45,8 @@ export default class DashboardLoggedIn extends Component {
   // }
 
   render() {
-    const user = this.props.currentUser
+    const user = this.props.currentUser;
+    console.log(this.props);
     return (
       <div>
         <div className="row  border-bottom white-bg dashboard-header">
@@ -54,25 +55,11 @@ export default class DashboardLoggedIn extends Component {
             <small>You have 42 messages and 6 notifications.</small>
           </div>
           <div className="col-sm-6">
-            <div className="flot-chart dashboard-chart">
-              <div className="flot-chart-content" id="flot-dashboard-chart"></div>
-            </div>
-            <div className="row text-left">
-              <div className="col-xs-4">
-                <div className=" m-l-md">
-                  <span className="h4 font-bold m-t block">$ 406,100</span>
-                  <small className="text-muted m-b block">Sales marketing report</small>
-                </div>
-              </div>
-              <div className="col-xs-4">
-              <span className="h4 font-bold m-t block">$ 150,401</span>
-                  <small className="text-muted m-b block">Annual sales revenue</small>
-              </div>
-              <div className="col-xs-4">
-                <span className="h4 font-bold m-t block">$ 16,822</span>
-                <small className="text-muted m-b block">Half-year revenue margin</small>
-              </div>
-            </div>
+            <ul>
+              {this.props.teams && this.props.teams.map((t) =>
+                <li><Link to={`/teams/${t._id}`}>{t.name}</Link></li>)
+              }
+            </ul>
           </div>
           <div className="col-sm-3">
             <div className="statistic-box">

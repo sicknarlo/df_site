@@ -139,6 +139,7 @@ class App extends Component {
             players: this.props.players,
             currentUser: this.props.currentUser,
             newsAlerts,
+            teams: this.props.teams,
           })}
           <Footer />
         </div>

@@ -16,12 +16,16 @@ export default class SignUp extends Component {
   onSubmit(event) {
     event.preventDefault();
     const username = this.refs.username.value;
+    const email = this.refs.email.value;
     const password = this.refs.password.value;
     const confirm = this.refs.confirm.value;
     const errors = {};
 
     if (!username) {
       errors.username = 'Username required';
+    }
+    if (!email) {
+      errors.email = 'Email required';
     }
     if (!password) {
       errors.password = 'Password required';
@@ -37,13 +41,14 @@ export default class SignUp extends Component {
 
     Accounts.createUser({
       username,
+      email,
       password,
     }, err => {
       if (err) {
         this.setState({
           errors: { none: err.reason },
         });
-        console.log(err);
+        return;
       }
       browserHistory.push('/dashboard');
     });
@@ -52,6 +57,7 @@ export default class SignUp extends Component {
     const { errors } = this.state;
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
+
     return (
       <div className="middle-box text-center loginscreen animated fadeInDown">
         <div>
@@ -62,18 +68,31 @@ export default class SignUp extends Component {
         <p>Create account to add your teams, watch players, and more.</p>
 
         <form className="m-t" role="form" action="#" onSubmit={this.onSubmit}>
+          <div className="list-errors">
+            {errorMessages.map(msg => (
+              <div className="list-item alert alert-danger" key={msg}>{msg}</div>
+            ))}
+          </div>
             <div className="form-group">
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${errorClass('username')}`}
                   placeholder="Username"
                   required=""
                   ref="username" />
             </div>
             <div className="form-group">
                 <input
+                  type="email"
+                  className={`form-control ${errorClass('email')}`}
+                  placeholder="Email"
+                  required=""
+                  ref="email" />
+            </div>
+            <div className="form-group">
+                <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${errorClass('password')}`}
                   placeholder="Password"
                   required=""
                   ref="password" />
@@ -81,7 +100,7 @@ export default class SignUp extends Component {
             <div className="form-group">
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${errorClass('confirm')}`}
                   placeholder="Confirm Password"
                   required=""
                   ref="confirm" />
