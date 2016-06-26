@@ -43,7 +43,8 @@ export default class Team extends Component {
       return <TeamPage
               team={team}
               currentUser={this.props.currentUser}
-              players={this.props.players} />
+              players={this.props.players}
+              newsAlerts={this.props.newsAlerts} />
     } else {
       browserHistory.push('/dashboard');
     }
