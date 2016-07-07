@@ -33,7 +33,6 @@ Meteor.methods({
 
     for (var i=0; i< team.players.length; i++) {
       initialValue += team.players[i][team.valueMonth];
-      console.log(initialValue);
     }
 
     const initVal = {
@@ -59,6 +58,24 @@ Meteor.methods({
     check(teamId, String);
 
     Teams.remove(teamId);
+  },
+
+  'teams.addTransaction'(data) {
+    const addRoster = data.team.players.concat(data.nextTrans[data.nextTrans.length - 1].add);
+    const newPlayers = addRoster.filter(function(p) {
+      let keep = true;
+      for (var i=0; i< data.nextTrans[data.nextTrans.length - 1].remove.length; i++) {
+        if (p._id._str === data.nextTrans[data.nextTrans.length - 1].remove[i]._id._str) {
+          keep = false;
+        }
+      }
+      return keep;
+    })
+
+    Teams.update({_id : data.team._id}, { $set : {
+      transactions : data.nextTrans,
+      players: newPlayers,
+    } });
   },
 
   'teams.get'() {

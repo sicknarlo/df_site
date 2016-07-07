@@ -7,6 +7,7 @@ import { Link, browserHistory } from 'react-router';
 import $ from 'jquery';
 import Select from 'react-select';
 import { Button } from 'react-bootstrap';
+import { Teams } from '../api/teams.js';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
@@ -15,6 +16,7 @@ import DashboardLoggedIn from './DashboardLoggedIn.jsx';
 import TeamValueGraph from './TeamValueGraph.jsx';
 import PositionWebGraph from './PositionWebGraph.jsx';
 import TeamPortfolioGraph from './TeamPortfolioGraph.jsx';
+import TeamPositionBreakdown from './TeamPositionBreakdown.jsx';
 
 const currentMonthADP = 'may_16';
 const previousMonthADP = 'apr_16';
@@ -52,19 +54,44 @@ export default class TeamPage extends Component {
       transactionType: 'Trade',
       transactionAdd: [],
       transactionRemove: [],
+      transactionShowCount: 5,
     };
     this.changeType = this.changeType.bind(this);
     this.handleAddtoAdd = this.handleAddtoAdd.bind(this);
     this.handleRemovefromAdd = this.handleRemovefromAdd.bind(this);
     this.handleAddtoRemove = this.handleAddtoRemove.bind(this);
     this.handleRemovefromRemove = this.handleRemovefromRemove.bind(this);
-    // this.addTransaction = this.addTransaction.bind(this);
+    this.addTransaction = this.addTransaction.bind(this);
+    this.increaseTransactionCount = this.increaseTransactionCount.bind(this);
   }
 
   changeType(e) {
     this.setState({
-      transactionAdd: e.target.value,
+      transactionType: e.target.value,
     });
+  }
+
+  addTransaction() {
+    const newTrans = {};
+    newTrans.add = this.state.transactionAdd;
+    newTrans.remove = this.state.transactionRemove;
+    newTrans.type = this.state.transactionType;
+    newTrans.date = new Date();
+    newTrans.valueMonth = currentMonthValue;
+    const nextTransArray = this.props.team.transactions.concat([newTrans]);
+    const dataWrapper = {
+      team: this.props.team,
+      nextTrans: nextTransArray,
+      players: this.props.players,
+    };
+
+    Meteor.call('teams.addTransaction', dataWrapper);
+
+    this.setState({
+      transactionAdd: [],
+      transactionRemove: [],
+      transactionType: 'Trade',
+    })
   }
 
   handleAddtoAdd(p) {
@@ -99,10 +126,11 @@ export default class TeamPage extends Component {
       const newRoster = old2Roster.splice(index, 1);
       this.setState({ transactionRemove: old2Roster });
     }
-
-    // addTransaction() {
-    //
-    // }
+  }
+  increaseTransactionCount() {
+    this.setState({
+      transactionShowCount: this.state.transactionShowCount + 5,
+    })
   }
   render() {
     const team = this.props.team;
@@ -141,7 +169,19 @@ export default class TeamPage extends Component {
     const monthDiff3Percent = (((100 * currentValue) / last3Value) - 100).toFixed(2);
     const monthDiff6Percent = (((100 * currentValue) / last6Value) - 100).toFixed(2);
 
+    const sortedPlayers = team.players.sort(function(a, b) {
+      if (a[currentMonthADP] > b[currentMonthADP]) {
+        return 1;
+      } else if (a[currentMonthADP] < b[currentMonthADP]) {
+        return -1;
+      }
 
+      return 0;
+    })
+
+    const transactionsList = team.transactions.slice(0, this.state.transactionShowCount);
+    const showMoreButton = team.transactions.length <= transactionsList.length
+      ? <li onClick={this.setState()}
     return (
       <div>
         <PageHeading current={team.name} />
@@ -277,7 +317,7 @@ export default class TeamPage extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {team.players && team.players.map((player, k) =>
+                      {sortedPlayers && sortedPlayers.map((player, k) =>
                         <PlayerRow key={k} player={player} sortGrp="sortByADP" />
                       )}
                     </tbody>
@@ -287,6 +327,14 @@ export default class TeamPage extends Component {
             </div>
           </div>
           <div className="row">
+            <div className="col-lg-12">
+              <TeamPositionBreakdown team={team}/>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <h1 className="text-center">Transactions</h1>
+            </div>
             <div className="col-md-6">
                 <div className="ibox float-e-margins">
                     <div className="ibox-title">
@@ -294,13 +342,13 @@ export default class TeamPage extends Component {
                     </div>
                     <div className="ibox-content no-padding">
                       <ul className="list-group">
-                        {team.transactions && team.transactions.map(function(t) {
+                        {transactionsList && transactionsList.map(function(t) {
                           return (
                             <li className="list-group-item">
                               <p>{t.date.toString()}</p>
                               <p>{t.type.toUpperCase()}</p>
                               <p><strong>ADD: </strong>{t.add.map((p) => <span className="greenText">{p.name} ({p[t.valueMonth]}) / </span>)};</p>
-                              <p><strong>REMOVE: </strong>{t.remove.map((p) => <span className="greenText">{p.name} ({p[t.valueMonth]}) / </span>)};</p>
+                              <p><strong>REMOVE: </strong>{t.remove.map((p) => <span className="redText">{p.name} (-{p[t.valueMonth]}) / </span>)};</p>
                             </li>
                           )
                         })}
@@ -313,14 +361,15 @@ export default class TeamPage extends Component {
                     <div className="ibox-title">
                         <h2>Add Transaction</h2>
                     </div>
-                    <div className="ibox-content no-padding">
+                    <div className="ibox-content">
                     <form className="form-horizontal">
                           <div className="form-group"><label className="col-lg-2 control-label">Type</label>
                               <div className="col-lg-10">
                                 <select
-                                  value="Trade"
+                                  value={this.state.transactionType}
                                   ref="type"
-                                  className="form-control">
+                                  className="form-control"
+                                  onChange={this.changeType}>
                                   <option>Trade</option>
                                   <option>Free Agency</option>
                                   <option>Drop</option>

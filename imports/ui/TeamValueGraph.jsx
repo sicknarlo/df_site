@@ -47,7 +47,6 @@ export default class TeamValueGraph extends Component {
       }
       chartData.data.push(val);
     }
-    console.log(chartData);
 
     const config = {
       chart: {
@@ -58,7 +57,7 @@ export default class TeamValueGraph extends Component {
         },
       },
       title: {
-        // text: 'Current Team Value',
+        text: '',
       },
       colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565'],
       xAxis: {
@@ -83,7 +82,7 @@ export default class TeamValueGraph extends Component {
     };
     return (
       <div className="adpChart">
-        <ReactHighcharts config={config} className="adpChart-container" />
+        <ReactHighcharts config={config} isPureConfig className="adpChart-container" />
       </div>
     );
   }

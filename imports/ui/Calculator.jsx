@@ -6,23 +6,11 @@ import { Checkbox } from 'react-icheck';
 import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
 import Select from 'react-select';
 import { Link } from 'react-router';
+import Values from './ADPConst.jsx';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
-
-const currentMonthADP = 'may_16';
-const previousMonthADP = 'apr_16';
-const currentMonthValue = 'may_16_value';
-const past6MonthsADP = [
-  'nov_15',
-  'dec_15',
-  'jan_16',
-  'feb_16',
-  'mar_16',
-  'apr_16',
-  'may_16',
-];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -165,7 +153,7 @@ export default class Calculator extends Component {
   findClosestPlayer(val) {
     let curr = this.props.players[0];
     this.props.players.forEach(function(player) {
-      if (Math.abs(val - player[currentMonthValue]) < Math.abs(val - curr[currentMonthValue])) {
+      if (Math.abs(val - player[Values.past6MonthsValue[5]]) < Math.abs(val - curr[Values.past6MonthsValue[5]])) {
         curr = player;
       }
     })
@@ -180,11 +168,11 @@ export default class Calculator extends Component {
     })
     let team1ValueSent = 0;
     this.state.team1.forEach(function(player) {
-      team1ValueSent += player[currentMonthValue]
+      team1ValueSent += player[Values.past6MonthsValue[5]]
     });
     let team2ValueSent = 0;
     this.state.team2.forEach(function(player) {
-      team2ValueSent += player[currentMonthValue]
+      team2ValueSent += player[Values.past6MonthsValue[5]]
     });
 
     const team1ValueGained = team2ValueSent - team1ValueSent;
@@ -223,7 +211,7 @@ export default class Calculator extends Component {
     const closestPlayer = this.findClosestPlayer(Math.abs(team1ValueGained));
     const closestPlayerString = closestPlayer
       ? (<div>
-          <h2>The difference is equal to <Link to={`/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[currentMonthADP]}</strong></h2>
+          <h2>The difference is equal to <Link to={`/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[Values.past6MonthsADP[5]]}</strong></h2>
         </div>
         )
       : null;
@@ -332,7 +320,7 @@ export default class Calculator extends Component {
                               <Link to={`/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[currentMonthValue]}
+                              {player[Values.past6MonthsValue[5]]}
                             </div>
                           </div>
                         )}
@@ -352,7 +340,7 @@ export default class Calculator extends Component {
                               <Link to={`/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[currentMonthValue]}
+                              {player[Values.past6MonthsValue[5]]}
                             </div>
                           </div>
                         )}

@@ -7,13 +7,11 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import $ from 'jquery';
 import { Link } from 'react-router';
+import Values from './ADPConst.jsx';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
-
-const currentMonthADP = 'may_16';
-const currentMonthValue = 'may_16_value';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
