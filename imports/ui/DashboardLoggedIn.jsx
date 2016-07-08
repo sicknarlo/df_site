@@ -56,37 +56,42 @@ export default class DashboardLoggedIn extends Component {
                 </div>
             </div>
             <div className="ibox-content">
-                <div className="project-list">
-                    <table className="table table-hover">
-                        <tbody>
-                          {this.props.teams && this.props.teams.map(function(t) {
-                            const playerCount = t.players.length;
-                            const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
-                            const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
-                            const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
-                            return (
-                            <Link to={`/teams/${t._id}`}>
-                              <tr>
-                                <td>
-                                    <Link to={`/teams/${t._id}`}>{t.name}</Link>
-                                    <br />
-                                    <small>{t.teamCount} teams</small>
-                                </td>
-                                <td>
-                                    {playerCount} players
-                                </td>
-                                <td>
-                                    &nbsp;
-                                    {isPPR}&nbsp;
-                                    {isIDP}&nbsp;
-                                    {is2QB}&nbsp;
-                                </td>
-                              </tr>
-                            </Link>
-                          )})}
-                        </tbody>
-                    </table>
-                </div>
+                  <table className="table table-hover">
+                    <thead>
+                      <th>Team Name</th>
+                      <th># Teams</th>
+                      <th># Assets</th>
+                      <th>Tags</th>
+                    </thead>
+                      <tbody>
+                        {this.props.teams && this.props.teams.map(function(t) {
+                          const playerCount = t.players.length;
+                          const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
+                          const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
+                          const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
+                          return (
+                            <tr>
+                              <td>
+                              <Link to={`/teams/${t._id}`}>
+                                {t.name}
+                              </Link>
+                              </td>
+                              <td>
+                                {t.teamCount}
+                              </td>
+                              <td>
+                                  {playerCount}
+                              </td>
+                              <td>
+                                  &nbsp;
+                                  {isPPR}&nbsp;
+                                  {isIDP}&nbsp;
+                                  {is2QB}&nbsp;
+                              </td>
+                            </tr>
+                        )})}
+                      </tbody>
+                  </table>
             </div>
         </div>
       </div>

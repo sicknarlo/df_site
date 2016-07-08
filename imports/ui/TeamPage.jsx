@@ -144,8 +144,8 @@ export default class TeamPage extends Component {
     const result = confirm('Are you sure you want to delete this team?');
     if (result) {
       Meteor.call('teams.delete', teamID);
+      browserHistory.push('/dashboard');
     }
-    browserHistory.push('/dashboard');
   }
   render() {
     const team = this.props.team;
