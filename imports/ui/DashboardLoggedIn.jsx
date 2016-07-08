@@ -20,14 +20,9 @@ const ageCalc = function(birthdate) {
 }
 
 export default class DashboardLoggedIn extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     rotoData: null,
-  //   };
-  //
-  //   this.componentDidMount = this.componentDidMount.bind(this);
-  // }
+  constructor(props) {
+    super(props);
+  }
   // componentDidMount() {
   //   const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
   //   let result = [];
@@ -46,46 +41,53 @@ export default class DashboardLoggedIn extends Component {
 
   render() {
     const user = this.props.currentUser;
-    console.log(this.props);
     return (
       <div>
         <div className="row  border-bottom white-bg dashboard-header">
           <div className="col-sm-3">
             <h2>Welcome {user.username}</h2>
-            <small>You have 42 messages and 6 notifications.</small>
           </div>
-          <div className="col-sm-6">
-            <ul>
-              {this.props.teams && this.props.teams.map((t) =>
-                <li><Link to={`/teams/${t._id}`}>{t.name}</Link></li>)
-              }
-            </ul>
-          </div>
-          <div className="col-sm-3">
-            <div className="statistic-box">
-              <h4>
-                  Project Beta progress
-              </h4>
-
-              <p>
-                  You have two project with not compleated task.
-              </p>
-
-              <div className="row text-center">
-                <div className="col-lg-6">
-                  <canvas id="polarChart" width="80" height="80"></canvas>
-                  <h5>Kolter</h5>
+        </div>
+        <div className="ibox">
+            <div className="ibox-title">
+                <h5>Your Teams</h5>
+                <div className="ibox-tools">
+                    <Link to='/createteam' className="btn btn-primary btn-xs">Create new team</Link>
                 </div>
-                <div className="col-lg-6">
-                  <canvas id="doughnutChart" width="78" height="78"></canvas>
-                  <h5>Maxtor</h5>
-                </div>
-              </div>
-              <div className="m-t">
-                <small>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
-              </div>
             </div>
-          </div>
+            <div className="ibox-content">
+                <div className="project-list">
+                    <table className="table table-hover">
+                        <tbody>
+                          {this.props.teams && this.props.teams.map(function(t) {
+                            const playerCount = t.players.length;
+                            const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
+                            const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
+                            const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
+                            return (
+                            <Link to={`/teams/${t._id}`}>
+                              <tr>
+                                <td>
+                                    <Link to={`/teams/${t._id}`}>{t.name}</Link>
+                                    <br />
+                                    <small>{t.teamCount} teams</small>
+                                </td>
+                                <td>
+                                    {playerCount} players
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    {isPPR}&nbsp;
+                                    {isIDP}&nbsp;
+                                    {is2QB}&nbsp;
+                                </td>
+                              </tr>
+                            </Link>
+                          )})}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
       </div>
     );

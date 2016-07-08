@@ -63,6 +63,7 @@ export default class TeamPage extends Component {
     this.handleRemovefromRemove = this.handleRemovefromRemove.bind(this);
     this.addTransaction = this.addTransaction.bind(this);
     this.increaseTransactionCount = this.increaseTransactionCount.bind(this);
+    this.deleteTeam = this.deleteTeam.bind(this);
   }
 
   changeType(e) {
@@ -73,8 +74,12 @@ export default class TeamPage extends Component {
 
   addTransaction() {
     const newTrans = {};
-    newTrans.add = this.state.transactionAdd;
-    newTrans.remove = this.state.transactionRemove;
+    const addIds = [];
+    this.state.transactionAdd.forEach((p) => addIds.push(p._id._str));
+    newTrans.add = addIds;
+    const removeIds = [];
+    this.state.transactionRemove.forEach((p) => removeIds.push(p._id._str));
+    newTrans.remove = removeIds;
     newTrans.type = this.state.transactionType;
     newTrans.date = new Date();
     newTrans.valueMonth = currentMonthValue;
@@ -132,8 +137,21 @@ export default class TeamPage extends Component {
       transactionShowCount: this.state.transactionShowCount + 5,
     })
   }
+
+  deleteTeam(){
+    const teamID = this.props.team._id;
+    console.log(teamID);
+    const result = confirm('Are you sure you want to delete this team?');
+    if (result) {
+      Meteor.call('teams.delete', teamID);
+    }
+    browserHistory.push('/dashboard');
+  }
   render() {
     const team = this.props.team;
+    const teamPlayers = this.props.players.filter(function(p) {
+      return team.players.indexOf(p._id._str) > -1;
+    })
     let currentValue = 0;
     let lastValue = 0;
     let last3Value = 0;
@@ -141,11 +159,11 @@ export default class TeamPage extends Component {
     const monthLast = past6MonthsValue[4];
     const month3 = past6MonthsValue[3];
     const month6 = past6MonthsValue[0];
-    for (var i=0; i<team.players.length; i++) {
-      currentValue += team.players[i][currentMonthValue];
-      lastValue += team.players[i][monthLast];
-      last3Value += team.players[i][month3];
-      last6Value += team.players[i][month6];
+    for (var i=0; i<teamPlayers.length; i++) {
+      currentValue += teamPlayers[i][currentMonthValue];
+      lastValue += teamPlayers[i][monthLast];
+      last3Value += teamPlayers[i][month3];
+      last6Value += teamPlayers[i][month6];
     }
 
     const monthDiff1 = currentValue - lastValue;
@@ -169,7 +187,7 @@ export default class TeamPage extends Component {
     const monthDiff3Percent = (((100 * currentValue) / last3Value) - 100).toFixed(2);
     const monthDiff6Percent = (((100 * currentValue) / last6Value) - 100).toFixed(2);
 
-    const sortedPlayers = team.players.sort(function(a, b) {
+    const sortedPlayers = teamPlayers.sort(function(a, b) {
       if (a[currentMonthADP] > b[currentMonthADP]) {
         return 1;
       } else if (a[currentMonthADP] < b[currentMonthADP]) {
@@ -178,10 +196,11 @@ export default class TeamPage extends Component {
 
       return 0;
     })
-
     const transactionsList = team.transactions.slice(0, this.state.transactionShowCount);
-    const showMoreButton = team.transactions.length <= transactionsList.length
-      ? <li onClick={this.setState()}
+    const showMoreButton = team.transactions.length > this.state.transactionShowCount
+      ? <li className="list-group-item showMoreButton" onClick={this.increaseTransactionCount}><h3>Show More</h3></li>
+      : null;
+      const playerList = this.props.players;
     return (
       <div>
         <PageHeading current={team.name} />
@@ -278,7 +297,7 @@ export default class TeamPage extends Component {
                   <h2>Current Team Values</h2>
                 </div>
                 <div className="ibox-content">
-                  <TeamValueGraph team={team} />
+                  <TeamValueGraph team={team} teamPlayers={teamPlayers} />
                 </div>
               </div>
             </div>
@@ -328,7 +347,7 @@ export default class TeamPage extends Component {
           </div>
           <div className="row">
             <div className="col-lg-12">
-              <TeamPositionBreakdown team={team}/>
+              <TeamPositionBreakdown team={team} teamPlayers={teamPlayers}/>
             </div>
           </div>
           <div className="row">
@@ -338,20 +357,32 @@ export default class TeamPage extends Component {
             <div className="col-md-6">
                 <div className="ibox float-e-margins">
                     <div className="ibox-title">
-                        <h2>Transaction History</h2>
+                        <h2>Transaction History ({team.transactions.length})</h2>
                     </div>
                     <div className="ibox-content no-padding">
                       <ul className="list-group">
                         {transactionsList && transactionsList.map(function(t) {
+                          const addPlayers = [];
+                          t.add.forEach((p) => addPlayers.push(playerList.find((pl) => pl._id._str === p)));
+                          const removePlayers = [];
+                          t.remove.forEach((p) => removePlayers.push(playerList.find((pl) => pl._id._str === p)));
                           return (
                             <li className="list-group-item">
                               <p>{t.date.toString()}</p>
-                              <p>{t.type.toUpperCase()}</p>
-                              <p><strong>ADD: </strong>{t.add.map((p) => <span className="greenText">{p.name} ({p[t.valueMonth]}) / </span>)};</p>
-                              <p><strong>REMOVE: </strong>{t.remove.map((p) => <span className="redText">{p.name} (-{p[t.valueMonth]}) / </span>)};</p>
+                              <p className={classnames('label', {
+                                'label-primary': t.type.toUpperCase() === 'TRADE',
+                                'label-info': t.type.toUpperCase() === 'DRAFT',
+                                'label-success': t.type.toUpperCase() === 'FREE AGENCY',
+                                'label-danger': t.type.toUpperCase() === 'DROP',
+                                'label-warning': t.type.toUpperCase() === 'OTHER',
+                              })}>{t.type.toUpperCase()}</p>
+                              <p><strong>ADD: </strong>{addPlayers.map((p) =>
+                                <span className="greenText">{p.name} (+{p[t.valueMonth]}) / </span>)};</p>
+                              <p><strong>REMOVE: </strong>{removePlayers.map((p) => <span className="redText">{p.name} (-{p[t.valueMonth]}) / </span>)};</p>
                             </li>
                           )
                         })}
+                        {showMoreButton}
                       </ul>
                     </div>
                 </div>
@@ -453,6 +484,11 @@ export default class TeamPage extends Component {
                 </div>
             </div>
           </div>
+        </div>
+        <div className="row flexContainer justifyCenter">
+          <button className="btn btn-lg btn-danger deleteBtn" onClick={this.deleteTeam}>
+            <i className="fa fa-times"></i> Delete Team
+          </button>
         </div>
       </div>
     );

@@ -77,10 +77,12 @@ export default class CreateTeam extends Component {
     this.setState({ teamCount: e.target.value });
   }
   createTeam() {
+    const playerIds = [];
+    this.state.roster.forEach((p) => playerIds.push(p._id._str));
     const team = {
       teamName: this.state.teamName,
       teamCount: this.state.teamCount,
-      players: this.state.roster,
+      players: playerIds,
       isPPR: this.state.isPPR,
       is2QB: this.state.is2QB,
       isIDP: this.state.isIDP,

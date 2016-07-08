@@ -78,16 +78,9 @@ export default class TopNav extends React.Component {
             >
               <i className="fa fa-bars"></i>
             </div>
-            <form role="search" className="navbar-form-custom" action="search_results">
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Search for something..."
-                  className="form-control"
-                  name="top-search"
-                  id="top-search" />
-              </div>
-            </form>
+            <div className="toplogo">
+              <h3>DynastyFFTools.com</h3>
+            </div>
           </div>
           {this.props.currentUser && this.renderLogoutButton()}
 

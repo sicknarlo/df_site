@@ -437,12 +437,6 @@ export default class Navigation extends React.Component {
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/myteams'}>
-                <i className="fa fa-sitemap"></i>
-                <span className="nav-label">My Teams</span>
-              </Link>
-            </li>
-            <li onClick={this.handleNavClick} className="">
               <Link to={'/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>

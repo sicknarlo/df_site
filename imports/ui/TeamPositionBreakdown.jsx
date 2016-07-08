@@ -18,8 +18,8 @@ export default class TeamPositionBreakdown extends Component {
     let teTotal = 0;
     let pickTotal = 0;
 
-    for (var i=0; i< this.props.team.players.length; i++) {
-      const p = this.props.team.players[i];
+    for (var i=0; i< this.props.teamPlayers.length; i++) {
+      const p = this.props.teamPlayers[i];
       if (p.position === 'QB') {
         qbTotal += p[currentMonthValue]
       } else if (p.position === 'WR') {

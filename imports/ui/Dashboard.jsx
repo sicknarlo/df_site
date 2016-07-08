@@ -89,7 +89,7 @@ export default class Dashboard extends Component {
                         <tr>
                           <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player[currentMonthADP]}</td>
-                          <td>{player.trend}</td>
+                          <td>+{player.trend}</td>
                         </tr>
                       )}
                     </tbody>
