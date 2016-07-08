@@ -23,7 +23,6 @@
     "lodash": "^4.13.1",
     "meteor-node-stubs": "~0.2.0",
     "node-cron": "^1.1.1",
-    "rd3": "^0.6.3",
     "react": "https://registry.npmjs.org/react/-/react-15.1.0.tgz",
     "react-addons-css-transition-group": "https://registry.npmjs.org/react-addons-css-transition-group/-/react-addons-css-transition-group-15.1.0.tgz",
     "react-addons-pure-render-mixin": "^15.0.0",
