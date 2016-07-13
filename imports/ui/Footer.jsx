@@ -15,7 +15,7 @@ export default class Footer extends React.Component {
         <div className="pull-right">
         </div>
         <div>
-            <strong>Copyright</strong> Stuff &copy; 2016
+            <strong>Copyright</strong> dynastyfftools.com &copy; 2016
         </div>
     </div>
     );

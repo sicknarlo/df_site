@@ -52,7 +52,7 @@ export default class DashboardLoggedIn extends Component {
             <div className="ibox-title">
                 <h5>Your Teams</h5>
                 <div className="ibox-tools">
-                    <Link to='/createteam' className="btn btn-primary btn-xs">Create new team</Link>
+                    <Link to='/createteam' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Create new team</Link>
                 </div>
             </div>
             <div className="ibox-content">
@@ -61,7 +61,6 @@ export default class DashboardLoggedIn extends Component {
                       <th>Team Name</th>
                       <th># Teams</th>
                       <th># Assets</th>
-                      <th>Tags</th>
                     </thead>
                       <tbody>
                         {this.props.teams && this.props.teams.map(function(t) {
@@ -81,12 +80,6 @@ export default class DashboardLoggedIn extends Component {
                               </td>
                               <td>
                                   {playerCount}
-                              </td>
-                              <td>
-                                  &nbsp;
-                                  {isPPR}&nbsp;
-                                  {isIDP}&nbsp;
-                                  {is2QB}&nbsp;
                               </td>
                             </tr>
                         )})}

@@ -485,6 +485,11 @@ export default class TeamPage extends Component {
             </div>
           </div>
         </div>
+        <div className="row">
+          <div className="col-xs-12">
+            <TeamPortfolioGraph />
+          </div>
+        </div>
         <div className="row flexContainer justifyCenter">
           <button className="btn btn-lg btn-danger deleteBtn" onClick={this.deleteTeam}>
             <i className="fa fa-times"></i> Delete Team

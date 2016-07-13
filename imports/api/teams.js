@@ -1,8 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
+import Values from '../ui/ADPConst.jsx';
 
 export const Teams = new Mongo.Collection('teams');
+import { Players } from './players.js';
+
+const currentMonthValue = Values.past6MonthsValue[5];
 
 if (Meteor.isServer) {
   // This code only runs on the server
@@ -65,6 +69,23 @@ Meteor.methods({
       transactions : data.nextTrans,
       players: newPlayers,
     } });
+  },
+
+  'teams.updateValues'() {
+    const teams = Teams.find({}).fetch();
+    const players = Players.find({}).fetch();
+    teams.forEach(function(t) {
+      const teamList = players.filter((p) => t.players.indexOf(p._id._str) > -1);
+      let value = 0;
+      teamList.forEach(function(p) {
+        value += p[currentMonthValue];
+      });
+      const oldValues = t.values;
+      const newValues = oldValues.concat([[new Date(), value]]);
+      Teams.update({_id : t._id}, { $set : {
+        values: newValues,
+      } });
+    })
   },
 
   'teams.get'() {

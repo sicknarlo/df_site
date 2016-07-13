@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
 
 const currentMonthADP = 'may_16';
 const previousMonthADP = 'apr_16';
@@ -17,6 +18,11 @@ const past6MonthsADP = [
   'apr_16',
   'may_16',
 ];
+
+const nextYearsFirst = '2017 1st';
+const nextYearsSecond = '2017 2nd';
+const nextYearsThird = '2017 3rd';
+const nextYearsFourth = '2017 4th';
 
 const _calculateAge = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
@@ -117,6 +123,21 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
+    const firstRoundPick = this.props.players.find((p) => p.name === nextYearsFirst);
+    const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
+    const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
+    const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
+
+    const firstRoundPickValue = firstRoundPick[currentMonthValue];
+    const secondRoundPickValue = secondRoundPick[currentMonthValue];
+    const thirdRoundPickValue = thirdRoundPick[currentMonthValue];
+    const fourthRoundPickValue = fourthRoundPick[currentMonthValue];
+
+    let valueRemaining = player[currentMonthValue];
+
+    const firstRoundPickIndex = (player[currentMonthValue] / firstRoundPick[currentMonthValue]).toFixed(2);
+    console.log(firstRoundPickIndex);
+
     return (
       <div>
         <PageHeading current={player.name} additional={topDetails} />
@@ -156,6 +177,13 @@ export default class Player extends Component {
                         </tr>
                       </tbody>
                     </table>
+                    <div className="player-profileSection-content">
+                      <h3>DynastyFFTools 1st Round Pick Index: <strong>{firstRoundPickIndex}</strong>&nbsp;
+                      <OverlayTrigger trigger="click" placement="bottom" overlay={<Popover title="DynastyFFTools 1st Round Pick Index">The players approximate worth in next year's 1st round picks.</Popover>}>
+                        <i className="fa fa-question-circle text-navy"></i>
+                      </OverlayTrigger>
+                      </h3>
+                    </div>
                   </div>
                 </div>
               </div>
