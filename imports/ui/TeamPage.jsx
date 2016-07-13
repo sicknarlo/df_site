@@ -487,7 +487,7 @@ export default class TeamPage extends Component {
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <TeamPortfolioGraph />
+            {/*<TeamPortfolioGraph />*/}
           </div>
         </div>
         <div className="row flexContainer justifyCenter">
