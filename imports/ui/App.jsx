@@ -2,12 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
-
 import { Players } from '../api/players.js';
 import { Teams } from '../api/teams.js';
-
 import Player from './Player.jsx'
-
 import Navigation from './Navigation.jsx';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
@@ -129,7 +126,6 @@ class App extends Component {
         };
       }, this);
     }
-    console.log(this.props);
     return (
       <div id="wrapper">
         <Navigation currentUser = {this.props.currentUser} />

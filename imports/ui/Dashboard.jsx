@@ -87,7 +87,7 @@ export default class Dashboard extends Component {
                     <tbody>
                       {risers.map((player) =>
                         <tr>
-                          <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player[currentMonthADP]}</td>
                           <td>+{player.trend}</td>
                         </tr>
@@ -112,7 +112,7 @@ export default class Dashboard extends Component {
                   <tbody>
                     {fallers.map((player) =>
                       <tr>
-                        <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                        <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                         <td>{player[currentMonthADP]}</td>
                         <td>{player.trend}</td>
                       </tr>

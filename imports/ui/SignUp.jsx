@@ -50,7 +50,7 @@ export default class SignUp extends Component {
         });
         return;
       }
-      browserHistory.push('/dashboard');
+      browserHistory.push('/tools/dashboard');
     });
   }
   render() {
@@ -111,7 +111,7 @@ export default class SignUp extends Component {
             <p className="text-muted text-center">
                 <small>Already have an account?</small>
             </p>
-            <Link className="btn btn-sm btn-white btn-block" to='login'>Login</Link>
+            <Link className="btn btn-sm btn-white btn-block" to='/tools/login'>Login</Link>
         </form>
     </div>
     );

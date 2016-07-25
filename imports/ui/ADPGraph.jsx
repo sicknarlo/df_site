@@ -1,10 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
-import { Line } from 'react-chartjs';
 import ReactHighcharts from 'react-highcharts';
 import Values from './ADPConst.jsx';
-
 
 // ADPGraph component - represents a ADPGraph profile
 export default class ADPGraph extends Component {

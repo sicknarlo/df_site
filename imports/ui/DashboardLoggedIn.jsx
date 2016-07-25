@@ -8,9 +8,10 @@ import { Link } from 'react-router';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const currentMonthValue = 'may_16_value';
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -52,7 +53,7 @@ export default class DashboardLoggedIn extends Component {
             <div className="ibox-title">
                 <h5>Your Teams</h5>
                 <div className="ibox-tools">
-                    <Link to='/createteam' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Create new team</Link>
+                    <Link to='/tools/createteam' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Create new team</Link>
                 </div>
             </div>
             <div className="ibox-content">
@@ -65,13 +66,14 @@ export default class DashboardLoggedIn extends Component {
                       <tbody>
                         {this.props.teams && this.props.teams.map(function(t) {
                           const playerCount = t.players.length;
+                          console.log(t.name);
                           const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
                           const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
                           const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
                           return (
                             <tr>
                               <td>
-                              <Link to={`/teams/${t._id}`}>
+                              <Link to={`/tools/teams/${t._id}`}>
                                 {t.name}
                               </Link>
                               </td>
@@ -104,7 +106,7 @@ DashboardLoggedIn.propTypes = {
     {this.props.newsAlerts && this.props.newsAlerts.map(function(item) {
       const playerLink = item.player
         ? (
-          <Link className="text-info" to={`/players/${item.player._id._str}`}>
+          <Link className="text-info" to={`/tools/players/${item.player._id._str}`}>
             @{item.player.name}&nbsp;
           </Link>)
         : <strong>General &nbsp;</strong>;

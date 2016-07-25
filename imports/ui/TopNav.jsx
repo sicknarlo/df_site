@@ -20,7 +20,7 @@ export default class TopNav extends React.Component {
     Meteor.logout(function(err) {
       console.log(err);
     })
-    browserHistory.push('/dashboard');
+    browserHistory.push('/tools/dashboard');
   }
 
   toggleSideNav() {

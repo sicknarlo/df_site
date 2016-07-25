@@ -2,9 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const currentMonthValue = 'may_16_value'
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
@@ -21,7 +22,7 @@ export default class PlayerRow extends Component {
                                   trendPositive: player.trend > 0,
                                   sorted: this.props.sortGrp === 'sortByTrend' });
     const trendLabel = player.trend > 0 ? `+${player.trend}` : player.trend;
-    const profileLink = `/players/${player._id._str}`;
+    const profileLink = `/tools/players/${player._id._str}`;
     return (
         <tr>
           <td

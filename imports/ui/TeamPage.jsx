@@ -17,28 +17,14 @@ import TeamValueGraph from './TeamValueGraph.jsx';
 import PositionWebGraph from './PositionWebGraph.jsx';
 import TeamPortfolioGraph from './TeamPortfolioGraph.jsx';
 import TeamPositionBreakdown from './TeamPositionBreakdown.jsx';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const previousMonthADP = 'apr_16';
-const currentMonthValue = 'may_16_value';
-const past6MonthsValue = [
-  'nov_15_value',
-  'dec_15_value',
-  'jan_16_value',
-  'feb_16_value',
-  'mar_16_value',
-  'apr_16_value',
-  'may_16_value',
-];
-const past6MonthsADP = [
-  'nov_15',
-  'dec_15',
-  'jan_16',
-  'feb_16',
-  'mar_16',
-  'apr_16',
-  'may_16',
-];
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
+const chartLabels = Values.chartLabels;
+const past6MonthsValue = Values.past6MonthsValue;
+const past6MonthsADP = Values.past6MonthsADP;
+const previousMonthADP = Values.past6MonthsADP[4];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -144,7 +130,7 @@ export default class TeamPage extends Component {
     const result = confirm('Are you sure you want to delete this team?');
     if (result) {
       Meteor.call('teams.delete', teamID);
-      browserHistory.push('/dashboard');
+      browserHistory.push('/tools/dashboard');
     }
   }
   render() {
@@ -426,7 +412,7 @@ export default class TeamPage extends Component {
                                   <tbody>
                                     {this.state.transactionAdd.length > 0 && this.state.transactionAdd.map((player) =>
                                       <tr className="removePlayerRow">
-                                        <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                                        <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                                         <td>
                                           <div className="removePlayer" onClick={() => { this.handleRemovefromAdd(player); } }>
                                             <i className="fa fa-times-circle-o"></i>
@@ -456,7 +442,7 @@ export default class TeamPage extends Component {
                                   <tbody>
                                     {this.state.transactionRemove.length > 0 && this.state.transactionRemove.map((player) =>
                                       <tr className="removePlayerRow">
-                                        <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                                        <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                                         <td>
                                           <div className="removePlayer" onClick={() => { this.handleRemovefromRemove(player); } }>
                                             <i className="fa fa-times-circle-o"></i>

@@ -107,7 +107,7 @@ export default class Compare extends Component {
                       <tbody>
                         {this.state.playersToCompare.length > 0 && this.state.playersToCompare.map((player) =>
                           <tr className="removePlayerRow">
-                            <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                            <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                             <td>
                               <div className="removePlayer" onClick={() => { this.removePlayerFromCompare(player); } }>
                                 <i className="fa fa-times-circle-o"></i>

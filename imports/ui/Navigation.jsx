@@ -431,25 +431,25 @@ export default class Navigation extends React.Component {
               </div>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/dashboard'}>
+              <Link to={'/tools/dashboard'}>
                 <i className="fa fa-dashboard"></i>
                 <span className="nav-label">Dashboard</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/players'}>
+              <Link to={'/tools/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/compare'}>
+              <Link to={'/tools/compare'}>
                 <i className="fa fa-compass"></i>
                 <span className="nav-label">Player Comparison</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/calculator'}>
+              <Link to={'/tools/calculator'}>
                 <i className="fa fa-exchange"></i>
                 <span className="nav-label">Trade Calculator</span>
               </Link>
@@ -472,9 +472,9 @@ export default class Navigation extends React.Component {
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <div className="block m-t-xs topNav">
-                      <strong className="font-bold underline"><Link to="/login">Log In</Link></strong> <br />
+                      <strong className="font-bold underline"><Link to="/tools/login">Log In</Link></strong> <br />
                       or <br />
-                      <strong className="font-bold underline"><Link to="/signup">Sign Up</Link></strong>
+                      <strong className="font-bold underline"><Link to="/tools/signup">Sign Up</Link></strong>
                     </div>
                   </span>
                 </a>
@@ -490,25 +490,25 @@ export default class Navigation extends React.Component {
               </div>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/dashboard'}>
+              <Link to={'/tools/dashboard'}>
                 <i className="fa fa-dashboard"></i>
                 <span className="nav-label">Dashboard</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/players'}>
+              <Link to={'/tools/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/compare'}>
+              <Link to={'/tools/compare'}>
                 <i className="fa fa-compass"></i>
                 <span className="nav-label">Player Comparison</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/calculator'}>
+              <Link to={'/tools/calculator'}>
                 <i className="fa fa-calculator"></i>
                 <span className="nav-label">Trade Calculator</span>
               </Link>

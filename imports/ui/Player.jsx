@@ -5,19 +5,13 @@ import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const previousMonthADP = 'apr_16';
-const currentMonthValue = 'may_16_value';
-const past6MonthsADP = [
-  'nov_15',
-  'dec_15',
-  'jan_16',
-  'feb_16',
-  'mar_16',
-  'apr_16',
-  'may_16',
-];
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
+
+const previousMonthADP = Values.past6MonthsADP[5];
+const past6MonthsADP = Values.past6MonthsADP;
 
 const nextYearsFirst = '2017 1st';
 const nextYearsSecond = '2017 2nd';

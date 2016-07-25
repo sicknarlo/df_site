@@ -13,24 +13,22 @@ import SignUp from '../ui/SignUp.jsx';
 import CreateTeam from '../ui/CreateTeam.jsx';
 import Team from '../ui/Team.jsx';
 import UpdateValues from '../ui/UpdateValues.jsx';
+import Landing from '../ui/Landing.jsx';
 
 export const renderRoutes = () => (
   <Router history={browserHistory}>
-    <Route path="/" component={App}>
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={SignUp} />
-      <Route path="/players" component={Players} />
-      <Route path="/players/:playerID" component={Player} />
-      <Route path="/compare" component={Compare} />
-      <Route path="/calculator" component={Calculator} />
-      {/*<Route path="/teams" component={Teams} />*/}
-      <Route path="/teams/:teamID" component={Team} />
-      <Route path="/createteam" component={CreateTeam} />
-      <Route path="/hokeypokey" component={UpdateValues} />
+    <Route path="/" component={Landing} />
+    <Route path="/tools" component={App}>
+      <Route path="/tools/dashboard" component={Dashboard} />
+      <Route path="/tools/login" component={Login} />
+      <Route path="/tools/signup" component={SignUp} />
+      <Route path="/tools/players" component={Players} />
+      <Route path="/tools/players/:playerID" component={Player} />
+      <Route path="/tools/compare" component={Compare} />
+      <Route path="/tools/calculator" component={Calculator} />
+      <Route path="/tools/teams/:teamID" component={Team} />
+      <Route path="/tools/createteam" component={CreateTeam} />
+      <Route path="/tools/hokeypokey" component={UpdateValues} />
     </Route>
   </Router>
 );
-
-
-{/*<Route path="lists/:id" component={ListContainer} />*/}

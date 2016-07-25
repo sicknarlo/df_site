@@ -7,7 +7,6 @@ import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
 import Select from 'react-select';
 import { Link } from 'react-router';
 import Values from './ADPConst.jsx';
-
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
@@ -139,12 +138,6 @@ export default class Calculator extends Component {
                 this, or any single, tool.
               </p>
             </div>
-                {/*<div className="ibox-footer">
-                  <span className="pull-right">
-                    The righ side of the footer
-                  </span>
-                    This is simple footer example
-                </div>*/}
           </div>
         </div>
       )
@@ -211,7 +204,7 @@ export default class Calculator extends Component {
     const closestPlayer = this.findClosestPlayer(Math.abs(team1ValueGained));
     const closestPlayerString = closestPlayer
       ? (<div>
-          <h2>The difference is equal to <Link to={`/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[Values.past6MonthsADP[5]]}</strong></h2>
+          <h2>The difference is equal to <Link to={`/tools/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[Values.past6MonthsADP[5]]}</strong></h2>
         </div>
         )
       : null;
@@ -247,7 +240,7 @@ export default class Calculator extends Component {
                       <tbody>
                         {this.state.team1.length > 0 && this.state.team1.map((player) =>
                           <tr className="removePlayerRow">
-                            <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                            <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                             <td>
                               <div className="removePlayer" onClick={() => { this.removePlayerFromTeam1(player); } }>
                                 <i className="fa fa-times-circle-o"></i>
@@ -286,7 +279,7 @@ export default class Calculator extends Component {
                       <tbody>
                         {this.state.team2.length > 0 && this.state.team2.map((player) =>
                           <tr className="removePlayerRow">
-                            <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                            <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                             <td>
                               <div className="removePlayer" onClick={() => { this.removePlayerFromTeam2(player); } }>
                                 <i className="fa fa-times-circle-o"></i>
@@ -317,7 +310,7 @@ export default class Calculator extends Component {
                         {this.state.team2.map((player) =>
                           <div className="calcResultRow">
                             <div>
-                              <Link to={`/players/${player._id._str}`}>{player.name}</Link>
+                              <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
                               {player[Values.past6MonthsValue[5]]}
@@ -337,7 +330,7 @@ export default class Calculator extends Component {
                         {this.state.team1.map((player) =>
                           <div className="calcResultRow">
                             <div>
-                              <Link to={`/players/${player._id._str}`}>{player.name}</Link>
+                              <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
                               {player[Values.past6MonthsValue[5]]}

@@ -9,8 +9,10 @@ import { Link } from 'react-router';
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 
-const currentMonthADP = 'may_16';
-const currentMonthValue = 'may_16_value';
+import Values from './ADPConst.jsx';
+
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -50,7 +52,7 @@ export default class DashboardLoggedOut extends Component {
         <div className="row  border-bottom white-bg dashboard-header">
           <div className="col-sm-12 text-center">
             <h1>You are not logged in.</h1>
-            <h3><Link to="/login">Log In</Link> or <Link to="/signup">Sign Up</Link> to use the dashboard. It's free!</h3>
+            <h3><Link to="/tools/login">Log In</Link> or <Link to="/tools/signup">Sign Up</Link> to use the dashboard. It's free!</h3>
           </div>
         </div>
       </div>
@@ -70,7 +72,7 @@ DashboardLoggedOut.propTypes = {
     {this.props.newsAlerts && this.props.newsAlerts.map(function(item) {
       const playerLink = item.player
         ? (
-          <Link className="text-info" to={`/players/${item.player._id._str}`}>
+          <Link className="text-info" to={`/tools/players/${item.player._id._str}`}>
             @{item.player.name}&nbsp;
           </Link>)
         : <strong>General &nbsp;</strong>;

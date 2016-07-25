@@ -90,7 +90,7 @@ export default class CreateTeam extends Component {
     };
     console.log(team);
     Meteor.call('teams.create', team);
-    browserHistory.push('/dashboard');
+    browserHistory.push('/tools/dashboard');
   }
   render() {
     // if (! this.props.currentUser) {
@@ -223,7 +223,7 @@ export default class CreateTeam extends Component {
                       <tbody>
                         {this.state.roster.length > 0 && this.state.roster.map((player) =>
                           <tr className="removePlayerRow">
-                            <td><Link to={`/players/${player._id._str}`}>{player.name}</Link></td>
+                            <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                             <td>
                               <div className="removePlayer" onClick={() => { this.removeFromRoster(player); } }>
                                 <i className="fa fa-times-circle-o"></i>

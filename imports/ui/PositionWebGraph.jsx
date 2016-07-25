@@ -5,37 +5,13 @@ import { Line } from 'react-chartjs';
 import ReactHighcharts from 'react-highcharts';
 import HighchartsMore from 'highcharts-more';
 import Highlight from 'react-highlight';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const previousMonthADP = 'apr_16';
-const currentMonthValue = 'may_16_value';
-const chartLabels = [
-  'Nov',
-  'Dec',
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-];
-const past6MonthsValue = [
-  'nov_15_value',
-  'dec_15_value',
-  'jan_16_value',
-  'feb_16_value',
-  'mar_16_value',
-  'apr_16_value',
-  'may_16_value',
-];
-const past6MonthsADP = [
-  'nov_15',
-  'dec_15',
-  'jan_16',
-  'feb_16',
-  'mar_16',
-  'apr_16',
-  'may_16',
-];
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
+const chartLabels = Values.chartLabels;
+const past6MonthsValue = Values.past6MonthsValue;
+const past6MonthsADP = Values.past6MonthsADP;
 
 // PositionWebGraph component - represents a PositionWebGraph profile
 export default class PositionWebGraph extends Component {

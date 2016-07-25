@@ -2,9 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link, browserHistory } from 'react-router';
+import Values from './ADPConst.jsx';
 
-const currentMonthADP = 'may_16';
-const currentMonthValue = 'may_16_value'
+const currentMonthADP = Values.past6MonthsADP[5];
+const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
@@ -63,7 +64,7 @@ export default class Login extends Component {
         });
         return;
       }
-      browserHistory.push('/dashboard');
+      browserHistory.push('/tools/dashboard');
     });
   }
   render() {
@@ -104,7 +105,7 @@ export default class Login extends Component {
             </div>
               <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
               <p className="text-muted text-center"><small>Do not have an account?</small></p>
-              <Link className="btn btn-sm btn-white btn-block" to="signup">Create an account</Link>
+              <Link className="btn btn-sm btn-white btn-block" to="/tools/signup">Create an account</Link>
           </form>
       </div>
   </div>
