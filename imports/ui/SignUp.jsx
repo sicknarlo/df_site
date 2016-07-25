@@ -63,7 +63,7 @@ export default class SignUp extends Component {
         <div>
             <h1 className="logo-name">DF+</h1>
         </div>
-        <h3>Sign Up for the Dynasty Fantasy Hub Tools</h3>
+        <h3>Sign Up for DynastyFF Tools</h3>
 
         <p>Create account to add your teams, watch players, and more.</p>
 

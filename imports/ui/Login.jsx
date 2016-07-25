@@ -78,7 +78,7 @@ export default class Login extends Component {
           <div>
             <h1 className="logo-name">DF+</h1>
           </div>
-          <h3>Welcome to the Dynasty Fantasy Hub</h3>
+          <h3>Welcome to DynastyFF Tools</h3>
           <p>Login to add your teams, watch your players, and customize your experience.
           </p>
           <form className="m-t" role="form" onSubmit={this.handleSubmit}>
