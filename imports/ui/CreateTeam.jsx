@@ -49,7 +49,7 @@ export default class CreateTeam extends Component {
     const index = oldRoster.indexOf(player);
     if (index > -1) {
       const newRoster = oldRoster.splice(index, 1);
-      this.setState({ roster: newRoster });
+      this.setState({ roster: oldRoster });
     }
   }
 

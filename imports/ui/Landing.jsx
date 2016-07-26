@@ -56,7 +56,7 @@ export default class Landing extends Component {
     return (
     <div>
       <div className="navbar-wrapper">
-          <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
+          <nav className="navbar navbar-default navbar-fixed-top navbar-landing" role="navigation">
               <div className="container">
                   <div className="navbar-header page-scroll">
                       <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -74,6 +74,7 @@ export default class Landing extends Component {
                           <li><a className="page-scroll" href="/tools/dashboard">Dashboard</a></li>
                           <li><a className="page-scroll" href="/tools/login">Sign In</a></li>
                           <li><a className="page-scroll" href="/tools/signup">Sign Up</a></li>
+                          <li><a className="page-scroll" href="https://medium.com/dynastyfftools">News</a></li>
                       </ul>
                   </div>
               </div>
@@ -123,7 +124,7 @@ export default class Landing extends Component {
               <div className="col-sm-3">
                   <h2>Free Forever</h2>
                   <p>We hate daily fantasy sports ads as much as you. No ads. No fees. Just awesome tools.</p>
-                  <p><a className="navy-link" href="/tools/players" role="button">View the Players &raquo;</a></p>
+                  <p><a className="navy-link" href="/tools/players" role="button">Check it out Meow &raquo;</a></p>
               </div>
           </div>
       </section>

@@ -419,15 +419,15 @@ export default class Navigation extends React.Component {
                     </span>
                   </span>
                 </a>
-                <ul className="dropdown-menu animated fadeInRight m-t-xs">
+                {/*<ul className="dropdown-menu animated fadeInRight m-t-xs">
                   <li><a href="#">Item</a></li>
                   <li><a href="#">Item</a></li>
                   <li className="divider"></li>
                   <li><a href="#">Item</a></li>
-                </ul>
+                </ul>*/}
               </div>
               <div className="logo-element">
-                DFHQ
+                DFFT
               </div>
             </li>
             <li onClick={this.handleNavClick} className="">
@@ -478,12 +478,12 @@ export default class Navigation extends React.Component {
                     </div>
                   </span>
                 </a>
-                <ul className="dropdown-menu animated fadeInRight m-t-xs">
+                {/*<ul className="dropdown-menu animated fadeInRight m-t-xs">
                   <li><a href="#">Item</a></li>
                   <li><a href="#">Item</a></li>
                   <li className="divider"></li>
                   <li><a href="#">Item</a></li>
-                </ul>
+                </ul>*/}
               </div>
               <div className="logo-element">
                 DFHQ

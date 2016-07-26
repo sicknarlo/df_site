@@ -7,6 +7,7 @@ import { Checkbox } from 'react-icheck';
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import Values from './ADPConst.jsx';
+import { Button, ButtonGroup } from 'react-bootstrap';
 
 const currentMonthADP = Values.past6MonthsADP[5];
 const currentMonthValue = Values.past6MonthsValue[5];
@@ -321,6 +322,26 @@ export default class Players extends Component {
       <div>
         <PageHeading current="Players" />
         <div className="wrapper wrapper-content animated fadeInRight">
+          <div className="row">
+            <div className="flex justifyCenter">
+                <ButtonGroup>
+                    <Button
+                        className="tradeButton"
+                        bsStyle="primary"
+                        bsSize="large">
+                          <i className="fa fa-check"></i>&nbsp;
+                          PPR
+                     </Button>
+                     <Button
+                         className="tradeButton"
+                         bsStyle="primary"
+                         bsSize="large">
+                           <i className="fa fa-check"></i>&nbsp;
+                           2QB
+                     </Button>
+                </ButtonGroup>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
