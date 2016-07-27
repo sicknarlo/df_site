@@ -149,7 +149,7 @@ export default class Landing extends Component {
                   </div>
               </div>
               <div className="col-md-6 text-center  wow zoomIn">
-                  <img src="img/landing/ex.png" alt="dashboard" className="img-responsive" />
+                  <img src="img/landing/devices.png" alt="dashboard" className="img-responsive" />
               </div>
               <div className="col-md-3 text-center wow fadeInRight">
                   <div>
