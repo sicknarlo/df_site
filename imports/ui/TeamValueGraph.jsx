@@ -58,7 +58,7 @@ export default class TeamValueGraph extends Component {
     };
     return (
       <div className="adpChart">
-        <ReactHighcharts config={config} isPureConfig className="adpChart-container" />
+        <ReactHighcharts isPureConfig config={config} isPureConfig className="adpChart-container" />
       </div>
     );
   }
