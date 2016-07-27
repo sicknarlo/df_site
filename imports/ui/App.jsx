@@ -22,9 +22,11 @@ class App extends Component {
       showConnectionIssue: false,
       rotoData: null,
       alertIDs: null,
+      db: 'ppr',
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
+    this.setDb = this.setDb.bind(this);
   }
   componentDidMount() {
     setTimeout(() => {
@@ -113,6 +115,11 @@ class App extends Component {
   //   })
   // }
 
+  setDb (e) {
+    console.log(e);
+    this.setState({ db: e });
+  }
+
   render() {
     let newsAlerts = [];
     if (this.state.rotoData && this.props.players) {
@@ -132,6 +139,8 @@ class App extends Component {
         <div id="page-wrapper" className="gray-bg">
           <TopNav currentUser = {this.props.currentUser} />
           {this.props.children && React.cloneElement(this.props.children, {
+            currentDb: this.state.db,
+            setDb: this.setDb,
             players: this.props.players,
             currentUser: this.props.currentUser,
             newsAlerts,

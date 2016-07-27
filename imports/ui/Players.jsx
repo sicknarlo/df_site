@@ -202,6 +202,10 @@ export default class Players extends Component {
   handleSearch(e) {
     this.setState({ search: e.target.value });
   }
+  updateDb(e) {
+    console.log('ffffff', e);
+    this.props.setDb(e);
+  }
 
   toggleSort(newSort) {
     if (newSort === this.state.sortGrp) {
@@ -317,6 +321,9 @@ export default class Players extends Component {
         </tr>
       </thead>
     );
+    console.log(this.props.currentDb);
+    const pprButtonActive = this.props.currentDb === 'ppr' ? 'primary' : '';
+    const qbButtonActive = this.props.currentDb === '2qb' ? 'primary' : '';
 
     return (
       <div>
@@ -327,15 +334,19 @@ export default class Players extends Component {
                 <ButtonGroup>
                     <Button
                         className="tradeButton"
-                        bsStyle="primary"
-                        bsSize="large">
+                        bsSize="large"
+                        bsStyle={pprButtonActive}
+                        value="ppr"
+                        onClick={this.updateDb.bind(this, 'ppr')}>
                           <i className="fa fa-check"></i>&nbsp;
                           PPR
                      </Button>
                      <Button
                          className="tradeButton"
-                         bsStyle="primary"
-                         bsSize="large">
+                         bsSize="large"
+                         bsStyle={qbButtonActive}
+                         value="2qb"
+                         onClick={this.updateDb.bind(this, '2qb')}>
                            <i className="fa fa-check"></i>&nbsp;
                            2QB
                      </Button>
