@@ -72,9 +72,8 @@ export default class Landing extends Component {
                           <li><a className="page-scroll" href="#page-top">Home</a></li>
                           <li><a className="page-scroll" href="#features">Features</a></li>
                           <li><a className="page-scroll" href="/tools/dashboard">Dashboard</a></li>
+                          <li><a className="page-scroll" href="https://medium.com/dynastyfftools">Blog</a></li>
                           <li><a className="page-scroll" href="/tools/login">Sign In</a></li>
-                          <li><a className="page-scroll" href="/tools/signup">Sign Up</a></li>
-                          <li><a className="page-scroll" href="https://medium.com/dynastyfftools">News</a></li>
                       </ul>
                   </div>
               </div>
@@ -90,11 +89,11 @@ export default class Landing extends Component {
                               Win your leagues.</h1>
                           <p>Tools to help you win your dynasty fantasy football leagues.</p>
                           <p>
-                              <a className="btn btn-lg btn-primary" href="/tools/dashboard" role="button">GO TO THE DASHBOARD</a>
+                              <a className="btn btn-lg btn-primary" href="/tools/dashboard" role="button">GET STARTED</a>
                           </p>
                       </div>
                       <div className="carousel-image wow zoomIn">
-                          <img src="img/landing/laptop1.png" alt="laptop"/>
+                          <img src="img/landing/devices.png" alt="devices" className="deviceImg"/>
                       </div>
                   </div>
                   <div className="header-back one"></div>
@@ -124,7 +123,7 @@ export default class Landing extends Component {
               <div className="col-sm-3">
                   <h2>Free Forever</h2>
                   <p>We hate daily fantasy sports ads as much as you. No ads. No fees. Just awesome tools.</p>
-                  <p><a className="navy-link" href="/tools/players" role="button">Check it out Meow &raquo;</a></p>
+                  <p><a className="navy-link" href="/tools/signup" role="button">Sign Up &raquo;</a></p>
               </div>
           </div>
       </section>
@@ -168,7 +167,7 @@ export default class Landing extends Component {
           <div className="row">
               <div className="col-lg-12 text-center">
                   <div className="navy-line"></div>
-                  <h1>And best of all? It's about free-fiddy</h1>
+                  <h1>And best of all? It costs about free-fiddy</h1>
               </div>
           </div>
       </section>
