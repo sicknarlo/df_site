@@ -75,7 +75,7 @@ export default class ADPGraph extends Component {
             <div className="col-sm-6 col-md-4 col-lg-3">
                 <div className="contact-box">
                     <h2>Where do you get your ADP?</h2>
-                    <p>Our ADP comes from a number of sources including <a href="www.dynastyleaguefootball.com">Dynasty League Football</a>, <a href="www.dynastynerds.com">Dynasty Nerds</a>, <a href="www.reddit.com/r/dynastyff">the Dynasty FF subreddit</a>, and wherever else we come across decent data each month.</p>
+                    <p>Our ADP comes from a number of sources including <a href="http://www.dynastyleaguefootball.com">Dynasty League Football</a>, <a href="http://www.dynastynerds.com">Dynasty Nerds</a>, <a href="http://www.reddit.com/r/dynastyff">the Dynasty FF subreddit</a>, and wherever else we come across decent data each month.</p>
                 </div>
             </div>
             <div className="col-sm-6 col-md-4 col-lg-3">
@@ -105,21 +105,21 @@ export default class ADPGraph extends Component {
             <div className="col-sm-6 col-md-4 col-lg-3">
                 <div className="contact-box">
                     <h2>What features are in development?</h2>
-                    <p>The new site has set the groundwork for a lot more features. Check out <a href="www.medium.com/dynastyfftools">the blog</a> for updates on new stuff in the works.</p>
+                    <p>The new site has set the groundwork for a lot more features. Check out <a href="http://www.medium.com/dynastyfftools">the blog</a> for updates on new stuff in the works.</p>
                 </div>
             </div>
             <div className="col-sm-6 col-md-4 col-lg-3">
                 <div className="contact-box">
                     <h2>HALP! I FOUND SOMETHING BROKEN</h2>
-                    <p><a href="www.reddit.com/u/sicknarlo">Shoot me a message on Reddit</a> if you find any bugs or have any suggestions.</p>
+                    <p><a href="http://www.reddit.com/u/sicknarlo">Shoot me a message on Reddit</a> if you find any bugs or have any suggestions.</p>
                 </div>
             </div>
             <div className="col-sm-6 col-md-4 col-lg-3">
                 <div className="contact-box">
                     <h2>What resources do you recommend?</h2>
-                    <p><a href="www.dynastyleaguefootball.com">Dynasty League Football</a> has great content and very trustworthy rankings. It is beyond worth the cost of a premium account.</p>
-                    <p><a href="www.dynastynerds.com">Dynasty Nerds</a> has great written content as well, and their podcast is a must-listen for any dynasty players.</p>
-                    <p><a href="www.reddit.com/r/dynastyff">The Dynasty FF subreddit</a> is an aweosme community with great resources and advice from some of the best minds in the game. There are some very smart people taking very different approaches to the game there -- it is a must use.</p>
+                    <p><a href="http://www.dynastyleaguefootball.com">Dynasty League Football</a> has great content and very trustworthy rankings. It is beyond worth the cost of a premium account.</p>
+                    <p><a href="http://www.dynastynerds.com">Dynasty Nerds</a> has great written content as well, and their podcast is a must-listen for any dynasty players.</p>
+                    <p><a href="http://www.reddit.com/r/dynastyff">The Dynasty FF subreddit</a> is an aweosme community with great resources and advice from some of the best minds in the game. There are some very smart people taking very different approaches to the game there -- it is a must use.</p>
                 </div>
             </div>
             <div className="col-sm-6 col-md-4 col-lg-3">

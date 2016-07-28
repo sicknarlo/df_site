@@ -52,12 +52,6 @@ export default class Calculator extends Component {
     this.setState({ showResults: true });
   }
   addToTeam1(val) {
-    if (this.state.team1.indexOf(val.val) > -1) {
-      $('.compareSearch').addClass('has-error');
-      setTimeout(function() {
-        $('.compareSearch').removeClass('has-error');
-      }, 1000);
-    } else {
       $('.compareSearch').addClass('has-success');
       setTimeout(function() {
         $('.compareSearch').removeClass('has-success');
@@ -65,7 +59,6 @@ export default class Calculator extends Component {
       const oldSet = this.state.team1;
       oldSet.push(val.val);
       this.setState({ team1: oldSet });
-    }
   }
   removePlayerFromTeam1(player) {
     const newState = { team1: this.state.team1 };
@@ -86,12 +79,6 @@ export default class Calculator extends Component {
     }
   }
   addToTeam2(val) {
-    if (this.state.team2.indexOf(val.val) > -1) {
-      $('.compareSearch').addClass('has-error');
-      setTimeout(function() {
-        $('.compareSearch').removeClass('has-error');
-      }, 1000);
-    } else {
       $('.compareSearch').addClass('has-success');
       setTimeout(function() {
         $('.compareSearch').removeClass('has-success');
@@ -99,7 +86,6 @@ export default class Calculator extends Component {
       const oldSet = this.state.team2;
       oldSet.push(val.val);
       this.setState({ team2: oldSet });
-    }
   }
   renderInstructions() {
     return (
