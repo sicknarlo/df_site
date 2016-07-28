@@ -83,7 +83,7 @@ export default class Dashboard extends Component {
                         bsStyle={pprButtonActive}
                         value="ppr"
                         onClick={this.updateDb.bind(this, 'ppr')}>
-                          PPR
+                          Standard
                      </Button>
                      <Button
                          className="tradeButton"

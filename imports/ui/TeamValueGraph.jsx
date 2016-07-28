@@ -7,6 +7,13 @@ import ReactHighcharts from 'react-highcharts';
 // TeamValueGraph component - represents a TeamValueGraph profile
 export default class TeamValueGraph extends Component {
 
+    shouldComponentUpdate (nextProps) {
+        if (this.props.team.players != nextProps.team.players) {
+            return true;
+        }
+        return false;
+    }
+
   render() {
     const chartData = { name: this.props.team.name , data: [] };
     for (var i = 0; i<this.props.values.past6MonthsValue.length; i++) {

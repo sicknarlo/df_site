@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, browserHistory, IndexRoute } from 'react-router';
+import { Router, Route, browserHistory, Redirect } from 'react-router';
 
 // route components
 import App from '../ui/App.jsx';
@@ -19,6 +19,9 @@ import FAQ from '../ui/FAQ.jsx';
 export const renderRoutes = () => (
   <Router history={browserHistory}>
     <Route path="/" component={Landing} />
+    <Redirect from="/players" to="/tools/players" />
+    <Redirect from="/calculator" to="/tools/calculator" />
+    <Redirect from="/calculator-2qb" to="/tools/calculator" />
     <Route path="/tools" component={App}>
       <Route path="/tools/dashboard" component={Dashboard} />
       <Route path="/tools/login" component={Login} />

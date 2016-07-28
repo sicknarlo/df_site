@@ -7,6 +7,13 @@ import ReactHighcharts from 'react-highcharts';
 // ADPGraph component - represents a ADPGraph profile
 export default class TeamPositionBreakdown extends Component {
 
+    shouldComponentUpdate (nextProps) {
+        if (this.props.team.players != nextProps.team.players) {
+            return true;
+        }
+        return false;
+    }
+
   render() {
 
     let qbTotal = 0;
@@ -89,7 +96,7 @@ export default class TeamPositionBreakdown extends Component {
       }
     return (
       <div className="adpChart">
-        <ReactHighcharts isPureConfig config={config} isPureConfig className="adpChart-container" />
+        <ReactHighcharts isPureConfig config={config} className="adpChart-container" />
       </div>
     );
   }
