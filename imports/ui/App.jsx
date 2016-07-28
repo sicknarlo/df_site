@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Players } from '../api/players.js';
+import { Players2QB } from '../api/players2qb.js';
 import { Teams } from '../api/teams.js';
 import Player from './Player.jsx'
+import PValues from './ADPConst.jsx';
 import Navigation from './Navigation.jsx';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
@@ -116,34 +118,36 @@ class App extends Component {
   // }
 
   setDb (e) {
-    console.log(e);
     this.setState({ db: e });
   }
 
   render() {
-    let newsAlerts = [];
-    if (this.state.rotoData && this.props.players) {
-      newsAlerts = this.state.rotoData.map(function(item) {
-        const p = this.props.players.filter(function(player) {
-          return player.rotoworld_id.toString() === item.link.split('/')[5];
-        });
-        return {
-          player: p[0],
-          content: item,
-        };
-      }, this);
-    }
+    // let newsAlerts = [];
+    // if (this.state.rotoData && this.props.players) {
+    //   newsAlerts = this.state.rotoData.map(function(item) {
+    //     const p = this.props.players.filter(function(player) {
+    //       return player.rotoworld_id.toString() === item.link.split('/')[5];
+    //     });
+    //     return {
+    //       player: p[0],
+    //       content: item,
+    //     };
+    //   }, this);
+    // }
+
+    const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
+
     return (
       <div id="wrapper">
         <Navigation currentUser = {this.props.currentUser} />
         <div id="page-wrapper" className="gray-bg">
           <TopNav currentUser = {this.props.currentUser} />
           {this.props.children && React.cloneElement(this.props.children, {
+            values: v,
             currentDb: this.state.db,
             setDb: this.setDb,
             players: this.props.players,
             currentUser: this.props.currentUser,
-            newsAlerts,
             teams: this.props.teams,
           })}
           <Footer />
@@ -160,10 +164,11 @@ App.propTypes = {
 
 export default createContainer(() => {
   Meteor.subscribe('players');
+  Meteor.subscribe('players2qb');
   Meteor.subscribe('teams');
 
   return {
-    players: Players.find({}, { sort: { may_16: 1 } }).fetch(),
+    players: Players.find({}, { sort: { jul_16: 1 } }).fetch(),
     teams: Teams.find({}).fetch(),
     currentUser: Meteor.user(),
   };

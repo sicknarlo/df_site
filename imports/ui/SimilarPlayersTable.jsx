@@ -3,13 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import { Line } from 'react-peity';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
-const chartLabels = Values.chartLabels;
-const past6MonthsValue = Values.past6MonthsValue;
-const past6MonthsADP = Values.past6MonthsADP;
 
 const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
@@ -25,6 +18,7 @@ export default class SimilarPlayersTable extends Component {
     }
 
     const currentPlayer = this.props.currentPlayer;
+    const past6MonthsADP = this.props.values.past6MonthsADP;
     return (
       <div className="ibox float-e-margins">
         <div className="ibox-title">
@@ -54,7 +48,7 @@ export default class SimilarPlayersTable extends Component {
                         <tr className={classnames({ info: isPlayer })}>
                           <td><Link to={profileLink}>{player.name}</Link></td>
                           <td>{player.position}</td>
-                          <td>{player[currentMonthADP]}</td>
+                          <td>{player[past6MonthsADP[5]]}</td>
                           <td>
                             <Line
                               values={data}

@@ -3,23 +3,16 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Line } from 'react-chartjs';
 import ReactHighcharts from 'react-highcharts';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
-const chartLabels = Values.chartLabels;
-const past6MonthsValue = Values.past6MonthsValue;
-const past6MonthsADP = Values.past6MonthsADP;
 
 // TeamValueGraph component - represents a TeamValueGraph profile
 export default class TeamValueGraph extends Component {
 
   render() {
     const chartData = { name: this.props.team.name , data: [] };
-    for (var i = 0; i<past6MonthsValue.length; i++) {
+    for (var i = 0; i<this.props.values.past6MonthsValue.length; i++) {
       let val = 0;
       for (var g=0; g<this.props.teamPlayers.length; g++) {
-        val += this.props.teamPlayers[g][past6MonthsValue[i]];
+        val += this.props.teamPlayers[g][this.props.values.past6MonthsValue[i]];
       }
       chartData.data.push(val);
     }
@@ -37,7 +30,7 @@ export default class TeamValueGraph extends Component {
       },
       colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565'],
       xAxis: {
-        categories: chartLabels,
+        categories: this.props.values.chartLabels,
       },
       series: [chartData],
       yAxis: {

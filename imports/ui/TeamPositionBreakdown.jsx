@@ -3,10 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Line } from 'react-chartjs';
 import ReactHighcharts from 'react-highcharts';
-import Values from './ADPConst.jsx';
 
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
 // ADPGraph component - represents a ADPGraph profile
 export default class TeamPositionBreakdown extends Component {
 
@@ -21,15 +18,15 @@ export default class TeamPositionBreakdown extends Component {
     for (var i=0; i< this.props.teamPlayers.length; i++) {
       const p = this.props.teamPlayers[i];
       if (p.position === 'QB') {
-        qbTotal += p[currentMonthValue]
+        qbTotal += p[this.props.values.past6MonthsValue[5]]
       } else if (p.position === 'WR') {
-        wrTotal += p[currentMonthValue]
+        wrTotal += p[this.props.values.past6MonthsValue[5]]
       } else if (p.position === 'RB') {
-        rbTotal += p[currentMonthValue]
+        rbTotal += p[this.props.values.past6MonthsValue[5]]
       } else if (p.position === 'TE') {
-        teTotal += p[currentMonthValue]
+        teTotal += p[this.props.values.past6MonthsValue[5]]
       } else if (p.position === 'PICK') {
-        pickTotal += p[currentMonthValue]
+        pickTotal += p[this.props.values.past6MonthsValue[5]]
       }
     }
 

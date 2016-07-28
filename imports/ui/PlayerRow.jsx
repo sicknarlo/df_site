@@ -2,10 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
@@ -46,7 +42,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}
           >
-            {player[currentMonthADP]}
+            {player[this.props.values.past6MonthsADP[5]]}
           </td>
           <td
             className={trendCls}
@@ -56,7 +52,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('hide-xs', 'playerCol', { sorted: this.props.sortGrp === 'sortByValue' })}
           >
-            {player[currentMonthValue]}
+            {player[this.props.values.past6MonthsValue[5]]}
           </td>
         </tr>
     );

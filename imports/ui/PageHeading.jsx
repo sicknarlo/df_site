@@ -16,6 +16,7 @@ export default class PageHeading extends React.Component {
         <div className="col-lg-12">
             <h2>{this.props.current}</h2>
             {additional}
+            <h3>Current database: {this.props.db}</h3>
         </div>
     </div>
     );

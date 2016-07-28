@@ -1,25 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
-import Values from './ADPConst.jsx';
-import { Button, ButtonGroup } from 'react-bootstrap';
 
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
-
-const sortByName = {
+let sortByName = {
   asc: function(a, b) {
     const nameA = a.name.toUpperCase(); // ignore upper and lowercase
     const nameB = b.name.toUpperCase(); // ignore upper and lowercase
@@ -47,32 +34,32 @@ const sortByName = {
     return 0;
   },
   _str: 'sortByName',
-}
-const sortByADP = {
+};
+let sortByADP = {
   asc: function(a, b) {
-    if (a[currentMonthADP] > b[currentMonthADP]) {
+    if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
       return 1;
     }
-    if (a[currentMonthADP] < b[currentMonthADP]) {
+    if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a[currentMonthADP] > b[currentMonthADP]) {
+    if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
       return -1;
     }
-    if (a[currentMonthADP] < b[currentMonthADP]) {
+    if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
       return 1;
     }
     // a must be equal to b
     return 0;
   },
   _str: 'sortByADP',
-}
+};
 
-const sortByPosition = {
+let sortByPosition = {
   asc: function(a, b) {
     if (a.position > b.position) {
       return 1;
@@ -94,10 +81,10 @@ const sortByPosition = {
     return 0;
   },
   _str: 'sortByPosition',
-}
+};
 
 
-const sortByTrend = {
+let sortByTrend = {
   asc: function(a, b) {
     if (a.trend > b.trend) {
       return 1;
@@ -120,23 +107,23 @@ const sortByTrend = {
   },
   _str: 'sortByTrend',
 
-}
-const sortByValue = {
+};
+let sortByValue = {
   asc: function(a, b) {
-    if (a[currentMonthValue] > b[currentMonthValue]) {
+    if (a[this.props.values.past6MonthsValue[5]] > b[this.props.values.past6MonthsValue[5]]) {
       return 1;
     }
-    if (a[currentMonthValue] < b[currentMonthValue]) {
+    if (a[this.props.values.past6MonthsValue[5]] < b[this.props.values.past6MonthsValue[5]]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a[currentMonthValue] > b[currentMonthValue]) {
+    if (a[this.props.values.past6MonthsValue[5]] > b[this.props.values.past6MonthsValue[5]]) {
       return -1;
     }
-    if (a[currentMonthValue] < b[currentMonthValue]) {
+    if (a[this.props.values.past6MonthsValue[5]] < b[this.props.values.past6MonthsValue[5]]) {
       return 1;
     }
     // a must be equal to b
@@ -145,7 +132,7 @@ const sortByValue = {
   _str: 'sortByValue',
 };
 
-const sortByAge = {
+let sortByAge = {
   asc: function(a, b) {
     if (ageCalc(new Date(a.birthdate * 1000)) > ageCalc(new Date(b.birthdate * 1000))) {
       return 1;
@@ -169,17 +156,30 @@ const sortByAge = {
   _str: 'sortByAge',
 };
 
+const ageCalc = function(birthdate) {
+  const bdate = birthdate ? birthdate : 680000000;
+  const ageDifMs = Date.now() - bdate.getTime();
+  const ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 // Player component - represents a Player profile
 export default class Players extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       filter: [],
       sortGrp: sortByADP,
-      sort: sortByADP.asc,
+      sort: sortByADP.asc.bind(this),
       search: '',
     };
-
+    // sortByADP = this.sortByADP.bind(this);
+    // sortByAge = this.sortByAge.bind(this);
+    // sortByValue = this.sortByValue.bind(this);
+    // sortByTrend = this.sortByTrend.bind(this);
+    // sortByName = this.sortByName.bind(this);
+    // sortByPosition = this.sortByPosition.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
   toggleFilter(pos) {
@@ -202,32 +202,29 @@ export default class Players extends Component {
   handleSearch(e) {
     this.setState({ search: e.target.value });
   }
-  updateDb(e) {
-    console.log('ffffff', e);
-    this.props.setDb(e);
-  }
 
   toggleSort(newSort) {
     if (newSort === this.state.sortGrp) {
       if (this.state.sort === newSort.asc) {
         this.setState(function() {
-          return { sort: newSort.desc }
+          return { sort: newSort.desc.bind(this) }
         })
       } else {
         this.setState(function() {
-          return { sort: newSort.asc }
+          return { sort: newSort.asc.bind(this) }
         })
       }
     } else {
       this.setState(function() {
         return {
           sortGrp: newSort,
-          sort: newSort.asc
+          sort: newSort.asc.bind(this)
         }
       })
     };
   }
   render() {
+
     const filteredData = this.props.players && this.props.players.filter((player) => {
       if (this.state.filter.length == 0) {
         return true;
@@ -321,38 +318,11 @@ export default class Players extends Component {
         </tr>
       </thead>
     );
-    console.log(this.props.currentDb);
-    const pprButtonActive = this.props.currentDb === 'ppr' ? 'primary' : '';
-    const qbButtonActive = this.props.currentDb === '2qb' ? 'primary' : '';
 
     return (
       <div>
-        <PageHeading current="Players" />
+        <PageHeading current="Players" db={this.props.currentDb} />
         <div className="wrapper wrapper-content animated fadeInRight">
-          <div className="row">
-            <div className="flex justifyCenter">
-                <ButtonGroup>
-                    <Button
-                        className="tradeButton"
-                        bsSize="large"
-                        bsStyle={pprButtonActive}
-                        value="ppr"
-                        onClick={this.updateDb.bind(this, 'ppr')}>
-                          <i className="fa fa-check"></i>&nbsp;
-                          PPR
-                     </Button>
-                     <Button
-                         className="tradeButton"
-                         bsSize="large"
-                         bsStyle={qbButtonActive}
-                         value="2qb"
-                         onClick={this.updateDb.bind(this, '2qb')}>
-                           <i className="fa fa-check"></i>&nbsp;
-                           2QB
-                     </Button>
-                </ButtonGroup>
-            </div>
-          </div>
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
@@ -417,7 +387,11 @@ export default class Players extends Component {
                     {tableHeader}
                     <tbody>
                       {filteredSortedSearchedData && filteredSortedSearchedData.map((player, i) =>
-                        <PlayerRow key={i} player={player} sortGrp={this.state.sortGrp._str} />
+                        <PlayerRow
+                            key={i}
+                            player={player}
+                            sortGrp={this.state.sortGrp._str}
+                            values={this.props.values} />
                       )}
                     </tbody>
                   </table>

@@ -6,8 +6,6 @@ import Values from '../ui/ADPConst.jsx';
 export const Teams = new Mongo.Collection('teams');
 import { Players } from './players.js';
 
-const currentMonthValue = Values.past6MonthsValue[5];
-
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish tasks that are public or belong to the current user
@@ -77,6 +75,7 @@ Meteor.methods({
     teams.forEach(function(t) {
       const teamList = players.filter((p) => t.players.indexOf(p._id._str) > -1);
       let value = 0;
+      const currentMonthValue = t.is2QB ? Values.super.past6MonthsValue[5] : Values.ppr.past6MonthsValue[5]
       teamList.forEach(function(p) {
         value += p[currentMonthValue];
       });

@@ -409,7 +409,7 @@ export default class Navigation extends React.Component {
           <ul className="nav metismenu" id="side-menu">
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <a data-toggle="dropdown" className="dropdown-toggle" href="#">
+                <a className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
                       <strong className="font-bold">{currentUser.username}</strong>
@@ -454,6 +454,12 @@ export default class Navigation extends React.Component {
                 <span className="nav-label">Trade Calculator</span>
               </Link>
             </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link to={'/tools/faq'}>
+                <i className="fa fa-question"></i>
+                <span className="nav-label">FAQ</span>
+              </Link>
+            </li>
           </ul>
 
         </div>
@@ -469,7 +475,7 @@ export default class Navigation extends React.Component {
           <ul className="nav metismenu" id="side-menu">
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <a data-toggle="dropdown" className="dropdown-toggle" href="#">
+                <a className="dropdown-toggle" href="#">
                   <span className="clear">
                     <div className="block m-t-xs topNav">
                       <strong className="font-bold underline"><Link to="/tools/login">Log In</Link></strong> <br />
@@ -511,6 +517,12 @@ export default class Navigation extends React.Component {
               <Link to={'/tools/calculator'}>
                 <i className="fa fa-calculator"></i>
                 <span className="nav-label">Trade Calculator</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link to={'/tools/faq'}>
+                <i className="fa fa-question"></i>
+                <span className="nav-label">FAQ</span>
               </Link>
             </li>
           </ul>

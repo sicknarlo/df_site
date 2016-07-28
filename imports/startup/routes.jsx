@@ -14,6 +14,7 @@ import CreateTeam from '../ui/CreateTeam.jsx';
 import Team from '../ui/Team.jsx';
 import UpdateValues from '../ui/UpdateValues.jsx';
 import Landing from '../ui/Landing.jsx';
+import FAQ from '../ui/FAQ.jsx';
 
 export const renderRoutes = () => (
   <Router history={browserHistory}>
@@ -29,6 +30,7 @@ export const renderRoutes = () => (
       <Route path="/tools/teams/:teamID" component={Team} />
       <Route path="/tools/createteam" component={CreateTeam} />
       <Route path="/tools/hokeypokey" component={UpdateValues} />
+      <Route path="/tools/faq" component={FAQ} />
     </Route>
   </Router>
 );

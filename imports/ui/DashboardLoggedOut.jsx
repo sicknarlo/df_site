@@ -5,14 +5,8 @@ import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
 import $ from 'jquery';
 import { Link } from 'react-router';
-
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
-
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;

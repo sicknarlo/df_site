@@ -5,13 +5,6 @@ import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
-
-const previousMonthADP = Values.past6MonthsADP[5];
-const past6MonthsADP = Values.past6MonthsADP;
 
 const nextYearsFirst = '2017 1st';
 const nextYearsSecond = '2017 2nd';
@@ -51,10 +44,10 @@ export default class Player extends Component {
     }
 
     // const this.props.players = this.props.players.sort(function(a, b) {
-    //   if (a[currentMonthADP] > b[currentMonthADP]) {
+    //   if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
     //     return 1;
     //   }
-    //   if (a[currentMonthADP] < b[currentMonthADP]) {
+    //   if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
     //     return -1;
     //   }
     //   // a must be equal to b
@@ -96,10 +89,10 @@ export default class Player extends Component {
       ? 'PICK'
       : _calculateAge(new Date(player.birthdate * 1000));
     const topDetails = `${player.team} - ${player.position}`;
-    const adpColorCls = player[currentMonthADP] >= player[previousMonthADP]
+    const adpColorCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
       ? 'text-navy'
       : 'text-danger';
-    const adpArrowCls = player[currentMonthADP] >= player[previousMonthADP]
+    const adpArrowCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
     const trend3ColorCls = player.trend > 0
@@ -109,7 +102,7 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const trend6Months = (player[past6MonthsADP[0]] - player[past6MonthsADP[5]]).toFixed(1);
+    const trend6Months = (player[this.props.values.past6MonthsADP[0]] - player[this.props.values.past6MonthsADP[5]]).toFixed(1);
     const trend6ColorCls = trend6Months > 0
       ? 'text-navy'
       : 'text-danger';
@@ -118,23 +111,23 @@ export default class Player extends Component {
       : 'fa fa-play fa-rotate-90';
 
     const firstRoundPick = this.props.players.find((p) => p.name === nextYearsFirst);
+    console.log(firstRoundPick);
+    console.log(player);
     const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
     const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
     const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
+    // const firstRoundPickValue = firstRoundPick[this.props.values.past6MonthsValue[4]];
+    // const secondRoundPickValue = secondRoundPick[this.props.values.past6MonthsValue[4]];
+    // const thirdRoundPickValue = thirdRoundPick[this.props.values.past6MonthsValue[4]];
+    // const fourthRoundPickValue = fourthRoundPick[this.props.values.past6MonthsValue[4]];
+    //
+    // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
 
-    const firstRoundPickValue = firstRoundPick[currentMonthValue];
-    const secondRoundPickValue = secondRoundPick[currentMonthValue];
-    const thirdRoundPickValue = thirdRoundPick[currentMonthValue];
-    const fourthRoundPickValue = fourthRoundPick[currentMonthValue];
-
-    let valueRemaining = player[currentMonthValue];
-
-    const firstRoundPickIndex = (player[currentMonthValue] / firstRoundPick[currentMonthValue]).toFixed(2);
-    console.log(firstRoundPickIndex);
-
+    const firstRoundPickIndex = (
+        player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
     return (
       <div>
-        <PageHeading current={player.name} additional={topDetails} />
+        <PageHeading current={player.name} db = {this.props.currentDb} additional={topDetails} />
         <div className="wrapper wrapper-content">
           <div className="row animated fadeInRight">
             <div className="col-md-4">
@@ -189,7 +182,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">Value</h5>
                       <h2 className="text-success">
-                        <i className="fa fa-tag"></i> {player[currentMonthValue]}
+                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[4]]}
                       </h2>
                     </div>
                   </div>
@@ -199,7 +192,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel ">
                       <h5 className="m-b-md">ADP</h5>
                       <h2 className={adpColorCls}>
-                        <i className={adpArrowCls}></i> {player[currentMonthADP]}
+                        <i className={adpArrowCls}></i> {player[this.props.values.past6MonthsADP[5]]}
                       </h2>
                     </div>
                   </div>
@@ -227,14 +220,14 @@ export default class Player extends Component {
               </div>
               <div className="row">
                 <div className="col-lg-12 graphContainer">
-                  <ADPGraph players={[player]} />
+                  <ADPGraph players={[player]} values={this.props.values} />
                 </div>
               </div>
             </div>
           </div>
           <div className="row">
             <div className="col-lg-12">
-              <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} />
+              <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} values={this.props.values} />
             </div>
           </div>
         </div>

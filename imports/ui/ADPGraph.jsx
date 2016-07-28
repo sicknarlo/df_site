@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactHighcharts from 'react-highcharts';
-import Values from './ADPConst.jsx';
+import PValues from './ADPConst.jsx';
 
 // ADPGraph component - represents a ADPGraph profile
 export default class ADPGraph extends Component {
@@ -8,9 +8,9 @@ export default class ADPGraph extends Component {
   render() {
     const datasets = this.props.players.map((player) => {
       const data = [];
-      for (var i=0; i<Values.chartLabels.length; i++) {
+      for (var i=0; i<this.props.values.chartLabels.length; i++) {
         data.push(
-          player[Values.past6MonthsADP[i]]
+          player[this.props.values.past6MonthsADP[i]]
         )
       }
       return {
@@ -31,7 +31,7 @@ export default class ADPGraph extends Component {
       },
       colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565'],
       xAxis: {
-        categories: Values.chartLabels,
+        categories: this.props.values.chartLabels,
       },
       series: datasets,
       yAxis: {

@@ -7,9 +7,6 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import $ from 'jquery';
 import { Link } from 'react-router';
-import Values from './ADPConst.jsx';
-
-import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 
@@ -58,7 +55,7 @@ export default class Compare extends Component {
     }
   }
   renderResults() {
-    return <ADPGraph players={this.state.playersToCompare} />
+    return <ADPGraph players={this.state.playersToCompare} values={this.props.values} />
   }
   renderInstructions() {
     return (
@@ -79,7 +76,7 @@ export default class Compare extends Component {
     })
     return (
       <div>
-        <PageHeading current="Player Comparison Tool" />
+        <PageHeading current="Player Comparison Tool" db={this.props.currentDb} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-md-4 col-sm-12">

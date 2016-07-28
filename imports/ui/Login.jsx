@@ -2,10 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link, browserHistory } from 'react-router';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();

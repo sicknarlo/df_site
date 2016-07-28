@@ -10,10 +10,8 @@ import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import DashboardLoggedOut from './DashboardLoggedOut.jsx';
 import DashboardLoggedIn from './DashboardLoggedIn.jsx';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
+import PValues from './ADPConst.jsx';
+import { Button, ButtonGroup } from 'react-bootstrap';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -23,12 +21,12 @@ const ageCalc = function(birthdate) {
 }
 
 export default class Dashboard extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     rotoData: null,
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      rotoData: null,
+    };
+  }
   // componentWillMount() {
   //   const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
   //   const test = this
@@ -43,9 +41,12 @@ export default class Dashboard extends Component {
   //     }
   //   }).bind(this);
   // }
+  updateDb(e) {
+    this.props.setDb(e);
+  }
 
   render() {
-    const filteredTrenders = this.props.players.filter((p) => p[currentMonthADP] < 151);
+    const filteredTrenders = this.props.players.filter((p) => p[this.props.values.past6MonthsADP[5]] < 151);
     const sortedTrenders = filteredTrenders.sort(function(a, b) {
       if (a.trend > b.trend) {
         return -1;
@@ -63,12 +64,38 @@ export default class Dashboard extends Component {
         players={this.props.players}
         newsAlerts={this.props.newsAlerts}
         currentUser={this.props.currentUser}
-        teams={this.props.teams} />
+        teams={this.props.teams}
+        currentDb={this.props.currentDb} />
     : <DashboardLoggedOut
         players={this.props.players}
-        newsAlerts={this.props.newsAlerts} />
+        newsAlerts={this.props.newsAlerts}
+        currentDb={this.props.currentDb} />
+    const pprButtonActive = this.props.currentDb === 'ppr' ? 'primary' : '';
+    const qbButtonActive = this.props.currentDb === '2qb' ? 'primary' : '';
     return (
       <div>
+          <div className="row dbToggle">
+            <div className="flex justifyCenter">
+                <ButtonGroup>
+                    <Button
+                        className="tradeButton"
+                        bsSize="large"
+                        bsStyle={pprButtonActive}
+                        value="ppr"
+                        onClick={this.updateDb.bind(this, 'ppr')}>
+                          PPR
+                     </Button>
+                     <Button
+                         className="tradeButton"
+                         bsSize="large"
+                         bsStyle={qbButtonActive}
+                         value="2qb"
+                         onClick={this.updateDb.bind(this, '2qb')}>
+                           2QB
+                     </Button>
+                </ButtonGroup>
+            </div>
+          </div>
         {dashboard}
         <div className="wrapper wrapper-content">
           <div className="row">
@@ -88,7 +115,7 @@ export default class Dashboard extends Component {
                       {risers.map((player) =>
                         <tr>
                           <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                          <td>{player[currentMonthADP]}</td>
+                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
                           <td>+{player.trend}</td>
                         </tr>
                       )}
@@ -113,7 +140,7 @@ export default class Dashboard extends Component {
                     {fallers.map((player) =>
                       <tr>
                         <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                        <td>{player[currentMonthADP]}</td>
+                        <td>{player[this.props.values.past6MonthsADP[5]]}</td>
                         <td>{player.trend}</td>
                       </tr>
                     )}

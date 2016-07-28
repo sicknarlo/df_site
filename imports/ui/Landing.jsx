@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
-import Values from './ADPConst.jsx';
 import $ from 'jquery';
 
 // Player component - represents a Player profile

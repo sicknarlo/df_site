@@ -2,29 +2,15 @@ import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
-import { Checkbox } from 'react-icheck';
 import { Link, browserHistory } from 'react-router';
-import $ from 'jquery';
 import Select from 'react-select';
 import { Button } from 'react-bootstrap';
-import { Teams } from '../api/teams.js';
 
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
-import DashboardLoggedOut from './DashboardLoggedOut.jsx';
-import DashboardLoggedIn from './DashboardLoggedIn.jsx';
 import TeamValueGraph from './TeamValueGraph.jsx';
-import PositionWebGraph from './PositionWebGraph.jsx';
-import TeamPortfolioGraph from './TeamPortfolioGraph.jsx';
 import TeamPositionBreakdown from './TeamPositionBreakdown.jsx';
-import Values from './ADPConst.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
-const chartLabels = Values.chartLabels;
-const past6MonthsValue = Values.past6MonthsValue;
-const past6MonthsADP = Values.past6MonthsADP;
-const previousMonthADP = Values.past6MonthsADP[4];
+import PValues from './ADPConst.jsx';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -36,11 +22,13 @@ const ageCalc = function(birthdate) {
 export default class TeamPage extends Component {
   constructor(props) {
     super(props);
+    const values = this.props.team.is2QB ? PValues.super : PValues.ppr;
     this.state = {
       transactionType: 'Trade',
       transactionAdd: [],
       transactionRemove: [],
       transactionShowCount: 5,
+      values: values,
     };
     this.changeType = this.changeType.bind(this);
     this.handleAddtoAdd = this.handleAddtoAdd.bind(this);
@@ -68,7 +56,7 @@ export default class TeamPage extends Component {
     newTrans.remove = removeIds;
     newTrans.type = this.state.transactionType;
     newTrans.date = new Date();
-    newTrans.valueMonth = currentMonthValue;
+    newTrans.valueMonth = this.state.values.past6MonthsValue[5];
     const nextTransArray = this.props.team.transactions.concat([newTrans]);
     const dataWrapper = {
       team: this.props.team,
@@ -142,11 +130,12 @@ export default class TeamPage extends Component {
     let lastValue = 0;
     let last3Value = 0;
     let last6Value = 0;
+    const past6MonthsValue = this.state.values.past6MonthsValue;
     const monthLast = past6MonthsValue[4];
     const month3 = past6MonthsValue[3];
     const month6 = past6MonthsValue[0];
     for (var i=0; i<teamPlayers.length; i++) {
-      currentValue += teamPlayers[i][currentMonthValue];
+      currentValue += teamPlayers[i][past6MonthsValue[5]];
       lastValue += teamPlayers[i][monthLast];
       last3Value += teamPlayers[i][month3];
       last6Value += teamPlayers[i][month6];
@@ -155,7 +144,6 @@ export default class TeamPage extends Component {
     const monthDiff1 = currentValue - lastValue;
     const monthDiff3 = currentValue - last3Value;
     const monthDiff6 = currentValue - last6Value;
-    console.log(this.state.transactionAdd);
 
     const options = this.props.players.map(function(player) {
       return { val: player, label: player.name };
@@ -174,22 +162,23 @@ export default class TeamPage extends Component {
     const monthDiff6Percent = (((100 * currentValue) / last6Value) - 100).toFixed(2);
 
     const sortedPlayers = teamPlayers.sort(function(a, b) {
-      if (a[currentMonthADP] > b[currentMonthADP]) {
+      if (a[this.state.values.past6MonthsADP[5]] > b[this.state.values.past6MonthsADP[5]]) {
         return 1;
-      } else if (a[currentMonthADP] < b[currentMonthADP]) {
+    } else if (a[this.state.values.past6MonthsADP[5]] < b[this.state.values.past6MonthsADP[5]]) {
         return -1;
       }
 
       return 0;
-    })
+  }.bind(this))
     const transactionsList = team.transactions.slice(0, this.state.transactionShowCount);
     const showMoreButton = team.transactions.length > this.state.transactionShowCount
       ? <li className="list-group-item showMoreButton" onClick={this.increaseTransactionCount}><h3>Show More</h3></li>
       : null;
       const playerList = this.props.players;
+      console.log(this.state.values);
     return (
       <div>
-        <PageHeading current={team.name} />
+        <PageHeading current={team.name} db={this.state.currentDb} />
         <div className="wrapper wrapper-content">
           <div className="row">
             <div className="col-xs-12 text-center">
@@ -283,7 +272,7 @@ export default class TeamPage extends Component {
                   <h2>Current Team Values</h2>
                 </div>
                 <div className="ibox-content">
-                  <TeamValueGraph team={team} teamPlayers={teamPlayers} />
+                  <TeamValueGraph team={team} teamPlayers={teamPlayers} values={this.state.values} />
                 </div>
               </div>
             </div>
@@ -323,7 +312,7 @@ export default class TeamPage extends Component {
                     </thead>
                     <tbody>
                       {sortedPlayers && sortedPlayers.map((player, k) =>
-                        <PlayerRow key={k} player={player} sortGrp="sortByADP" />
+                        <PlayerRow key={k} player={player} values={this.state.values} sortGrp="sortByADP" />
                       )}
                     </tbody>
                   </table>
@@ -333,7 +322,7 @@ export default class TeamPage extends Component {
           </div>
           <div className="row">
             <div className="col-lg-12">
-              <TeamPositionBreakdown team={team} teamPlayers={teamPlayers}/>
+              <TeamPositionBreakdown team={team} teamPlayers={teamPlayers} values={this.state.values} />
             </div>
           </div>
           <div className="row">

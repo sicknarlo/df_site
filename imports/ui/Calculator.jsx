@@ -6,8 +6,6 @@ import { Checkbox } from 'react-icheck';
 import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
 import Select from 'react-select';
 import { Link } from 'react-router';
-import Values from './ADPConst.jsx';
-import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 
@@ -145,8 +143,9 @@ export default class Calculator extends Component {
 
   findClosestPlayer(val) {
     let curr = this.props.players[0];
+    const past6MonthsValue = this.props.values.past6MonthsValue;
     this.props.players.forEach(function(player) {
-      if (Math.abs(val - player[Values.past6MonthsValue[5]]) < Math.abs(val - curr[Values.past6MonthsValue[5]])) {
+      if (Math.abs(val - player[past6MonthsValue[5]]) < Math.abs(val - curr[past6MonthsValue[5]])) {
         curr = player;
       }
     })
@@ -160,12 +159,13 @@ export default class Calculator extends Component {
       return { val: player, label: player.name }
     })
     let team1ValueSent = 0;
+    const past6MonthsValue = this.props.values.past6MonthsValue;
     this.state.team1.forEach(function(player) {
-      team1ValueSent += player[Values.past6MonthsValue[5]]
+      team1ValueSent += player[past6MonthsValue[5]]
     });
     let team2ValueSent = 0;
     this.state.team2.forEach(function(player) {
-      team2ValueSent += player[Values.past6MonthsValue[5]]
+      team2ValueSent += player[past6MonthsValue[5]]
     });
 
     const team1ValueGained = team2ValueSent - team1ValueSent;
@@ -204,14 +204,14 @@ export default class Calculator extends Component {
     const closestPlayer = this.findClosestPlayer(Math.abs(team1ValueGained));
     const closestPlayerString = closestPlayer
       ? (<div>
-          <h2>The difference is equal to <Link to={`/tools/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[Values.past6MonthsADP[5]]}</strong></h2>
+          <h2>The difference is equal to <Link to={`/tools/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[this.props.values.past6MonthsADP[5]]}</strong></h2>
         </div>
         )
       : null;
       // console.log(this.props.params);
     return (
       <div>
-        <PageHeading current={"Trade Calculator"} />
+        <PageHeading current={"Trade Calculator"} db={this.props.currentDb} />
         {this.state.showInstructions && this.renderInstructions()}
         <div className="wrapper wrapper-content animated fadeIn">
           <div className="row">
@@ -301,7 +301,7 @@ export default class Calculator extends Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <div classNames="row">
+                <div className="row">
                   <div className="col-md-6 calcSection">
                     <div className="flexContainer spaceBetween header4">
                       <div>Team 1 Gains:</div>
@@ -313,7 +313,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[Values.past6MonthsValue[5]]}
+                              {player[this.props.values.past6MonthsValue[5]]}
                             </div>
                           </div>
                         )}
@@ -333,7 +333,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[Values.past6MonthsValue[5]]}
+                              {player[this.props.values.past6MonthsValue[5]]}
                             </div>
                           </div>
                         )}
@@ -361,7 +361,7 @@ export default class Calculator extends Component {
                 </div>
                 <div className="row">
                   <div className="col-lg-12">
-                    <ADPGraph players={this.state.team1.concat(this.state.team2)} />
+                    <ADPGraph players={this.state.team1.concat(this.state.team2)} values={this.props.values} />
                   </div>
                 </div>
                 <div className="row">

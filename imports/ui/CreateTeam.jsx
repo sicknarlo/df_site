@@ -1,19 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
 import Select from 'react-select';
-import $ from 'jquery';
 import { Link, browserHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
-import Values from './ADPConst.jsx';
-
-import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
-
-const currentMonthADP = Values.past6MonthsADP[5];
-const currentMonthValue = Values.past6MonthsValue[5];
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -79,6 +71,7 @@ export default class CreateTeam extends Component {
   createTeam() {
     const playerIds = [];
     this.state.roster.forEach((p) => playerIds.push(p._id._str));
+
     const team = {
       teamName: this.state.teamName,
       teamCount: this.state.teamCount,
@@ -86,7 +79,7 @@ export default class CreateTeam extends Component {
       isPPR: this.state.isPPR,
       is2QB: this.state.is2QB,
       isIDP: this.state.isIDP,
-      valueMonth: currentMonthValue,
+      valueMonth: this.props.values.past6MonthsValue[5],
     };
     console.log(team);
     Meteor.call('teams.create', team);
@@ -118,7 +111,7 @@ export default class CreateTeam extends Component {
           </Button>;
     return (
       <div>
-        <PageHeading current="Create Team" />
+        <PageHeading current="Create Team" db={this.props.currentDb} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-md-8">
