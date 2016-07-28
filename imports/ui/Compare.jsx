@@ -45,11 +45,9 @@ export default class Compare extends Component {
   }
 
   removePlayerFromCompare(player) {
-    console.log('clicky');
     const newState = { playersToCompare: this.state.playersToCompare };
     const index = newState.playersToCompare.indexOf(player);
     if (index > -1) {
-      console.log('worky');
       newState.playersToCompare.splice(index, 1);
       this.setState(newState);
     }

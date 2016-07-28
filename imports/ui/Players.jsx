@@ -205,7 +205,6 @@ export default class Players extends Component {
 
   toggleSort(newSort) {
     if (newSort === this.state.sortGrp) {
-        console.log(this.state.sort.name);
       if (this.state.sort.name === "bound asc") {
         this.setState(function() {
           return { sort: newSort.desc.bind(this) }

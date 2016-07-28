@@ -111,8 +111,6 @@ export default class Player extends Component {
       : 'fa fa-play fa-rotate-90';
 
     const firstRoundPick = this.props.players.find((p) => p.name === nextYearsFirst);
-    console.log(firstRoundPick);
-    console.log(player);
     const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
     const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
     const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);

@@ -18,7 +18,6 @@ export default class TopNav extends React.Component {
 
   handleLogout() {
     Meteor.logout(function(err) {
-      console.log(err);
     })
     browserHistory.push('/tools/dashboard');
   }

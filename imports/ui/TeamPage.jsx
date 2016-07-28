@@ -114,7 +114,6 @@ export default class TeamPage extends Component {
 
   deleteTeam(){
     const teamID = this.props.team._id;
-    console.log(teamID);
     const result = confirm('Are you sure you want to delete this team?');
     if (result) {
       Meteor.call('teams.delete', teamID);

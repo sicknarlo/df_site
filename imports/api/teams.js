@@ -23,7 +23,6 @@ Meteor.methods({
     if (! this.userId) {
       throw new Meteor.error('not-authorized');
     }
-    console.log(team);
     const initialAdd = {};
     initialAdd.add = team.players;
     initialAdd.remove = [];

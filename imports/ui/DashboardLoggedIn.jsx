@@ -61,7 +61,6 @@ export default class DashboardLoggedIn extends Component {
                       <tbody>
                         {this.props.teams && this.props.teams.map(function(t) {
                           const playerCount = t.players.length;
-                          console.log(t.name);
                           const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
                           const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
                           const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;

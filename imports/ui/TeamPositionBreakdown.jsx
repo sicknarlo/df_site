@@ -64,7 +64,6 @@ export default class TeamPositionBreakdown extends Component {
         data: data
       }]
 
-    console.log(pieData);
 
     const config = {
       chart: {

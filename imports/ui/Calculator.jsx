@@ -64,7 +64,6 @@ export default class Calculator extends Component {
     const newState = { team1: this.state.team1 };
     const index = newState.team1.indexOf(player);
     if (index > -1) {
-      console.log('worky');
       newState.team1.splice(index, 1);
       this.setState(newState);
     }
@@ -73,7 +72,6 @@ export default class Calculator extends Component {
     const newState = { team2: this.state.team2 };
     const index = newState.team2.indexOf(player);
     if (index > -1) {
-      console.log('worky');
       newState.team2.splice(index, 1);
       this.setState(newState);
     }

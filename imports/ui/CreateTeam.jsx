@@ -81,7 +81,6 @@ export default class CreateTeam extends Component {
       isIDP: this.state.isIDP,
       valueMonth: this.props.values.past6MonthsValue[5],
     };
-    console.log(team);
     Meteor.call('teams.create', team);
     browserHistory.push('/tools/dashboard');
   }
