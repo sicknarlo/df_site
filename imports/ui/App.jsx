@@ -1,11 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Players } from '../api/players.js';
-import { Players2QB } from '../api/players2qb.js';
 import { Teams } from '../api/teams.js';
-import Player from './Player.jsx'
 import PValues from './ADPConst.jsx';
 import Navigation from './Navigation.jsx';
 import TopNav from './TopNav.jsx';
@@ -86,23 +83,23 @@ class App extends Component {
     // BOXED LAYOUT
     // Uncomment this if you want to have boxed layout
     // $('body').addClass('boxed-layout');
-    const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
-    let result = [];
-    $.ajax({
-      url: document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=13&callback=?&q=' + encodeURIComponent(feed),
-      dataType: 'json',
-      context: this,
-      success(data) {
-        if (data.responseData.feed && data.responseData.feed.entries) {
-          result = data.responseData.feed.entries;
-          // const alertIDs = result.map((item) => item.link.split('/')[5]);
-          this.setState({
-            rotoData: result,
-            // alertIDs
-          });
-        }
-      },
-    });
+    // const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
+    // let result = [];
+    // $.ajax({
+    //   url: document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=13&callback=?&q=' + encodeURIComponent(feed),
+    //   dataType: 'json',
+    //   context: this,
+    //   success(data) {
+    //     if (data.responseData.feed && data.responseData.feed.entries) {
+    //       result = data.responseData.feed.entries;
+    //       // const alertIDs = result.map((item) => item.link.split('/')[5]);
+    //       this.setState({
+    //         rotoData: result,
+    //         // alertIDs
+    //       });
+    //     }
+    //   },
+    // });
   }
 
   // componentWillUpdate() {
@@ -164,7 +161,6 @@ App.propTypes = {
 
 export default createContainer(() => {
   Meteor.subscribe('players');
-  Meteor.subscribe('players2qb');
   Meteor.subscribe('teams');
 
   return {

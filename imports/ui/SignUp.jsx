@@ -45,6 +45,7 @@ export default class SignUp extends Component {
       password,
     }, err => {
       if (err) {
+        console.log(err);
         this.setState({
           errors: { none: err.reason },
         });

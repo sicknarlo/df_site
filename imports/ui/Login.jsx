@@ -39,7 +39,7 @@ export default class Login extends Component {
     e.preventDefault();
     const username = this.refs.username.value;
     const password = this.refs.password.value;
-    const errors = {}
+    const errors = {};
 
     if (!username) {
       errors.username = 'Username required';
@@ -55,6 +55,7 @@ export default class Login extends Component {
 
     Meteor.loginWithPassword(username, password, err => {
       if (err) {
+        console.log(err);
         this.setState({
           errors: { none: err.reason },
         });
