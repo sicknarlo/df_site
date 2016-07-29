@@ -33,7 +33,7 @@
  // Configure environment
  "env": {
      "ROOT_URL": "http://www.dynastyfftools.com",
-      "PORT": 80,
+      "PORT": 3000,
       "UPSTART_UID" : "meteoruser",
       "MAIL_URL": "smtp://username:password@smtp.sendgrid.net:587",
       "METEOR_ENV": "production"
