@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
-import Values from '../ui/ADPConst.jsx';
+import PValues from '../ui/ADPConst.jsx';
 
 export const Teams = new Mongo.Collection('teams');
 import { Players } from './players.js';
@@ -74,7 +74,7 @@ Meteor.methods({
     teams.forEach(function(t) {
       const teamList = players.filter((p) => t.players.indexOf(p._id._str) > -1);
       let value = 0;
-      const currentMonthValue = t.is2QB ? Values.super.past6MonthsValue[5] : Values.ppr.past6MonthsValue[5]
+      const currentMonthValue = t.is2QB ? PValues.super.past6MonthsValue[5] : PValues.ppr.past6MonthsValue[5]
       teamList.forEach(function(p) {
         value += p[currentMonthValue];
       });
@@ -84,6 +84,7 @@ Meteor.methods({
         values: newValues,
       } });
     })
+    console.log('complete');
   },
 
   'teams.get'() {
