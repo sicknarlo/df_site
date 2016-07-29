@@ -212,7 +212,7 @@ export default class Players extends Component {
         })
       } else {
         this.setState(function() {
-          return { sort: newSort.asc.bind(this), sortDirection: 'desc' };
+          return { sort: newSort.asc.bind(this), sortDirection: 'asc' };
         })
       }
     } else {
