@@ -171,6 +171,7 @@ export default class Players extends Component {
     this.state = {
       filter: [],
       sortGrp: sortByADP,
+      sortDirection: 'asc',
       sort: sortByADP.asc.bind(this),
       search: '',
     };
@@ -205,20 +206,20 @@ export default class Players extends Component {
 
   toggleSort(newSort) {
     if (newSort === this.state.sortGrp) {
-      console.log(this.state.sort.name);
-      if (this.state.sort.name === "bound asc") {
+      if (this.state.sortDirection === 'asc') {
         this.setState(function() {
-          return { sort: newSort.desc.bind(this) }
+          return { sort: newSort.desc.bind(this), sortDirection: 'desc' };
         })
       } else {
         this.setState(function() {
-          return { sort: newSort.asc.bind(this) }
+          return { sort: newSort.asc.bind(this), sortDirection: 'desc' };
         })
       }
     } else {
       this.setState(function() {
         return {
           sortGrp: newSort,
+          sortDirection: 'asc',
           sort: newSort.asc.bind(this)
         }
       })
