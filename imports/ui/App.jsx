@@ -162,6 +162,7 @@ App.propTypes = {
 export default createContainer(() => {
   Meteor.subscribe('players');
   Meteor.subscribe('teams');
+  Meteor.subscribe('votes');
 
   return {
     players: Players.find({}, { sort: { jul_16: 1 } }).fetch(),

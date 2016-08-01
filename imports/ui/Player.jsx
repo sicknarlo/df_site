@@ -5,6 +5,8 @@ import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import { Votes } from '../api/votes.js';
 
 const nextYearsFirst = '2017 1st';
 const nextYearsSecond = '2017 2nd';
@@ -25,16 +27,106 @@ const _calculateHeight = function(inches) {
 
 // Player component - represents a Player profile
 export default class Player extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      communityValue: 0,
+      moves: 0,
+      playerVote: null,
+    };
+
+    this.addVote = this.addVote.bind(this);
+  }
+
+  componentWillMount() {
+  }
 
   componentDidMount() {
-    window.scrollTo(0, 0);
+    let moves = 0;
+    let communityValue = 0;
+    let playerVote = null;
+    const that = this;
+    Meteor.call('votes.getPlayer', {
+      playerId: this.props.params.playerID,
+    }, function(error, result){
+        if(error){
+            console.log(error);
+        } else {
+          result.forEach(function(v) {
+            moves ++;
+            if (v.moveType === 'buy') communityValue ++;
+            if (v.moveType === 'sell') communityValue --;
+            if (v.userId === that.props.currentUser._id) {
+              playerVote = v.moveType;
+            }
+          });
+          that.setState({
+            communityValue,
+            moves,
+            playerVote
+          });
+        };
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.playerID !== this.props.params.playerID) {
+      let moves = 0;
+      let communityValue = 0;
+      let playerVote = null;
+      const that = this;
+      Meteor.call('votes.getPlayer', {
+        playerId: nextProps.params.playerID,
+      }, function(error, result){
+          if(error){
+              console.log(error);
+          } else {
+            result.forEach(function(v) {
+              moves ++;
+              if (v.moveType === 'buy') communityValue ++;
+              if (v.moveType === 'sell') communityValue --;
+              if (v.userId === that.props.currentUser._id) {
+                playerVote = v.moveType;
+              }
+            });
+            console.log(moves, communityValue, playerVote);
+            that.setState({
+              communityValue,
+              moves,
+              playerVote,
+            });
+          };
+      });
+    }
   }
 
   componentWillUpdate() {
-    window.scrollTo(0, 0);
+  }
+
+  addVote(moveType) {
+    // Meteor.subscribe('votes');
+    if (moveType !== this.state.playerVote) {
+      Meteor.call('votes.addVote', {
+        playerId: this.props.params.playerID,
+        moveType,
+      });
+      let moveChange = moveType === 'buy' ? 1 : -1;
+      let voteChange = 0;
+      if (this.state.playerVote !== null) {
+        moveChange *= 2;
+      } else {
+        voteChange ++;
+      }
+      this.setState({
+        playerVote: moveType,
+        communityValue: this.state.communityValue + moveChange,
+        moves: this.state.moves + voteChange,
+      })
+    }
   }
 
   render() {
+    console.log(this.state);
     const player = this.props.players.find((p) => {
       return p._id._str === this.props.params.playerID;
     });
@@ -120,7 +212,37 @@ export default class Player extends Component {
     // const fourthRoundPickValue = fourthRoundPick[this.props.values.past6MonthsValue[4]];
     //
     // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
+    const buyBtnCls = classnames({ 'primary': this.state.playerVote === 'buy' });
+    const sellBtnCls = classnames({ 'danger': this.state.playerVote === 'sell' });
 
+    const buySell = this.props.currentUser
+      ? (
+        <div className="col-sm-12 col-md-12 col-lg-12">
+          <div className="ibox">
+            <div className="ibox-content dataPanel">
+              <h5 className="m-b-md textCenter">At an ADP of {player[this.props.values.past6MonthsADP[5]]}, are you buying or selling?</h5>
+              <div className="buysellContainer">
+                <ButtonGroup>
+                    <Button
+                        className="tradeButton btn-buy"
+                        bsStyle={buyBtnCls}
+                        bsSize="large"
+                        onClick={this.addVote.bind(this, 'buy')}>
+                          BUY
+                     </Button>
+                     <Button
+                         className="tradeButton"
+                         bsStyle={sellBtnCls}
+                         bsSize="large"
+                         onClick={this.addVote.bind(this, 'sell')}>
+                           SELL
+                     </Button>
+                </ButtonGroup>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null;
     const firstRoundPickIndex = (
         player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
     return (
@@ -174,6 +296,25 @@ export default class Player extends Component {
               </div>
             </div>
             <div className="col-md-8">
+              <div className="row">
+                {buySell}
+                <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel">
+                      <h5 className="m-b-md">Community Value</h5>
+                      <h2 className="greenText">{this.state.communityValue}</h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel">
+                      <h5 className="m-b-md">Community Votes</h5>
+                      <h2 className>{this.state.moves}</h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="row">
                 <div className="col-xs-6 col-lg-3">
                   <div className="ibox">
