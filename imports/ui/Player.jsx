@@ -30,8 +30,12 @@ export default class Player extends Component {
     window.scrollTo(0, 0);
   }
 
-  componentWillUpdate() {
-    window.scrollTo(0, 0);
+  componentWillReceiveProps(nextProps) {
+    console.log('swiggity');
+    if (nextProps.params.playerID !== this.props.params.playerID) {
+      console.log('swooty');
+      window.scrollTo(0, 0);
+    }
   }
 
   render() {
