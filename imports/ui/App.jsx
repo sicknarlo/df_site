@@ -117,8 +117,15 @@ class App extends Component {
   setDb (e) {
     this.setState({ db: e });
   }
+  shouldComponentUpdate(nextProps) {
+    if (!nextProps.playersReady) {
+      return false;
+    }
+    return true;
+  }
 
   render() {
+    console.log('flooo');
     // let newsAlerts = [];
     // if (this.state.rotoData && this.props.players) {
     //   newsAlerts = this.state.rotoData.map(function(item) {

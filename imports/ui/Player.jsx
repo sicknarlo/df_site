@@ -73,7 +73,6 @@ export default class Player extends Component {
 
   render() {
     const player = this.state.player;
-
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
