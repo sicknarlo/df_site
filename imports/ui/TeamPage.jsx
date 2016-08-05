@@ -5,7 +5,7 @@ import 'icheck/skins/all.css';
 import { Link, browserHistory } from 'react-router';
 import Select from 'react-select';
 import { Button } from 'react-bootstrap';
-
+import { createContainer } from 'meteor/react-meteor-data';
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import TeamValueGraph from './TeamValueGraph.jsx';
@@ -124,7 +124,7 @@ export default class TeamPage extends Component {
     const team = this.props.team;
     const teamPlayers = this.props.players.filter(function(p) {
       return team.players.indexOf(p._id._str) > -1;
-    })
+    });
     let currentValue = 0;
     let lastValue = 0;
     let last3Value = 0;
@@ -174,7 +174,6 @@ export default class TeamPage extends Component {
       ? <li className="list-group-item showMoreButton" onClick={this.increaseTransactionCount}><h3>Show More</h3></li>
       : null;
       const playerList = this.props.players;
-      console.log(this.state.values);
     return (
       <div>
         <PageHeading current={team.name} db={this.state.currentDb} />

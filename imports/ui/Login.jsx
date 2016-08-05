@@ -3,40 +3,19 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link, browserHistory } from 'react-router';
 
-const ageCalc = function(birthdate) {
-  const ageDifMs = Date.now() - birthdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
-
 // Player component - represents a Player profile
 export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       errors: {},
-      // username: '',
-      // password: '',
-      // invalid: false,
-      // error: false,
-      // usernameRequired: false,
-      // sent: false,
-      // menuOpen: false,
-      // showConnectionIssue: false,
+      loading: false,
     };
-    // this.updateUsername = this.updateUsername.bind(this);
-    // this.updatePassword = this.updatePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-  // updateUsername(e) {
-  //   this.setState({ username: e.target.value });
-  // }
-  // updatePassword(e) {
-  //   this.setState({ password: e.target.value });
-  // }
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({ loading: true });
     const username = this.refs.username.value;
     const password = this.refs.password.value;
     const errors = {};
@@ -50,14 +29,15 @@ export default class Login extends Component {
 
     this.setState({ errors });
     if (Object.keys(errors).length) {
+      this.setState({ loading: false });
       return;
     }
 
     Meteor.loginWithPassword(username, password, err => {
       if (err) {
-        console.log(err);
         this.setState({
           errors: { none: err.reason },
+          loading: false,
         });
         return;
       }
@@ -68,9 +48,27 @@ export default class Login extends Component {
     const { errors } = this.state;
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
+    const loading = this.state.loading
+      ? (
+        <div className="overlay">
+          <div className="sk-spinner sk-spinner-cube-grid">
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+          </div>
+        </div>
+      )
+      : null;
 
     return (
       <div className="middle-box text-center loginscreen animated fadeInDown">
+        {loading}
         <div>
           <div>
             <h1 className="logo-name">DF+</h1>

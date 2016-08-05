@@ -29,7 +29,7 @@ export default class ADPGraph extends Component {
       title: {
         text: 'Average Draft Position',
       },
-      colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565'],
+      colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565', '#4719B3', '#B39419', '#1985B3', '#E0294E', '#1938B3'],
       xAxis: {
         categories: this.props.values.chartLabels,
       },
@@ -53,7 +53,7 @@ export default class ADPGraph extends Component {
     };
     return (
       <div className="adpChart">
-        <ReactHighcharts isPureConfig config={config} className="adpChart-container" />
+        <ReactHighcharts config={config} className="adpChart-container" />
       </div>
     );
   }

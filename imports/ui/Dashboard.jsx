@@ -5,13 +5,13 @@ import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
 import { Link } from 'react-router';
 import $ from 'jquery';
-
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 import DashboardLoggedOut from './DashboardLoggedOut.jsx';
 import DashboardLoggedIn from './DashboardLoggedIn.jsx';
 import PValues from './ADPConst.jsx';
 import { Button, ButtonGroup } from 'react-bootstrap';
+
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -25,7 +25,39 @@ export default class Dashboard extends Component {
     super(props);
     this.state = {
       rotoData: null,
+      topTrendersPPR: [],
+      bottomTrendersPPR: [],
+      topTrendersSuper: [],
+      bottomTrendersSuper: [],
     };
+  }
+
+  componentDidMount() {
+    const that = this;
+    Meteor.call('teams.getStandardTopTrenders', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ topTrendersPPR: result })
+      }
+    });
+    Meteor.call('teams.get2QBTopTrenders', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ topTrendersSuper: result })
+      }
+    });
+    Meteor.call('teams.getStandardBottomTrenders', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ bottomTrendersPPR: result })
+      }
+    });
+    Meteor.call('teams.get2QBBottomTrenders', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ bottomTrendersSuper: result })
+      }
+    });
   }
   // componentWillMount() {
   //   const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
@@ -46,22 +78,25 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const filteredTrenders = this.props.players.filter((p) => p[this.props.values.past6MonthsADP[5]] < 151);
-    const sortedTrenders = filteredTrenders.sort(function(a, b) {
-      if (a.trend > b.trend) {
-        return -1;
-      }
-      if (a.trend < b.trend) {
-        return 1;
-      }
-      // a must be equal to b
-        return 0;
-    });
-    const risers = sortedTrenders.slice(0, 10);
-    const fallers = sortedTrenders.slice(sortedTrenders.length - 10, sortedTrenders.length).reverse();
+    if (
+      this.state.topTrendersPPR.length === 0
+      && this.state.bottomTrendersPPR.length === 0
+      && this.state.topTrendersSuper.length === 0
+      && this.state.bottomTrendersSuper.length === 0
+    ) {
+      return (
+          <div className="sk-spinner sk-spinner-double-bounce">
+            <div className="sk-double-bounce1"></div>
+            <div className="sk-double-bounce2"></div>
+          </div>
+      );
+    }
+
+    const risers = this.props.currentDb === 'ppr' ? this.state.topTrendersPPR : this.state.topTrendersSuper;
+    const fallers = this.props.currentDb === 'ppr' ? this.state.bottomTrendersPPR : this.state.bottomTrendersSuper;
     const dashboard = this.props.currentUser
     ? <DashboardLoggedIn
-        players={this.props.players}
+        teamsReady={this.props.teamsReady}
         newsAlerts={this.props.newsAlerts}
         currentUser={this.props.currentUser}
         teams={this.props.teams}

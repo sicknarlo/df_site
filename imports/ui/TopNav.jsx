@@ -78,7 +78,7 @@ export default class TopNav extends React.Component {
               <i className="fa fa-bars"></i>
             </div>
             <div className="toplogo">
-              <h3>DynastyFFTools.com &nbsp;<small>Updated 7/26/2016</small></h3>
+              <h3>DynastyFFTools.com <br /><small>Updated 8/4/2016</small></h3>
             </div>
           </div>
           {this.props.currentUser && this.renderLogoutButton()}

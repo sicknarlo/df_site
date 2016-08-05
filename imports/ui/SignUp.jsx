@@ -9,12 +9,16 @@ import { Accounts } from 'meteor/accounts-base';
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
-    this.state = { errors: {} };
+    this.state = {
+      errors: {},
+      loading: false,
+    };
     this.onSubmit = this.onSubmit.bind(this);
   }
 
   onSubmit(event) {
     event.preventDefault();
+    this.setState({ loading: true });
     const username = this.refs.username.value;
     const email = this.refs.email.value;
     const password = this.refs.password.value;
@@ -36,6 +40,7 @@ export default class SignUp extends Component {
 
     this.setState({ errors });
     if (Object.keys(errors).length) {
+      this.setState({ loading: false });
       return;
     }
 
@@ -45,9 +50,9 @@ export default class SignUp extends Component {
       password,
     }, err => {
       if (err) {
-        console.log(err);
         this.setState({
           errors: { none: err.reason },
+          loading: false,
         });
         return;
       }
@@ -58,9 +63,27 @@ export default class SignUp extends Component {
     const { errors } = this.state;
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
+    const loading = this.state.loading
+      ? (
+        <div className="overlay">
+          <div className="sk-spinner sk-spinner-cube-grid">
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+          </div>
+        </div>
+      )
+      : null;
 
     return (
       <div className="middle-box text-center loginscreen animated fadeInDown">
+        {loading}
         <div>
             <h1 className="logo-name">DF+</h1>
         </div>

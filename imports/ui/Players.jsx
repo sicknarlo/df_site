@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
-
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 
@@ -183,6 +182,7 @@ export default class Players extends Component {
     // sortByPosition = this.sortByPosition.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
+
   toggleFilter(pos) {
     const index = this.state.filter.indexOf(pos);
     if (index > -1) {

@@ -31,6 +31,7 @@ export default class Player extends Component {
     super(props);
 
     this.state = {
+      player: null,
       communityValue: 0,
       moves: 0,
       playerVote: null,
@@ -39,14 +40,22 @@ export default class Player extends Component {
     this.addVote = this.addVote.bind(this);
   }
 
-  componentWillMount() {
-  }
-
   componentDidMount() {
+    window.scrollTo(0, 0);
+    const that = this;
+    Meteor.call('players.getPlayer', {
+      playerId: this.props.params.playerID,
+    }, function(error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(result);
+        that.setState({ player: result })
+      }
+    });
     let moves = 0;
     let communityValue = 0;
     let playerVote = null;
-    const that = this;
     Meteor.call('votes.getPlayer', {
       playerId: this.props.params.playerID,
     }, function(error, result){
@@ -71,6 +80,16 @@ export default class Player extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.playerID !== this.props.params.playerID) {
+      window.scrollTo(0, 0);
+      const that = this;
+      Meteor.call('players.getPlayer', {
+        playerId: nextProps.params.playerID,
+      }, function(error, result) {
+        if (error) {
+        } else {
+          that.setState({ player: result })
+        }
+      });
       let moves = 0;
       let communityValue = 0;
       let playerVote = null;
@@ -100,9 +119,6 @@ export default class Player extends Component {
     }
   }
 
-  componentWillUpdate() {
-  }
-
   addVote(moveType) {
     // Meteor.subscribe('votes');
     if (moveType !== this.state.playerVote) {
@@ -121,18 +137,19 @@ export default class Player extends Component {
         playerVote: moveType,
         communityValue: this.state.communityValue + moveChange,
         moves: this.state.moves + voteChange,
-      })
+      });
     }
   }
 
   render() {
-    console.log(this.state);
-    const player = this.props.players.find((p) => {
-      return p._id._str === this.props.params.playerID;
-    });
-
+    const player = this.state.player;
     if (!player) {
-      return <div>Loading</div>;
+      return (
+          <div className="sk-spinner sk-spinner-double-bounce">
+            <div className="sk-double-bounce1"></div>
+            <div className="sk-double-bounce2"></div>
+          </div>
+      );
     }
 
     // const this.props.players = this.props.players.sort(function(a, b) {
@@ -145,15 +162,48 @@ export default class Player extends Component {
     //   // a must be equal to b
     //   return 0;
     // });
+    let sortByADP = {
+      asc: function(a, b) {
+        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      },
+      desc: function(a, b) {
+        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      },
+      _str: 'sortByADP',
+    };
+    const that = this;
+    const sortedPlayers = this.props.players.sort(function(a, b) {
+        if (a[that.props.values.past6MonthsADP[5]] > b[that.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        if (a[that.props.values.past6MonthsADP[5]] < b[that.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
 
-    const playerADPRank = this.props.players.indexOf(player);
 
+    const playerADPRank = sortedPlayers.findIndex((p) => p._id._str === player._id._str);
     const previous5 = [];
-
     let i = playerADPRank - 1;
     let n = 0;
     while (i >= 0 && n < 5) {
-      previous5.unshift(this.props.players[i]);
+      previous5.unshift(sortedPlayers[i]);
       i--;
       n++;
     }
@@ -161,16 +211,16 @@ export default class Player extends Component {
     const next5 = [];
     i = playerADPRank + 1;
     n = 0;
-    while (i <= this.props.players.length && n < 5) {
-      next5.push(this.props.players[i]);
+    while (i <= sortedPlayers.length && n < 5) {
+      next5.push(sortedPlayers[i]);
       i++;
       n++;
     }
 
     const similarPlayers = previous5.concat([player], next5);
-
-    const imgLoc = player.position === 'PICK' ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-                                               : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.espn_id}.png&w=350&h=254`;
+    const imgLoc = player.position === 'PICK'
+      ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
+      : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.espn_id}.png&w=350&h=254`;
     const height = player.height === 'PICK' ? 'PICK' : _calculateHeight(player.height);
     const weight = player.weight === 'PICK' ? 'PICK' : `${player.weight}lbs`;
     const rotoLink = player.rotoworld_id === 'PICK' ? '#' : `http://www.rotoworld.com/player/nfl/${player.rotoworld_id}`;
@@ -193,7 +243,6 @@ export default class Player extends Component {
     const trend3ArrowCls = player.trend > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-
     const trend6Months = (player[this.props.values.past6MonthsADP[0]] - player[this.props.values.past6MonthsADP[5]]).toFixed(1);
     const trend6ColorCls = trend6Months > 0
       ? 'text-navy'
@@ -202,10 +251,10 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const firstRoundPick = this.props.players.find((p) => p.name === nextYearsFirst);
-    const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
-    const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
-    const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
+    const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
+    // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
+    // const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
+    // const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
     // const firstRoundPickValue = firstRoundPick[this.props.values.past6MonthsValue[4]];
     // const secondRoundPickValue = secondRoundPick[this.props.values.past6MonthsValue[4]];
     // const thirdRoundPickValue = thirdRoundPick[this.props.values.past6MonthsValue[4]];

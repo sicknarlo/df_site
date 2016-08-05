@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import $ from 'jquery';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;

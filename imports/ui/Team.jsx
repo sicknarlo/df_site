@@ -31,8 +31,8 @@ export default class Team extends Component {
     if (team) {
       return <TeamPage
                   team={team}
-                  currentUser={this.props.currentUser}
                   players={this.props.players}
+                  currentUser={this.props.currentUser}
                   newsAlerts={this.props.newsAlerts}
                   values={this.props.values}
                   currentDb={this.props.currentDb} />
