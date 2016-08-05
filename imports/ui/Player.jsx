@@ -93,7 +93,6 @@ export default class Player extends Component {
       let moves = 0;
       let communityValue = 0;
       let playerVote = null;
-      const that = this;
       Meteor.call('votes.getPlayer', {
         playerId: nextProps.params.playerID,
       }, function(error, result){
@@ -294,6 +293,11 @@ export default class Player extends Component {
       ) : null;
     const firstRoundPickIndex = (
         player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
+    const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
+    const communityCls = classnames({
+      greenText: this.state.communityValue > 0,
+      redText: this.state.communityValue < 0,
+    })
     return (
       <div>
         <PageHeading current={player.name} db = {this.props.currentDb} additional={topDetails} />
@@ -347,19 +351,25 @@ export default class Player extends Component {
             <div className="col-md-8">
               <div className="row">
                 {buySell}
-                <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <div className="col-xs-12">
                   <div className="ibox">
-                    <div className="ibox-content dataPanel">
-                      <h5 className="m-b-md">Community Value</h5>
-                      <h2 className="greenText">{this.state.communityValue}</h2>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                  <div className="ibox">
-                    <div className="ibox-content dataPanel">
-                      <h5 className="m-b-md">Community Votes</h5>
-                      <h2 className>{this.state.moves}</h2>
+                    <div className="ibox-content dataPanel text-center">
+                      <h3 className="m-b-md">
+                        Community Market Place&nbsp;
+                        <OverlayTrigger trigger="click" placement="bottom" overlay={<Popover title="Community Value Rating">Net users who would buy or draft this player at the current ADP. Votes expire after 7 days.</Popover>}>
+                          <i className="fa fa-question-circle text-navy"></i>
+                        </OverlayTrigger>
+                      </h3>
+                      <div className="communityMarketplace">
+                        <div className="communityMarketplace-left">
+                          <h4>Community Rating</h4>
+                          <h2 className={communityCls}>{communityValue}</h2>
+                        </div>
+                        <div className="communityMarketplace-left">
+                          <h4>Community Votes</h4>
+                          <h2>{this.state.moves}</h2>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -406,11 +416,11 @@ export default class Player extends Component {
                   </div>
                 </div>
               </div>
-              <div className="row">
-                <div className="col-lg-12 graphContainer">
-                  <ADPGraph players={[player]} values={this.props.values} />
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12 graphContainer">
+              <ADPGraph players={[player]} values={this.props.values} />
             </div>
           </div>
           <div className="row">

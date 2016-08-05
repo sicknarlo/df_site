@@ -31,22 +31,22 @@ Meteor.methods({
   'teams.getStandardTopTrenders'() {
     const query = {};
     query[currentMonthStandard] = { $lt: 151 };
-    return Players.find(query, { sort: { trend: -1 }, limit: 25 }).fetch();
+    return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBTopTrenders'() {
     const query = {};
     query[currentMonth2QB] = { $lt: 151 };
-    return Players.find(query, { sort: { trend: -1 }, limit: 25 }).fetch();
+    return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardBottomTrenders'() {
     const query = {};
     query[currentMonthStandard] = { $lt: 151 };
-    return Players.find(query, { sort: { trend: 1 }, limit: 25 }).fetch();
+    return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBBottomTrenders'() {
     const query = {};
     query[currentMonth2QB] = { $lt: 151 };
-    return Players.find(query, { sort: { trend: 1 }, limit: 25 }).fetch();
+    return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'players.getPlayer'({ playerId }) {
     const id = new Meteor.Collection.ObjectID(playerId);
