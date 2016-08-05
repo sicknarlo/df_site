@@ -43,16 +43,16 @@ export default class Player extends Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     const that = this;
-    Meteor.call('players.getPlayer', {
-      playerId: this.props.params.playerID,
-    }, function(error, result) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(result);
-        that.setState({ player: result })
-      }
-    });
+    // Meteor.call('players.getPlayer', {
+    //   playerId: this.props.params.playerID,
+    // }, function(error, result) {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log(result);
+    //     that.setState({ player: result })
+    //   }
+    // });
     let moves = 0;
     let communityValue = 0;
     let playerVote = null;
@@ -82,14 +82,14 @@ export default class Player extends Component {
     if (nextProps.params.playerID !== this.props.params.playerID) {
       window.scrollTo(0, 0);
       const that = this;
-      Meteor.call('players.getPlayer', {
-        playerId: nextProps.params.playerID,
-      }, function(error, result) {
-        if (error) {
-        } else {
-          that.setState({ player: result })
-        }
-      });
+      // Meteor.call('players.getPlayer', {
+      //   playerId: nextProps.params.playerID,
+      // }, function(error, result) {
+      //   if (error) {
+      //   } else {
+      //     that.setState({ player: result })
+      //   }
+      // });
       let moves = 0;
       let communityValue = 0;
       let playerVote = null;
@@ -141,7 +141,7 @@ export default class Player extends Component {
   }
 
   render() {
-    const player = this.state.player;
+    const player = this.props.players.find((p) => p._id._str === this.props.params.playerID);
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
