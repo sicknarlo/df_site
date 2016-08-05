@@ -134,6 +134,24 @@ class App extends Component {
 
     const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
 
+    if (!this.props.playersReady) {
+      return (
+        <div className="overlay">
+          <div className="sk-spinner sk-spinner-cube-grid">
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+              <div className="sk-cube"></div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div id="wrapper">
         <Navigation currentUser = {this.props.currentUser} />
@@ -141,9 +159,10 @@ class App extends Component {
           <TopNav currentUser = {this.props.currentUser} />
           {this.props.children && React.cloneElement(this.props.children, {
             values: v,
+            players: this.props.players,
             currentDb: this.state.db,
             setDb: this.setDb,
-            players: this.props.players,
+            teamsReady: this.props.teamsReady,
             currentUser: this.props.currentUser,
             teams: this.props.teams,
           })}
@@ -160,12 +179,18 @@ App.propTypes = {
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('players');
-  Meteor.subscribe('teams');
+  const subscribeTeams = Meteor.subscribe('teams');
+  const subscribePlayers = Meteor.subscribe('players');
+  const teamsReady = subscribeTeams.ready();
+  const playersReady = subscribePlayers.ready();
+  const players = Players.find({}).fetch();
+  const teams = Teams.find({}).fetch();
 
   return {
-    players: Players.find({}, { sort: { jul_16: 1 } }).fetch(),
-    teams: Teams.find({}).fetch(),
     currentUser: Meteor.user(),
+    teamsReady,
+    teams,
+    playersReady,
+    players,
   };
 }, App);

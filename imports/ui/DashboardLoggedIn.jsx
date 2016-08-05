@@ -1,12 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
+import { createContainer } from 'meteor/react-meteor-data';
 import 'icheck/skins/all.css';
 import { Checkbox } from 'react-icheck';
 import $ from 'jquery';
 import { Link } from 'react-router';
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
+import { Teams } from '../api/teams.js';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -36,6 +38,21 @@ export default class DashboardLoggedIn extends Component {
   // }
 
   render() {
+    if (!this.props.teamsReady) {
+      return (
+        <div className="sk-spinner sk-spinner-cube-grid">
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+            <div className="sk-cube"></div>
+        </div>
+      );
+    }
     const user = this.props.currentUser;
     return (
       <div>
@@ -116,3 +133,13 @@ DashboardLoggedIn.propTypes = {
     })}
 </ul>
 </div>*/}
+
+// export default createContainer(() => {
+//   const subscription = Meteor.subscribe('teams');
+//   const loading = !subscription.ready();
+//   const teams = Teams.find({}).fetch();
+//   return {
+//     loading,
+//     teams,
+//   };
+// }, DashboardLoggedIn);
