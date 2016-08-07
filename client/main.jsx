@@ -4,6 +4,5 @@ import { renderRoutes } from '../imports/startup/routes.jsx';
 import '../imports/startup/accounts-config.js';
 
 Meteor.startup(() => {
-  // job.start();
   render(renderRoutes(), document.getElementById('app'));
 });

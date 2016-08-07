@@ -125,7 +125,6 @@ class App extends Component {
   }
 
   render() {
-    console.log('flooo');
     // let newsAlerts = [];
     // if (this.state.rotoData && this.props.players) {
     //   newsAlerts = this.state.rotoData.map(function(item) {

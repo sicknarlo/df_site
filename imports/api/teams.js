@@ -9,7 +9,7 @@ import { Players } from './players.js';
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish tasks that are public or belong to the current user
-  Meteor.publish('teams', function tasksPublication() {
+  Meteor.publish('teams', function() {
     return Teams.find({
       $or: [
         { owner: this.userId },

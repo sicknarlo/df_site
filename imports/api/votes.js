@@ -6,7 +6,7 @@ export const Votes = new Mongo.Collection('votes');
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish tasks that are public or belong to the current user
-  Meteor.publish('votes', function tasksPublication() {
+  Meteor.publish('votes', function() {
     return Votes.find({});
   });
 }
