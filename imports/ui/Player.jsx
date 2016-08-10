@@ -380,7 +380,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">Value</h5>
                       <h2 className="text-success">
-                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[4]]}
+                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[5]]}
                       </h2>
                     </div>
                   </div>
