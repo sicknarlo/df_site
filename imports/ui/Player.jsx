@@ -44,35 +44,36 @@ export default class Player extends Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     const that = this;
-    Meteor.call('players.getPlayer', {
-      playerId: this.props.params.playerID,
-    }, function(error, result) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(result);
-        that.setState({ player: result })
-      }
-    });
+    // Meteor.call('players.getPlayer', {
+    //   playerId: this.props.params.playerID,
+    // }, function(error, result) {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log(result);
+    //     that.setState({ player: result })
+    //   }
+    // });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.playerID !== this.props.params.playerID) {
       window.scrollTo(0, 0);
       const that = this;
-      Meteor.call('players.getPlayer', {
-        playerId: nextProps.params.playerID,
-      }, function(error, result) {
-        if (error) {
-        } else {
-          that.setState({ player: result })
-        }
-      });
+      // Meteor.call('players.getPlayer', {
+      //   playerId: nextProps.params.playerID,
+      // }, function(error, result) {
+      //   if (error) {
+      //   } else {
+      //     that.setState({ player: result })
+      //   }
+      // });
     }
   }
 
   render() {
-    const player = this.state.player;
+    const player = this.props.players.find((p) => p._id._str === this.props.params.playerID);
+    // const player = this.state.player;
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
@@ -251,7 +252,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">Value</h5>
                       <h2 className="text-success">
-                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[4]]}
+                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[5]]}
                       </h2>
                     </div>
                   </div>

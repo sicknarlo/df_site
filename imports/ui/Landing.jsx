@@ -68,11 +68,11 @@ export default class Landing extends Component {
                   </div>
                   <div id="navbar" className="navbar-collapse collapse">
                       <ul className="nav navbar-nav navbar-right">
-                          <li><a className="page-scroll" href="#page-top">Home</a></li>
-                          <li><a className="page-scroll" href="#features">Features</a></li>
                           <li><a className="page-scroll" href="/tools/dashboard">Dashboard</a></li>
+                          <li><a className="page-scroll" href="/tools/calculator">Calculator</a></li>
+                          <li><a className="page-scroll" href="/tools/players">Player List</a></li>
+                          <li><a className="page-scroll" href="/tools/compare">Compare</a></li>
                           <li><a className="page-scroll" href="https://medium.com/dynastyfftools">Blog</a></li>
-                          <li><a className="page-scroll" href="/tools/login">Sign In</a></li>
                       </ul>
                   </div>
               </div>

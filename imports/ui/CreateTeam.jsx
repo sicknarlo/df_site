@@ -46,11 +46,9 @@ export default class CreateTeam extends Component {
   }
 
   addPlayer(p) {
-    if (!this.state.roster.indexOf(p.val) > -1) {
-      const newRoster = this.state.roster;
-      newRoster.push(p.val);
-      this.setState({ roster: newRoster });
-    }
+    const newRoster = this.state.roster;
+    newRoster.push(p.val);
+    this.setState({ roster: newRoster });
   }
 
   togglePPR() {
