@@ -182,6 +182,14 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
+    const redraftRank = player[this.props.values.redraftRank]
+      ? player[this.props.values.redraftRank]
+      : 'N/A';
+
+    const fpRank = player[this.props.values.rank]
+      ? player[this.props.values.rank]
+      : 'N/A';
+
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
     // const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
@@ -195,6 +203,62 @@ export default class Player extends Component {
 
     const firstRoundPickIndex = (
         player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
+
+    const badges = [];
+
+    if (player[this.props.values.buyIndex] > 9 && player[this.props.values.buyIndex] < 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Value Buy">This player's average ranking is over 10 spots greater than their current ADP. They could be a good buy.</Popover>}>
+          <div className="badge badge-info playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>Good Value Buy</strong></div>
+        </OverlayTrigger>)
+      );
+    } else if (player[this.props.values.buyIndex] >= 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Value Buy">This player's average ranking is over 20 spots greater than their current ADP. They are a great buy at this value.</Popover>}>
+          <div className="badge badge-green playerBadge"><i className="fa fa-dollar badgeIcon"></i><strong>Great Value Buy</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.buyIndex] <= -20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Sell Target">This player's average ranking is over 20 spots worse than their current ADP. They are being overvalued and should be sold at this value.</Popover>}>
+          <div className="badge badge-danger playerBadge"><i className="fa fa-exclamation badgeIcon"></i><strong>Great Sell Target</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.buyIndex] < -9 && player[this.props.values.buyIndex] > 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Sell Target">This player's average ranking is over 10 spots worse than their current ADP. They are possibly being overvalued and could be a good guy to move.</Popover>}>
+          <div className="badge badge-warning playerBadge"><i className="fa fa-thumbs-o-down badgeIcon"></i><strong>Good Sell Target</strong></div>
+        </OverlayTrigger>)
+        );
+    }
+
+    if (player[this.props.values.winNowIndex] > 19) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Now Player">This player's redraft ranking is over 20 spots higher than their ADP. They are more valuable for win-now teams, or are more likely to provide more immediate returns for their owner.</Popover>}>
+          <div className="badge badge-warning playerBadge"><i className="fa fa-flash badgeIcon"></i><strong>Win Now</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.winNowIndex] < -19) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Later Player">This player's redraft ranking is over 20 spots lower than their ADP. They are more valuable for win-later teams and may not provide as much immediate value this season.</Popover>}>
+          <div className="badge badge-primary playerBadge"><i className="fa fa-rocket badgeIcon"></i><strong>Win Later</strong></div>
+        </OverlayTrigger>)
+        );
+    }
+
+    if (player[this.props.values.trend] > 9) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Up">This player has increased in value by over 10 spots over the last 3 months.</Popover>}>
+          <div className="badge badge-green playerBadge"><i className="fa fa-level-up badgeIcon"></i><strong>Trending Up</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.trend] < -9) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Down">This player has decreased in value by over 10 spots over the last 3 months.</Popover>}>
+          <div className="badge badge-danger playerBadge"><i className="fa fa-level-down badgeIcon"></i><strong>Trending Down</strong></div>
+        </OverlayTrigger>)
+        );
+    }
     return (
       <div>
         <PageHeading current={player.name} db = {this.props.currentDb} additional={topDetails} />
@@ -207,9 +271,6 @@ export default class Player extends Component {
                     <img alt="image" className="img-responsive playerImg" src={imgLoc} />
                   </div>
                   <div className="ibox-content profile-content">
-                    {/*<div className="player-badges">
-                      <div className="badge badge-primary playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>BUY</strong></div>
-                    </div>*/}
                     <table className="table">
                       <tbody>
                         <tr>
@@ -236,10 +297,13 @@ export default class Player extends Component {
                     </table>
                     <div className="player-profileSection-content">
                       <h3>DynastyFFTools 1st Round Pick Index: <strong>{firstRoundPickIndex}</strong>&nbsp;
-                      <OverlayTrigger trigger="click" placement="bottom" overlay={<Popover title="DynastyFFTools 1st Round Pick Index">The players approximate worth in next year's 1st round picks.</Popover>}>
+                      <OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="DynastyFFTools 1st Round Pick Index">The players approximate worth in next year's 1st round picks.</Popover>}>
                         <i className="fa fa-question-circle text-navy"></i>
                       </OverlayTrigger>
                       </h3>
+                    </div>
+                    <div className="player-badges">
+                      {badges.map(function(b) { return b })}
                     </div>
                   </div>
                 </div>
@@ -262,12 +326,32 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel ">
                       <h5 className="m-b-md">ADP</h5>
                       <h2 className={adpColorCls}>
-                        <i className={adpArrowCls}></i> {player[this.props.values.past6MonthsADP[5]]}
+                        {player[this.props.values.past6MonthsADP[5]]}
                       </h2>
                     </div>
                   </div>
                 </div>
                 <div className="col-xs-6 col-lg-3">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel ">
+                      <h5 className="m-b-md">Dynasty Rank</h5>
+                      <h2 >
+                        {fpRank}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6 col-lg-3">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel ">
+                      <h5 className="m-b-md">Redraft Rank</h5>
+                      <h2 >
+                        {redraftRank}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6">
                   <div className="ibox">
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">3-Month Trend</h5>
@@ -277,7 +361,7 @@ export default class Player extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-xs-6 col-lg-3">
+                <div className="col-xs-6">
                   <div className="ibox">
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">6-Month Trend</h5>

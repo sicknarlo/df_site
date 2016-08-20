@@ -8,9 +8,11 @@ import Navigation from './Navigation.jsx';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
 import $ from 'jquery';
+import mixpanel from 'mixpanel-browser';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
+mixpanel.init("b3957d78fe49d65a13ad277d691d3a8b")
 // App component - represents the whole app
 class App extends Component {
   constructor(props) {
@@ -172,6 +174,7 @@ class App extends Component {
             teamsReady: this.props.teamsReady,
             currentUser: this.props.currentUser,
             teams: this.props.teams,
+            mixpanel,
           })}
           <Footer />
         </div>

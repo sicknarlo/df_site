@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import $ from 'jquery';
 
 export default class Navigation extends React.Component {
   constructor(props) {
@@ -15,6 +16,12 @@ export default class Navigation extends React.Component {
     this.setState({
       open: !this.state.open,
     });
+  }
+
+  closeOnMobile() {
+    if ($(window).width() < 768) {
+      $('body').addClass('mini-navbar');
+    }
   }
 
   renderLoggedIn() {
@@ -52,31 +59,31 @@ export default class Navigation extends React.Component {
               </div>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/dashboard'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/dashboard'}>
                 <i className="fa fa-dashboard"></i>
                 <span className="nav-label">Dashboard</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/players'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/compare'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/compare'}>
                 <i className="fa fa-compass"></i>
                 <span className="nav-label">Player Comparison</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/calculator'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/calculator'}>
                 <i className="fa fa-exchange"></i>
                 <span className="nav-label">Trade Calculator</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/faq'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/faq'}>
                 <i className="fa fa-question"></i>
                 <span className="nav-label">FAQ</span>
               </Link>
@@ -99,9 +106,9 @@ export default class Navigation extends React.Component {
                 <a className="dropdown-toggle" href="#">
                   <span className="clear">
                     <div className="block m-t-xs topNav">
-                      <strong className="font-bold underline"><Link to="/tools/login">Log In</Link></strong> <br />
+                      <strong className="font-bold underline"><Link onClick={this.closeOnMobile} to="/tools/login">Log In</Link></strong> <br />
                       or <br />
-                      <strong className="font-bold underline"><Link to="/tools/signup">Sign Up</Link></strong>
+                      <strong className="font-bold underline"><Link onClick={this.closeOnMobile} to="/tools/signup">Sign Up</Link></strong>
                     </div>
                   </span>
                 </a>
@@ -117,31 +124,31 @@ export default class Navigation extends React.Component {
               </div>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/dashboard'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/dashboard'}>
                 <i className="fa fa-dashboard"></i>
                 <span className="nav-label">Dashboard</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/players'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/compare'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/compare'}>
                 <i className="fa fa-compass"></i>
                 <span className="nav-label">Player Comparison</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/calculator'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/calculator'}>
                 <i className="fa fa-calculator"></i>
                 <span className="nav-label">Trade Calculator</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
-              <Link to={'/tools/faq'}>
+              <Link onClick={this.closeOnMobile} to={'/tools/faq'}>
                 <i className="fa fa-question"></i>
                 <span className="nav-label">FAQ</span>
               </Link>

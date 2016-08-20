@@ -50,6 +50,7 @@ export default class Calculator extends Component {
     })
   }
   showResults() {
+    this.props.mixpanel.track('evaluate trade');
     this.setState({ showResults: true });
   }
   addToTeam1(val) {
