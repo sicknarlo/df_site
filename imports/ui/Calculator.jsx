@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import GoogleURL from 'google-url';
 import $ from 'jquery';
 
 const ageCalc = function(birthdate) {
@@ -15,6 +16,55 @@ const ageCalc = function(birthdate) {
   const ageDifMs = Date.now() - bdate.getTime();
   const ageDate = new Date(ageDifMs); // miliseconds from epoch
   return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
+const googleUrl = new GoogleURL({ key: 'AIzaSyAbs9ol5Vtmr9SzguqVFh6iwJ2uDjx-s8U' });
+
+class ShareUrl extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showLink: false,
+      showLoading: false,
+      shareURL: null,
+    };
+    this.getLink = this.getLink.bind(this);
+  }
+  getLink() {
+    this.props.mixpanel.track('share trade');
+    this.setState({ showLoading: true });
+    const that = this;
+    googleUrl.shorten(this.props.longURL, function(err, shortUrl) {
+      if (err) console.log(err);
+      that.setState({ shareURL: shortUrl, showLink: true, showLoading: false });
+    });
+  }
+  showButton() {
+    return (
+      <button type="button" className="btn btn-lg btn-block btn-outline btn-primary" onClick={this.getLink}>Share this trade!</button>
+    )
+  }
+  showLoading() {
+    return (
+      <div class="sk-spinner sk-spinner-wave">
+          <div class="sk-rect1"></div>
+          <div class="sk-rect2"></div>
+          <div class="sk-rect3"></div>
+          <div class="sk-rect4"></div>
+          <div class="sk-rect5"></div>
+      </div>
+    )
+  }
+  showLink() {
+    return (
+      <h2>Share this link: {this.state.shareURL}</h2>
+    )
+  }
+  render() {
+    if (this.state.showLink) return this.showLink();
+    if (this.state.showLoading) return this.showLoading();
+    return this.showButton();
+  }
 }
 
 export default class Calculator extends Component {
@@ -25,6 +75,10 @@ export default class Calculator extends Component {
       showResults: false,
       team1: [],
       team2: [],
+      shareURL: null,
+      longURL: null,
+      shouldShare: false,
+      gettingShareURL: false,
     };
     this.closeInstructions = this.closeInstructions.bind(this);
     this.closeResults = this.closeResults.bind(this);
@@ -35,23 +89,69 @@ export default class Calculator extends Component {
     this.removePlayerFromTeam1 = this.removePlayerFromTeam1.bind(this);
     this.removePlayerFromTeam2 = this.removePlayerFromTeam2.bind(this);
     this.findClosestPlayer = this.findClosestPlayer.bind(this);
+    this.getShareURL = this.getShareURL.bind(this);
+  }
+  componentWillMount() {
+    const that = this;
+    if (that.props.location.query.share) {
+      const team1 = [];
+      if (!Array.isArray(that.props.location.query.t1)) {
+        const player = that.props.players.find(function(pl) {
+          return pl._id._str === that.props.location.query.t1;
+        });
+        team1.push(player);
+      } else {
+        that.props.location.query.t1.forEach(function(p) {
+          const player = that.props.players.find(function(pl) {
+            return pl._id._str === p;
+          });
+          team1.push(player);
+        });
+      }
+      const team2 = [];
+      if (!Array.isArray(that.props.location.query.t2)) {
+        const player = that.props.players.find(function(pl) {
+          return pl._id._str === that.props.location.query.t2;
+        });
+        team2.push(player);
+      } else {
+        that.props.location.query.t2.forEach(function(p) {
+          const player = that.props.players.find(function(pl) {
+            return pl._id._str === p;
+          });
+          team2.push(player);
+        });
+      }
+      that.setState({
+        team1,
+        team2,
+        showResults: true,
+      });
+    }
   }
   closeInstructions() {
     this.setState({ showInstructions: false });
   }
   closeResults() {
-    this.setState({ showResults: false });
+    this.setState({ showResults: false, shouldShare: false });
   }
   clearTrade() {
     this.setState({
       showResults: false,
       team1: [],
       team2: [],
+      shouldShare: false,
     })
   }
   showResults() {
+    // const that = this;
     this.props.mixpanel.track('evaluate trade');
-    this.setState({ showResults: true });
+    // googleUrl.shorten(longUrl, function(err, shortUrl) {
+    //   if (err) console.log(err);
+    //   that.setState({ shareURL: shortUrl, showResults: true });
+    // });
+    const that = this;
+    that.setState({ showResults: true })
   }
   addToTeam1(val) {
       $('.compareSearch').addClass('has-success');
@@ -104,7 +204,7 @@ export default class Calculator extends Component {
                 The Dynasty Fantasy Football Trade Calculator<br />
               </h2>
               <p>
-                Not sure if a trade is fair? The Dynasty Hub's Trade Calculator was
+                Not sure if a trade is fair? DynastyFF Tool's Trade Calculator was
                 created to help players make informed trade decisions based on
                 Average Draft Position. Simply add the players being exchanged and
                 get an in depth look at the players being exchanged.
@@ -124,7 +224,16 @@ export default class Calculator extends Component {
             </div>
           </div>
         </div>
-      )
+      );
+  }
+
+  getShareURL() {
+    // const that = this;
+    // that.setState({ shouldShare: true })
+    // googleUrl.shorten(that.state.longURL, function(err, shortUrl) {
+    //   if (err) console.log(err);
+    //   that.setState({ shareURL: shortUrl });
+    // });
   }
 
   findClosestPlayer(val) {
@@ -153,26 +262,8 @@ export default class Calculator extends Component {
     this.state.team2.forEach(function(player) {
       team2ValueSent += player[past6MonthsValue[5]]
     });
-
     const team1ValueGained = team2ValueSent - team1ValueSent;
     const team2ValueGained = team1ValueSent - team2ValueSent;
-    const submitButton = this.state.team1.length > 0 && this.state.team2.length > 0
-      ? <Button
-          className="tradeButton"
-          bsStyle="primary"
-          bsSize="large"
-          onClick={this.showResults}>
-            <i className="fa fa-random"></i>&nbsp;
-            Calculate the Trade
-        </Button>
-      : <Button
-          className="tradeButton"
-          bsStyle="Danger"
-          disabled
-          bsSize="large">
-            <i className="fa fa-times"></i>&nbsp;
-            Add players to both teams
-        </Button>;
     const fairness = Math.round((Math.min(team1ValueSent, team2ValueSent) / Math.max(team1ValueSent, team2ValueSent)) * 100);
     const fairnessText = `${fairness}% Fair`;
     let degree = null;
@@ -195,6 +286,36 @@ export default class Calculator extends Component {
         )
       : null;
       // console.log(this.props.params);
+    // ?list_a=1&list_a=2&list_a=3
+    // apikey=AIzaSyA-wpBnY7yCf-V5yf9Jb7uwLeojtLU--3c
+
+    let team1Str = '';
+    this.state.team1.forEach(function(p, i) {
+      team1Str += `&t1=${p._id._str}`
+    });
+    let team2Str = '';
+    this.state.team2.forEach(function(p, i) {
+      team2Str += `&t2=${p._id._str}`
+    });
+
+    const shareLink = `www.dynastyfftools.com/tools/calculator?share=true${team1Str}${team2Str}`;
+    const submitButton = this.state.team1.length > 0 && this.state.team2.length > 0
+      ? <Button
+          className="tradeButton"
+          bsStyle="primary"
+          bsSize="large"
+          onClick={this.showResults}>
+            <i className="fa fa-random"></i>&nbsp;
+            Calculate the Trade
+        </Button>
+      : <Button
+          className="tradeButton"
+          bsStyle="Danger"
+          disabled
+          bsSize="large">
+            <i className="fa fa-times"></i>&nbsp;
+            Add players to both teams
+        </Button>;
     return (
       <div>
         <PageHeading current={"Trade Calculator"} db={this.props.currentDb} />
@@ -356,6 +477,13 @@ export default class Calculator extends Component {
                       <div className="ibox-content">
                         {closestPlayerString}
                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-lg-12">
+                    <div className="ibox">
+                      <ShareUrl longURL={shareLink} mixpanel={this.props.mixpanel}/>
                     </div>
                   </div>
                 </div>

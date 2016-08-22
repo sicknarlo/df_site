@@ -199,6 +199,11 @@ export default class Landing extends Component {
                       <p><strong>&copy; 2016 DynastyFF Tools</strong><br/></p>
                   </div>
               </div>
+              <div className="row">
+                  <div className="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
+                      <a href="https://mixpanel.com/f/partner" rel="nofollow"><img src="//cdn.mxpnl.com/site_media/images/partner/badge_blue.png" alt="Mobile Analytics" /></a>
+                  </div>
+              </div>
           </div>
       </section>
     </div>);
