@@ -46,12 +46,12 @@ class ShareUrl extends Component {
   }
   showLoading() {
     return (
-      <div class="sk-spinner sk-spinner-wave">
-          <div class="sk-rect1"></div>
-          <div class="sk-rect2"></div>
-          <div class="sk-rect3"></div>
-          <div class="sk-rect4"></div>
-          <div class="sk-rect5"></div>
+      <div className="sk-spinner sk-spinner-wave">
+          <div className="sk-rect1"></div>
+          <div className="sk-rect2"></div>
+          <div className="sk-rect3"></div>
+          <div className="sk-rect4"></div>
+          <div className="sk-rect5"></div>
       </div>
     )
   }
