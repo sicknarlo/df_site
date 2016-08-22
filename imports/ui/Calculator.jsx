@@ -18,8 +18,6 @@ const ageCalc = function(birthdate) {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
 
-const googleUrl = new GoogleURL({ key: 'AIzaSyAbs9ol5Vtmr9SzguqVFh6iwJ2uDjx-s8U' });
-
 class ShareUrl extends Component {
   constructor(props) {
     super(props);
@@ -34,10 +32,17 @@ class ShareUrl extends Component {
     this.props.mixpanel.track('share trade');
     this.setState({ showLoading: true });
     const that = this;
-    googleUrl.shorten(this.props.longURL, function(err, shortUrl) {
-      if (err) console.log(err);
-      that.setState({ shareURL: shortUrl, showLink: true, showLoading: false });
-    });
+    $.ajax({
+        url: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAbs9ol5Vtmr9SzguqVFh6iwJ2uDjx-s8U',
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        data: '{ longUrl: "' + this.props.longURL +'"}',
+        dataType: 'json',
+        success: function(response) {
+          console.log(response);
+            that.setState({ shareURL: response.id, showLink: true, showLoading: false });
+        }
+     });
   }
   showButton() {
     return (
