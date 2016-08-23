@@ -27,6 +27,7 @@ class ShareUrl extends Component {
       shareURL: null,
     };
     this.getLink = this.getLink.bind(this);
+    this.selectLink = this.selectLink.bind(this);
   }
   getLink() {
     this.props.mixpanel.track('share trade');
@@ -39,8 +40,8 @@ class ShareUrl extends Component {
         data: '{ longUrl: "' + this.props.longURL +'"}',
         dataType: 'json',
         success: function(response) {
-          console.log(response);
-            that.setState({ shareURL: response.id, showLink: true, showLoading: false });
+          // console.log(response);
+          that.setState({ shareURL: response.id, showLink: true, showLoading: false });
         }
      });
   }
@@ -58,12 +59,26 @@ class ShareUrl extends Component {
           <div className="sk-rect4"></div>
           <div className="sk-rect5"></div>
       </div>
-    )
+    );
+  }
+  selectLink() {
+    const input = this.refs.input;
+    // input.focus();
+    console.log(input.value.length);
+    input.setSelectionRange(0, input.value.length);
   }
   showLink() {
     return (
-      <h2>Share this link: {this.state.shareURL}</h2>
-    )
+      <div>
+        <h2>Share this link</h2>
+        <input
+          ref="input"
+          className="form-control"
+          readOnly
+          value={this.state.shareURL}
+          onClick={() => this.selectLink()} />
+      </div>
+    );
   }
   render() {
     if (this.state.showLink) return this.showLink();
@@ -99,6 +114,7 @@ export default class Calculator extends Component {
   componentWillMount() {
     const that = this;
     if (that.props.location.query.share) {
+      this.props.mixpanel.track('came from link share');
       const team1 = [];
       if (!Array.isArray(that.props.location.query.t1)) {
         const player = that.props.players.find(function(pl) {
