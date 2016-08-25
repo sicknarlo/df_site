@@ -15,9 +15,17 @@ import Team from '../ui/Team.jsx';
 import UpdateValues from '../ui/UpdateValues.jsx';
 import Landing from '../ui/Landing.jsx';
 import FAQ from '../ui/FAQ.jsx';
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-67151916-1');
+
+function logPageView() {
+  ReactGA.set({ page: window.location.pathname });
+  ReactGA.pageview(window.location.pathname);
+}
 
 export const renderRoutes = () => (
-  <Router history={browserHistory}>
+  <Router history={browserHistory} onUpdate={logPageView}>
     <Route path="/" component={Landing} />
     <Redirect from="/players" to="/tools/players" />
     <Redirect from="/calculator" to="/tools/calculator" />

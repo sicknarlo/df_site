@@ -24,6 +24,11 @@ const PValues = {
         'Jun',
         'Jul',
       ],
+      redraftRank: 'redraft_rank',
+      rank: 'rank',
+      buyIndex: 'buy_index',
+      winNowIndex: 'win_now_index',
+      trend: 'trend',
   },
   super: {
     past6MonthsValue: [
@@ -50,7 +55,12 @@ const PValues = {
       'Jun',
       'Jul',
     ],
-},
+    redraftRank: 'redraft_rank_2qb',
+    rank: 'rank_2qb',
+    buyIndex: 'buy_index_2qb',
+    winNowIndex: 'win_now_index_2qb',
+    trend: 'trend_2qb',
+  },
 }
 
 export default PValues;

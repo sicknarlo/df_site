@@ -127,11 +127,9 @@ export default class TeamPage extends Component {
     team.players.forEach(function(pId) {
       that.props.players.forEach(function(p) {
         if (p._id._str === pId) teamPlayers.push(p);
-      })
-    })
-    // const teamPlayers = this.props.players.filter(function(p) {
-    //   return team.players.indexOf(p._id._str) > -1;
-    // });
+      });
+    });
+
     let currentValue = 0;
     let lastValue = 0;
     let last3Value = 0;

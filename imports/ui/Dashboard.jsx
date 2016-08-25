@@ -29,7 +29,14 @@ export default class Dashboard extends Component {
       bottomTrendersPPR: [],
       topTrendersSuper: [],
       bottomTrendersSuper: [],
+      underValuedPPR: [],
+      underValuedSuper: [],
+      overValuedPPR: [],
+      overValuedSuper: [],
+      winNowPPR: [],
+      winNowSuper: [],
     };
+    this.trackClick = this.trackClick.bind(this);
   }
 
   componentDidMount() {
@@ -58,6 +65,42 @@ export default class Dashboard extends Component {
         that.setState({ bottomTrendersSuper: result })
       }
     });
+    Meteor.call('teams.getStandardUnderValuedPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ underValuedPPR: result })
+      }
+    });
+    Meteor.call('teams.get2QBUnderValuedPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ underValuedSuper: result })
+      }
+    });
+    Meteor.call('teams.getStandardOverValuedPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ overValuedPPR: result })
+      }
+    });
+    Meteor.call('teams.get2QBOverValuedPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ overValuedSuper: result })
+      }
+    });
+    Meteor.call('teams.getStandardWinNowPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ winNowPPR: result })
+      }
+    });
+    Meteor.call('teams.get2QBWinNowPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ winNowSuper: result })
+      }
+    });
   }
   // componentWillMount() {
   //   const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
@@ -77,6 +120,10 @@ export default class Dashboard extends Component {
     this.props.setDb(e);
   }
 
+  trackClick() {
+    this.props.mixpanel.track('dashboard player clicked');
+  }
+
   render() {
     if (
       this.state.topTrendersPPR.length === 0
@@ -94,6 +141,9 @@ export default class Dashboard extends Component {
 
     const risers = this.props.currentDb === 'ppr' ? this.state.topTrendersPPR : this.state.topTrendersSuper;
     const fallers = this.props.currentDb === 'ppr' ? this.state.bottomTrendersPPR : this.state.bottomTrendersSuper;
+    const overs = this.props.currentDb === 'ppr' ? this.state.overValuedPPR : this.state.overValuedSuper;
+    const unders = this.props.currentDb === 'ppr' ? this.state.underValuedPPR : this.state.underValuedSuper;
+    const nows = this.props.currentDb === 'ppr' ? this.state.winNowPPR : this.state.winNowSuper;
     const dashboard = this.props.currentUser
     ? <DashboardLoggedIn
         teamsReady={this.props.teamsReady}
@@ -144,12 +194,12 @@ export default class Dashboard extends Component {
                     <thead>
                       <th>Name</th>
                       <th>ADP</th>
-                      <th>Trend</th>
+                      <th>3mo Trend</th>
                     </thead>
                     <tbody>
                       {risers.map((player) =>
                         <tr>
-                          <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player[this.props.values.past6MonthsADP[5]]}</td>
                           <td>+{player.trend}</td>
                         </tr>
@@ -169,18 +219,97 @@ export default class Dashboard extends Component {
                   <thead>
                     <th>Name</th>
                     <th>ADP</th>
-                    <th>Trend</th>
+                    <th>3mo Trend</th>
                   </thead>
                   <tbody>
                     {fallers.map((player) =>
                       <tr>
-                        <td><Link to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                        <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                         <td>{player[this.props.values.past6MonthsADP[5]]}</td>
                         <td>{player.trend}</td>
                       </tr>
                     )}
                   </tbody>
                 </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Over Valued Players</h5>
+                </div>
+                <div className="ibox-content">
+                  <table className="table">
+                    <thead>
+                      <th>Name</th>
+                      <th>ADP</th>
+                      <th>Rank</th>
+                    </thead>
+                    <tbody>
+                      {overs.map((player) =>
+                        <tr>
+                          <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
+                          <td>{player[this.props.values.rank]}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Under Valued Players</h5>
+                </div>
+                <div className="ibox-content">
+                <table className="table">
+                  <thead>
+                    <th>Name</th>
+                    <th>ADP</th>
+                    <th>Rank</th>
+                  </thead>
+                  <tbody>
+                    {unders.map((player) =>
+                      <tr>
+                        <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                        <td>{player[this.props.values.past6MonthsADP[5]]}</td>
+                        <td>{player[this.props.values.rank]}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6 col-md-offset-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Win Now Bargains</h5>
+                </div>
+                <div className="ibox-content">
+                  <table className="table">
+                    <thead>
+                      <th>Name</th>
+                      <th>ADP</th>
+                      <th>Redraft Rank</th>
+                    </thead>
+                    <tbody>
+                      {nows.map((player) =>
+                        <tr>
+                          <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
+                          <td>{player[this.props.values.redraftRank]}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

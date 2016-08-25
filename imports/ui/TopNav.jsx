@@ -67,7 +67,7 @@ export default class TopNav extends React.Component {
   render() {
     return (
       <div className="row border-bottom">
-        <nav className="navbar" role="navigation" style={{ marginBottom: 0 }}>
+        <nav className="navbar navbar-fixed-top" role="navigation" style={{ marginBottom: 0 }}>
           <div className="navbar-header">
             <div
               id="navbar-minimalize"
