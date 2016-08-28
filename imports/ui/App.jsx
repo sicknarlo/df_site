@@ -24,12 +24,20 @@ class App extends Component {
       rotoData: null,
       alertIDs: null,
       db: 'ppr',
+      players: [],
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.setDb = this.setDb.bind(this);
   }
   componentDidMount() {
+    const that = this;
+    Meteor.call('players.getPlayers', function(error, result){
+      if (error) {
+      } else {
+        that.setState({ players: result, playersReady: true })
+      }
+    });
     setTimeout(() => {
       /* eslint-disable react/no-did-mount-set-state */
       this.setState({ showConnectionIssue: true });
@@ -119,12 +127,12 @@ class App extends Component {
   setDb (e) {
     this.setState({ db: e });
   }
-  shouldComponentUpdate(nextProps) {
-    if (!nextProps.playersReady) {
-      return false;
-    }
-    return true;
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   if (!nextProps.playersReady) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   render() {
     // let newsAlerts = [];
@@ -142,7 +150,7 @@ class App extends Component {
 
     const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
 
-    if (!this.props.playersReady) {
+    if (!this.state.playersReady) {
       return (
         <div className="overlay">
           <div className="sk-spinner sk-spinner-cube-grid">
@@ -167,7 +175,7 @@ class App extends Component {
           <TopNav currentUser = {this.props.currentUser} />
           {this.props.children && React.cloneElement(this.props.children, {
             values: v,
-            players: this.props.players,
+            players: this.state.players,
             currentDb: this.state.db,
             setDb: this.setDb,
             teamsReady: this.props.teamsReady,
@@ -189,17 +197,12 @@ App.propTypes = {
 
 export default createContainer(() => {
   const subscribeTeams = Meteor.subscribe('teams');
-  const subscribePlayers = Meteor.subscribe('players');
   const teamsReady = subscribeTeams.ready();
-  const playersReady = subscribePlayers.ready();
-  const players = Players.find({}).fetch();
   const teams = Teams.find({}).fetch();
 
   return {
     currentUser: Meteor.user(),
     teamsReady,
     teams,
-    playersReady,
-    players,
   };
 }, App);

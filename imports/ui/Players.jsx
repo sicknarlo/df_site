@@ -231,7 +231,7 @@ export default class Players extends Component {
       if (this.state.filter.length == 0) {
         return true;
       } else {
-        return this.state.filter.indexOf(player.position) > -1;
+        return this.state.filter.indexOf(player.position) > -1 || (this.state.filter.indexOf(player.status) > -1 && player.position !== "PICK");
       }
     });
     const filteredSortedData = filteredData &&
@@ -270,6 +270,13 @@ export default class Players extends Component {
         'btn-primary',
         'playersFilterToggle',
         { active: this.state.filter.indexOf('PICK') > -1 }
+    );
+    const rookieCls = classnames(
+        'btn',
+        'btn-outline',
+        'btn-primary',
+        'playersFilterToggle',
+        { active: this.state.filter.indexOf('R') > -1 }
     );
 
     const tableHeader = (
@@ -363,6 +370,12 @@ export default class Players extends Component {
                         increaseArea="20%"
                         label="PICK"
                         onChange={this.toggleFilter.bind(this, 'PICK')}
+                      />
+                      <Checkbox
+                        checkboxClass="icheckbox_flat-green positionFilter"
+                        increaseArea="20%"
+                        label="ROOKIES"
+                        onChange={this.toggleFilter.bind(this, 'R')}
                       />
                     </div>
                   </div>

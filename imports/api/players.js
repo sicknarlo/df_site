@@ -6,13 +6,14 @@ const currentMonthStandard = PValues.ppr.past6MonthsADP[5];
 const currentMonth2QB = PValues.super.past6MonthsADP[5];
 export const Players = new Mongo.Collection('players');
 
-if (Meteor.isServer) {
-  // This code only runs on the server
-  // Only publish tasks that are public or belong to the current user
-  Meteor.publish('players', function() {
-    return Players.find({});
-  });
-}
+// if (Meteor.isServer) {
+//   // This code only runs on the server
+//   // Only publish tasks that are public or belong to the current user
+//   Meteor.publish('players', function() {
+//     console.log('playas');
+//     return Players.find({});
+//   });
+// }
 
 Meteor.methods({
   'players.getPlayers'() {
