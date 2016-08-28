@@ -111,6 +111,24 @@ export default class CreateTeam extends Component {
         <PageHeading current="Create Team" db={this.props.currentDb} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
+            <div className="col-lg-12">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <h5>Import from MFL <small>Optional</small></h5>
+                </div>
+                <div className="ibox-content">
+                  <form role="form" className="form-inline">
+                    <div className="row">
+                      <div className="col-sm-4"><input type="text" placeholder="League ID" className="form-control mflForm" /></div>
+                      <div className="col-sm-4"><input type="text" placeholder="Franchise ID" className="form-control mflForm" /></div>
+                      <div className="col-sm-4"><button className="btn btn-primary"><i className="fa fa-users"></i> Import Players</button></div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
             <div className="col-md-8">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
