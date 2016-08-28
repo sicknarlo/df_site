@@ -196,7 +196,6 @@ App.propTypes = {
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('players');
   Meteor.subscribe('teams');
   const subscribeTeams = Meteor.subscribe('teams');
   const teamsReady = subscribeTeams.ready();
