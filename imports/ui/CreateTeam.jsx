@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { Link, browserHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
 import PageHeading from './PageHeading.jsx';
+import $ from 'jquery';
 
 const ageCalc = function(birthdate) {
   const bdate = birthdate ? birthdate : 680000000;
@@ -25,6 +26,14 @@ export default class CreateTeam extends Component {
       isPPR: false,
       is2QB: false,
       isIDP: false,
+      leagueID: '',
+      franchiseID: '',
+      invalidLeagueID: false,
+      invalidFranchiseID: false,
+      showImportAlert: false,
+      showImportSuccess: false,
+      imported: false,
+      isImporting: false,
     };
     this.updateTeamName = this.updateTeamName.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -34,6 +43,56 @@ export default class CreateTeam extends Component {
     this.createTeam = this.createTeam.bind(this);
     this.removeFromRoster = this.removeFromRoster.bind(this);
     this.addPlayer = this.addPlayer.bind(this);
+    this.updateLeagueID = this.updateLeagueID.bind(this);
+    this.updateFranchiseID = this.updateFranchiseID.bind(this);
+    this.importTeam = this.importTeam.bind(this);
+  }
+
+  updateLeagueID(e) {
+    this.setState({ leagueID: e.target.value });
+  }
+
+  updateFranchiseID(e) {
+    this.setState({ franchiseID: e.target.value });
+  }
+
+  importTeam(event) {
+    event.preventDefault();
+    if (this.state.isImporting) {
+      return;
+    } else {
+      this.setState({ isImporting: true });
+    }
+    this.props.mixpanel.track('import team');
+    const that = this;
+    const site = `http://www59.myfantasyleague.com/2016/export?TYPE=rosters&L=${this.state.leagueID}&FRANCHISE=${this.state.franchiseID}`
+    var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + site + '"') + '&format=xml&callback=?';
+    $.getJSON(yql, function(data){
+      const xmlDoc = $.parseXML(data.results[0]);
+      const $xml = $( xmlDoc )
+      const $players = $xml.find( "player");
+      if ($players.length > 1) {
+        for (var i=0; i<$players.length; i++) {
+          const player = that.props.players.find(function (pl) {
+            return pl.id === parseInt($players[i].id) });
+          if (player) {
+            that.addPlayer({ val: player });
+          }
+        }
+        that.setState({ showImportAlert: false, imported: true, isImporting: false, })
+      } else {
+        that.setState({ showImportAlert: true, isImporting: false, });
+      }
+    });
+    // $.ajax({
+    //     url: `http://www59.myfantasyleague.com/2015/export?TYPE=rosters&L=${this.state.leagueID}&FRANCHISE=${this.state.franchiseID}&JSON=1`,
+    //     type: 'GET',
+    //     dataType: 'JSON',
+    //     success: function(response) {
+    //       // console.log(response);
+    //       console.log(response);
+    //     }
+    //  });
   }
 
   removeFromRoster(player) {
@@ -106,6 +165,31 @@ export default class CreateTeam extends Component {
             <i className="fa fa-times"></i>&nbsp;
             Team Name & Players Required
           </Button>;
+    const importAlert = this.state.showImportAlert
+      ? (
+        <div className="alert alert-danger">
+            There was a problem importing your team. Check the IDs and try again.
+        </div>
+      )
+      : null;
+    const importSuccess = this.state.imported
+      ? (
+        <div className="alert alert-success">
+            Success. Check the players below.
+        </div>
+      )
+      : null;
+    const importButton = this.state.imported
+      ? (
+        <div className="col-sm-4">
+          <button className="btn btn-info" disabled><i className="fa fa-thumbs-o-up"></i> Success</button>
+        </div>
+      )
+      : (
+        <div className="col-sm-4">
+          <button className="btn btn-primary" onClick={this.importTeam}><i className="fa fa-users"></i> Import Players</button>
+        </div>
+      )
     return (
       <div>
         <PageHeading current="Create Team" db={this.props.currentDb} />
@@ -114,14 +198,20 @@ export default class CreateTeam extends Component {
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>Import from MFL <small>Optional</small></h5>
+                  <h5>Import from MFL <small>Optional: Will only import players in database; must manually enter draft picks</small></h5>
                 </div>
                 <div className="ibox-content">
+                  {importAlert}
+                  {importSuccess}
                   <form role="form" className="form-inline">
                     <div className="row">
-                      <div className="col-sm-4"><input type="text" placeholder="League ID" className="form-control mflForm" /></div>
-                      <div className="col-sm-4"><input type="text" placeholder="Franchise ID" className="form-control mflForm" /></div>
-                      <div className="col-sm-4"><button className="btn btn-primary"><i className="fa fa-users"></i> Import Players</button></div>
+                      <div className="col-sm-4">
+                        <input type="text" value={this.state.leagueID} placeholder="League ID" className="form-control mflForm" onChange={this.updateLeagueID} />
+                      </div>
+                      <div className="col-sm-4">
+                        <input type="text" value={this.state.franchiseID} placeholder="Franchise ID" className="form-control mflForm" onChange={this.updateFranchiseID}/>
+                      </div>
+                      {importButton}
                     </div>
                   </form>
                 </div>
