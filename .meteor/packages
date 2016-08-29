@@ -54,6 +54,7 @@ accounts-ui
 accounts-password
 practicalmeteor:mocha
 session
+meteorhacks:aggregate
 meteorhacks:kadira
 kadira:debug
 meteorhacks:kadira-profiler

@@ -12,6 +12,9 @@ const ageCalc = function(birthdate) {
 
 // Player component - represents a Player profile
 export default class SimilarPlayersTable extends Component {
+  handlePlayerClick() {
+    window.scrollTo(0, 0);
+  }
   render() {
     if (!this.props.currentPlayer) {
       return null;
@@ -46,7 +49,7 @@ export default class SimilarPlayersTable extends Component {
                   const profileLink = `/tools/players/${player._id._str}`;
                   return (
                         <tr className={classnames({ info: isPlayer })}>
-                          <td><Link to={profileLink}>{player.name}</Link></td>
+                          <td><Link to={profileLink} onClick={this.handlePlayerClick}>{player.name}</Link></td>
                           <td>{player.position}</td>
                           <td>{player[past6MonthsADP[5]]}</td>
                           <td>

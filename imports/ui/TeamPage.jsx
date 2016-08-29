@@ -125,10 +125,10 @@ export default class TeamPage extends Component {
     const that = this;
     const teamPlayers = [];
     team.players.forEach(function(pId) {
-     that.props.players.forEach(function(p) {
-       if (p._id._str === pId) teamPlayers.push(p);
-     })
-    })
+      that.props.players.forEach(function(p) {
+        if (p._id._str === pId) teamPlayers.push(p);
+      });
+    });
 
     let currentValue = 0;
     let lastValue = 0;

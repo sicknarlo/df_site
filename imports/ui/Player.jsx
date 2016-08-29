@@ -5,6 +5,8 @@ import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import { Votes } from '../api/votes.js';
 
 const nextYearsFirst = '2017 1st';
 const nextYearsSecond = '2017 2nd';
@@ -30,50 +32,99 @@ export default class Player extends Component {
 
     this.state = {
       player: null,
+      communityValue: 0,
+      moves: 0,
+      playerVote: null,
     };
-  }
 
-  // shouldComponentUpdate(nextProps) {
-  //   console.log(nextProps, this.props)
-  //   if (nextProps !== this.props) {
-  //     return true
-  //   }
-  //   return false;
-  // }
+    this.addVote = this.addVote.bind(this);
+  }
 
   componentDidMount() {
     window.scrollTo(0, 0);
     const that = this;
-    // Meteor.call('players.getPlayer', {
-    //   playerId: this.props.params.playerID,
-    // }, function(error, result) {
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     console.log(result);
-    //     that.setState({ player: result })
-    //   }
-    // });
+    let moves = 0;
+    let communityValue = 0;
+    let playerVote = null;
+    Meteor.call('votes.getPlayer', {
+      playerId: this.props.params.playerID,
+    }, function(error, result){
+        if(error){
+            console.log(error);
+        } else {
+          result.forEach(function(v) {
+            moves ++;
+            if (v.moveType === 'buy') communityValue ++;
+            if (v.moveType === 'sell') communityValue --;
+            if (v.userId === that.props.currentUser._id) {
+              playerVote = v.moveType;
+            }
+          });
+          that.setState({
+            communityValue,
+            moves,
+            playerVote
+          });
+        };
+    });
   }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.playerID !== this.props.params.playerID) {
       window.scrollTo(0, 0);
       const that = this;
-      // Meteor.call('players.getPlayer', {
-      //   playerId: nextProps.params.playerID,
-      // }, function(error, result) {
-      //   if (error) {
-      //   } else {
-      //     that.setState({ player: result })
-      //   }
-      // });
+      let moves = 0;
+      let communityValue = 0;
+      let playerVote = null;
+      Meteor.call('votes.getPlayer', {
+        playerId: nextProps.params.playerID,
+      }, function(error, result){
+          if(error){
+              console.log(error);
+          } else {
+            result.forEach(function(v) {
+              moves ++;
+              if (v.moveType === 'buy') communityValue ++;
+              if (v.moveType === 'sell') communityValue --;
+              if (v.userId === that.props.currentUser._id) {
+                playerVote = v.moveType;
+              }
+            });
+            console.log(moves, communityValue, playerVote);
+            that.setState({
+              communityValue,
+              moves,
+              playerVote,
+            });
+          };
+      });
+    }
+  }
+
+  addVote(moveType) {
+    // Meteor.subscribe('votes');
+    this.props.mixpanel.track('vote');
+    if (moveType !== this.state.playerVote) {
+      Meteor.call('votes.addVote', {
+        playerId: this.props.params.playerID,
+        moveType,
+      });
+      let moveChange = moveType === 'buy' ? 1 : -1;
+      let voteChange = 0;
+      if (this.state.playerVote !== null) {
+        moveChange *= 2;
+      } else {
+        voteChange ++;
+      }
+      this.setState({
+        playerVote: moveType,
+        communityValue: this.state.communityValue + moveChange,
+        moves: this.state.moves + voteChange,
+      });
     }
   }
 
   render() {
     const player = this.props.players.find((p) => p._id._str === this.props.params.playerID);
-    // const player = this.state.player;
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
@@ -162,7 +213,7 @@ export default class Player extends Component {
       ? 'PICK'
       : _calculateAge(new Date(player.birthdate * 1000));
     const topDetails = `${player.team} - ${player.position}`;
-    const adpColorCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
+    const adpColorCls = player[this.props.values.past6MonthsADP[5]] <= player[this.props.values.past6MonthsADP[4]]
       ? 'text-navy'
       : 'text-danger';
     const adpArrowCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
@@ -200,10 +251,44 @@ export default class Player extends Component {
     // const fourthRoundPickValue = fourthRoundPick[this.props.values.past6MonthsValue[4]];
     //
     // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
+    const buyBtnCls = classnames({ 'primary': this.state.playerVote === 'buy' });
+    const sellBtnCls = classnames({ 'danger': this.state.playerVote === 'sell' });
 
+    const buySell = this.props.currentUser
+      ? (
+        <div className="col-sm-12 col-md-12 col-lg-12">
+          <div className="ibox">
+            <div className="ibox-content dataPanel">
+              <h5 className="m-b-md textCenter">At an ADP of {player[this.props.values.past6MonthsADP[5]]}, are you buying or selling?</h5>
+              <div className="buysellContainer">
+                <ButtonGroup>
+                    <Button
+                        className="tradeButton btn-buy"
+                        bsStyle={buyBtnCls}
+                        bsSize="large"
+                        onClick={this.addVote.bind(this, 'buy')}>
+                          BUY
+                     </Button>
+                     <Button
+                         className="tradeButton"
+                         bsStyle={sellBtnCls}
+                         bsSize="large"
+                         onClick={this.addVote.bind(this, 'sell')}>
+                           SELL
+                     </Button>
+                </ButtonGroup>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null;
     const firstRoundPickIndex = (
         player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
-
+    const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
+    const communityCls = classnames({
+      greenText: this.state.communityValue > 0,
+      redText: this.state.communityValue < 0,
+    })
     const badges = [];
 
     if (player[this.props.values.buyIndex] > 9 && player[this.props.values.buyIndex] < 20) {
@@ -311,6 +396,31 @@ export default class Player extends Component {
             </div>
             <div className="col-md-8">
               <div className="row">
+                {buySell}
+                <div className="col-xs-12">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel text-center">
+                      <h3 className="m-b-md">
+                        Community Market Place&nbsp;
+                        <OverlayTrigger trigger="click" placement="bottom" overlay={<Popover title="Community Value Rating">Net users who would buy or draft this player at the current ADP. Votes expire after 7 days.</Popover>}>
+                          <i className="fa fa-question-circle text-navy"></i>
+                        </OverlayTrigger>
+                      </h3>
+                      <div className="communityMarketplace">
+                        <div className="communityMarketplace-left">
+                          <h4>Community Rating</h4>
+                          <h2 className={communityCls}>{communityValue}</h2>
+                        </div>
+                        <div className="communityMarketplace-left">
+                          <h4>Community Votes</h4>
+                          <h2>{this.state.moves}</h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
                 <div className="col-xs-6 col-lg-3">
                   <div className="ibox">
                     <div className="ibox-content dataPanel">
@@ -372,11 +482,11 @@ export default class Player extends Component {
                   </div>
                 </div>
               </div>
-              <div className="row">
-                <div className="col-lg-12 graphContainer">
-                  <ADPGraph players={[player]} values={this.props.values} />
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12 graphContainer">
+              <ADPGraph players={[player]} values={this.props.values} />
             </div>
           </div>
           <div className="row">

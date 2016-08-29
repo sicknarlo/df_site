@@ -196,6 +196,7 @@ App.propTypes = {
 };
 
 export default createContainer(() => {
+  Meteor.subscribe('teams');
   const subscribeTeams = Meteor.subscribe('teams');
   const teamsReady = subscribeTeams.ready();
   const teams = Teams.find({}).fetch();
