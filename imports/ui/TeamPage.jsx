@@ -135,8 +135,8 @@ export default class TeamPage extends Component {
     let last3Value = 0;
     let last6Value = 0;
     const past6MonthsValue = this.state.values.past6MonthsValue;
-    const monthLast = past6MonthsValue[4];
-    const month3 = past6MonthsValue[3];
+    const monthLast = past6MonthsValue[5];
+    const month3 = past6MonthsValue[2];
     const month6 = past6MonthsValue[0];
     for (var i=0; i<teamPlayers.length; i++) {
       currentValue += teamPlayers[i][past6MonthsValue[5]];

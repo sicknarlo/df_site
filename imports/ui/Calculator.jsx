@@ -115,6 +115,10 @@ export default class Calculator extends Component {
     const that = this;
     if (that.props.location.query.share) {
       this.props.mixpanel.track('came from link share');
+      console.log(that.props.location.query)
+      if (parseInt(that.props.location.query.super) === 1) {
+        that.props.setDb('2qb');
+      }
       const team1 = [];
       if (!Array.isArray(that.props.location.query.t1)) {
         const player = that.props.players.find(function(pl) {
@@ -318,8 +322,8 @@ export default class Calculator extends Component {
     this.state.team2.forEach(function(p, i) {
       team2Str += `&t2=${p._id._str}`
     });
-
-    const shareLink = `www.dynastyfftools.com/tools/calculator?share=true${team1Str}${team2Str}`;
+    const dbShare = this.props.currentDb === '2qb' ? '&super=1' : '';
+    const shareLink = `www.dynastyfftools.com/tools/calculator?share=true${team1Str}${team2Str}${dbShare}`;
     const submitButton = this.state.team1.length > 0 && this.state.team2.length > 0
       ? <Button
           className="tradeButton"
