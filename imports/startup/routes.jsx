@@ -15,6 +15,7 @@ import Team from '../ui/Team.jsx';
 import UpdateValues from '../ui/UpdateValues.jsx';
 import Landing from '../ui/Landing.jsx';
 import FAQ from '../ui/FAQ.jsx';
+import MrCommissioner from '../ui/MrCommissioner.jsx';
 import ReactGA from 'react-ga';
 
 ReactGA.initialize('UA-67151916-1');
@@ -27,6 +28,7 @@ function logPageView() {
 export const renderRoutes = () => (
   <Router history={browserHistory} onUpdate={logPageView}>
     <Route path="/" component={Landing} />
+    <Route path="/mrcommissioner" component={MrCommissioner} />
     <Redirect from="/players" to="/tools/players" />
     <Redirect from="/calculator" to="/tools/calculator" />
     <Redirect from="/calculator-2qb" to="/tools/calculator" />

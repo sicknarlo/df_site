@@ -12,7 +12,7 @@ import mixpanel from 'mixpanel-browser';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
-mixpanel.init("b3957d78fe49d65a13ad277d691d3a8b")
+mixpanel.init("b3957d78fe49d65a13ad277d691d3a8b");
 // App component - represents the whole app
 class App extends Component {
   constructor(props) {
@@ -32,10 +32,9 @@ class App extends Component {
   }
   componentDidMount() {
     const that = this;
-    Meteor.call('players.getPlayers', function(error, result){
-      if (error) {
-      } else {
-        that.setState({ players: result, playersReady: true })
+    Meteor.call('players.getPlayers', function (error, result) {
+      if (!error) {
+        that.setState({ players: result, playersReady: true });
       }
     });
     setTimeout(() => {
