@@ -283,7 +283,7 @@ export default class Player extends Component {
         </div>
       ) : null;
     const firstRoundPickIndex = (
-        player[this.props.values.past6MonthsValue[4]] / firstRoundPick[this.props.values.past6MonthsValue[4]]).toFixed(2);
+        player[this.props.values.past6MonthsValue[5]] / firstRoundPick[this.props.values.past6MonthsValue[5]]).toFixed(2);
     const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
     const communityCls = classnames({
       greenText: this.state.communityValue > 0,
