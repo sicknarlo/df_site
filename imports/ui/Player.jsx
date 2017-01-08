@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import PlayerMetricsGraph from './PlayerMetricsGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Button, ButtonGroup } from 'react-bootstrap';
@@ -484,12 +485,127 @@ export default class Player extends Component {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row playerRow">
             <div className="col-lg-12 graphContainer">
               <ADPGraph players={[player]} values={this.props.values} />
             </div>
           </div>
           <div className="row">
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.targets_2015_rank}</span>
+                  <h5>Targets</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.targets_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.catches_2015_rank}</span>
+                  <h5>Receptions</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.catches_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.rz_targets_2015_rank}</span>
+                  <h5>Redzone Targets</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.rz_targets_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.rec_td_2015_rank}</span>
+                  <h5>Touchdown Receptions</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.rec_td_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.carries_2015_rank}</span>
+                  <h5>Carries</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.carries_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.rush_td_2015_rank}</span>
+                  <h5>Rushing Touchdowns</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.rush_td_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.pass_att_2015_rank}</span>
+                  <h5>Pass Attempts</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.pass_att_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.completions_2015_rank}</span>
+                  <h5>Pass Completions</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.completions_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3">
+              <div className="ibox float-e-margins">
+                <div className="ibox-title">
+                  <span className="label label-success pull-right">Ranked {player.pass_td_2015_rank}</span>
+                  <h5>Passing TDs</h5>
+                </div>
+                <div className="ibox-content">
+                  <h1 className="no-margins">{player.pass_td_2015}</h1>
+                  <small>in 2015</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row playerRow">
+            <div className="col-lg-12">
+              <PlayerMetricsGraph player={player} />
+            </div>
+          </div>
+          <div className="row playerRow">
             <div className="col-lg-12">
               <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} values={this.props.values} />
             </div>
