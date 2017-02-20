@@ -11,6 +11,7 @@ export default class PlayerStats extends Component {
     return (
       <div>
         <div className="row">
+          Test
           <div className="col-lg-3 col-xs-6">
             <div className="ibox">
               <div className="ibox-content">
@@ -31,6 +32,8 @@ export default class PlayerStats extends Component {
                   <SparklinesLine color="#1ab394" />
                   <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_fp']} />
                 </Sparklines>
+                <small>test</small>
+                <small>test2</small>
               </div>
             </div>
           </div>

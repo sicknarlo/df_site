@@ -8,6 +8,7 @@ import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { Votes } from '../api/votes.js';
+import PlayerStats from './PlayerStats.jsx';
 
 
 const nextYearsFirst = '2017 1st';
