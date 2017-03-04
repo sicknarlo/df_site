@@ -7,8 +7,9 @@ import PlayerMetricsGraph from './PlayerMetricsGraph.jsx';
 import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { Votes } from '../api/votes.js';
 import PlayerStats from './PlayerStats.jsx';
+import StatMedians from './StatMedians.jsx';
+import { Votes } from '../api/votes.js';
 
 
 const nextYearsFirst = '2017 1st';
@@ -38,6 +39,7 @@ export default class Player extends Component {
       communityValue: 0,
       moves: 0,
       playerVote: null,
+      selectedStat: 'fp',
     };
 
     this.addVote = this.addVote.bind(this);
@@ -92,7 +94,6 @@ export default class Player extends Component {
                 playerVote = v.moveType;
               }
             });
-            console.log(moves, communityValue, playerVote);
             that.setState({
               communityValue,
               moves,
@@ -243,6 +244,30 @@ export default class Player extends Component {
     const fpRank = player[this.props.values.rank]
       ? player[this.props.values.rank]
       : 'N/A';
+
+    const pointsPassYards2014 = player.pass_yards_2014 * 0.04;
+    const pointsPassYards2015 = player.pass_yards_2015 * 0.04;
+    const pointsPassYards2016 = player.pass_yards_2016 * 0.04;
+
+    const pointsPassTds2014 = player.pass_td_2014 * 6;
+    const pointsPassTds2015 = player.pass_td_2015 * 6;
+    const pointsPassTds2016 = player.pass_td_2016 * 6;
+
+    const pointsReceptions2014 = player.rec_2014;
+    const pointsReceptions2015 = player.rec_2015;
+    const pointsReceptions2016 = player.rec_2016;
+
+    const pointsRecYards2014 = player.rec_yards_2014 * 0.1;
+    const pointsRecYards2015 = player.rec_yards_2015 * 0.1;
+    const pointsRecYards2016 = player.rec_yards_2016 * 0.1;
+
+    const pointsRecTds2014 = player.rec_td_2014 * 6;
+    const pointsRecTds2015 = player.rec_td_2015 * 6;
+    const pointsRecTds2016 = player.rec_td_2016 * 6;
+
+    const pointsRushYds2014 = player.rush_yards_2014 * 0.1;
+    const pointsRushYds2015 = player.rush_yards_2015 * 0.1;
+    const pointsRushYds2016 = player.rush_yards_2016 * 0.1;
 
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);

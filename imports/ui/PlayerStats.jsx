@@ -3,323 +3,176 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import { Sparklines, SparklinesLine, SparklinesReferenceLine } from 'react-sparklines';
 import StatMedians from './StatMedians.jsx';
+import ReactHighcharts from 'react-highcharts';
 
 export default class PlayerStats extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedStat: 'fp',
+    };
+
+    this.updateSelectedStat = this.updateSelectedStat.bind(this);
+  }
+
+  updateSelectedStat(b) {
+    this.setState({ selectedStat: b.target.value });
+  }
+
   render() {
     const player = this.props.player;
+    const selectedStat = this.state.selectedStat;
+
+    const datasets = [
+      {
+        name: player.name,
+        data: [
+          player[selectedStat+'_2014'],
+          player[selectedStat+'_2015'],
+          player[selectedStat+'_2016'],
+        ]
+      },
+      {
+        name: `${player.position}1 Median`,
+        data: [
+          StatMedians[selectedStat][player.position.toLowerCase()],
+          StatMedians[selectedStat][player.position.toLowerCase()],
+          StatMedians[selectedStat][player.position.toLowerCase()],
+        ]
+      },
+      {
+        name: `${player.position}2 Median`,
+        data: [
+          StatMedians[selectedStat][player.position.toLowerCase() + '2'],
+          StatMedians[selectedStat][player.position.toLowerCase() + '2'],
+          StatMedians[selectedStat][player.position.toLowerCase() + '2'],
+        ]
+      }
+    ]
+    const config = {
+      chart: {
+        backgroundColor: "rgba(0,0,0,0)",
+        type: 'line',
+        style: {
+          fontFamily: 'open sans',
+        },
+      },
+      title: {
+        text: selectedStat.title,
+      },
+      colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565', '#4719B3', '#B39419', '#1985B3', '#E0294E', '#1938B3'],
+      xAxis: {
+        categories: [2014, 2015, 2016]
+      },
+      series: datasets,
+      yAxis: {
+        title: {
+          text: undefined,
+        }
+      },
+      plotOptions: {
+        series: {
+          compare: 'percent'
+        }
+      },
+
+      tooltip: {
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+        valueDecimals: 1,
+      },
+    };
 
     return (
-      <div>
-        <div className="row">
-          Test
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Fantasy Points in 2016</h5>
-                <h2>{player.fp_2016}</h2>
-                <Sparklines
-                  data={[player.fp_2014, player.fp_2015, player.fp_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_fp'],
-                    Math.min(player.fp_2014, player.fp_2015, player.fp_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_fp'],
-                    Math.max(player.fp_2014, player.fp_2015, player.fp_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_fp']} />
-                </Sparklines>
-                <small>test</small>
-                <small>test2</small>
-              </div>
+      <div className="row playerRow">
+        <div className="col-lg-12">
+          <h1>Advanced Stats</h1>
+          <select
+            className="form-control m-b"
+            name="account"
+            value={selectedStat}
+            onChange={this.updateSelectedStat}>
+              <option value="fp">Fantasy Points</option>
+              <option value="pass_attempts" >Pass Attempts</option>
+              <option value="pass_completions" >Pass Completions</option>
+              <option value="pass_yards" >Pass Yards</option>
+              <option value="pass_td" >Pass TDs</option>
+              <option value="int" >Interceptions</option>
+              <option value="targets">Targets</option>
+              <option value="rec">Receptions</option>
+              <option value="rec_yards">Reception Yards</option>
+              <option value="rec_td">Reception TDs</option>
+              <option value="rush">Carries</option>
+              <option value="rush_yards">Rushing Yards</option>
+              <option value="rush_td">Rushing TDs</option>
+              <option value="fumble">Fumbles</option>
+          </select>
+        </div>
+        <div className="col-sm-4">
+          <div className="ibox float-e-margins">
+            <div className="ibox-title">
+              <h5>2014</h5>
             </div>
+          <div className="ibox-content">
+            <h1 className="no-margins">{player[selectedStat + '_2014']}</h1>
+            <div className={
+              (player[selectedStat + '_2014'] / StatMedians[selectedStat][player.position.toLowerCase()])
+               * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
+            }>
+              {
+                ((player[selectedStat + '_2014'] / StatMedians[selectedStat][player.position.toLowerCase()])
+                 * 100).toFixed(0)
+              }%
+            </div>
+            <small>{player.position}1 Median</small>
           </div>
         </div>
-        <div className="row">
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Targets in 2016</h5>
-                <h2>{player.targets_2016}</h2>
-                <Sparklines
-                  data={[player.targets_2014, player.targets_2015, player.targets_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_targets'],
-                    Math.min(player.targets_2014, player.targets_2015, player.targets_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_targets'],
-                    Math.max(player.targets_2014, player.targets_2015, player.targets_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_targets']} />
-                </Sparklines>
-              </div>
-            </div>
+      </div>
+      <div className="col-sm-4">
+        <div className="ibox float-e-margins">
+          <div className="ibox-title">
+            <h5>2015</h5>
           </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Receptions in 2016</h5>
-                <h2>{player.rec_2016}</h2>
-                <Sparklines
-                  data={[player.rec_2014, player.rec_2015, player.rec_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rec'],
-                    Math.min(player.rec_2014, player.rec_2015, player.rec_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rec'],
-                    Math.max(player.rec_2014, player.rec_2015, player.rec_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rec']} />
-                </Sparklines>
-              </div>
-            </div>
+        <div className="ibox-content">
+          <h1 className="no-margins">{player[selectedStat + '_2015']}</h1>
+          <div className={
+            (player[selectedStat + '_2015'] / StatMedians[selectedStat][player.position.toLowerCase()])
+             * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
+          }>
+            {
+              ((player[selectedStat + '_2015'] / StatMedians[selectedStat][player.position.toLowerCase()])
+               * 100).toFixed(0)
+            }%
           </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Reception Yards in 2016</h5>
-                <h2>{player.rec_yards_2016}</h2>
-                <Sparklines
-                  data={[player.rec_yards_2014, player.rec_yards_2015, player.rec_yards_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rec_yards'],
-                    Math.min(player.rec_yards_2014, player.rec_yards_2015, player.rec_yards_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rec_yards'],
-                    Math.max(player.rec_yards_2014, player.rec_yards_2015, player.rec_yards_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rec_yards']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Reception TDs in 2016</h5>
-                <h2>{player.rec_td_2016}</h2>
-                <Sparklines
-                  data={[player.rec_td_2014, player.rec_td_2015, player.rec_td_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rec_td'],
-                    Math.min(player.rec_td_2014, player.rec_td_2015, player.rec_td_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rec_td'],
-                    Math.max(player.rec_td_2014, player.rec_td_2015, player.rec_td_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rec_td']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
+          <small>{player.position}1 Median</small>
         </div>
-        <div className="row">
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Carries in 2016</h5>
-                <h2>{player.rush_2016}</h2>
-                <Sparklines
-                  data={[player.rush_2014, player.rush_2015, player.rush_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rush'],
-                    Math.min(player.rush_2014, player.rush_2015, player.rush_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rush'],
-                    Math.max(player.rush_2014, player.rush_2015, player.rush_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rush']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Rushing Yards in 2016</h5>
-                <h2>{player.rush_yards_2016}</h2>
-                <Sparklines
-                  data={[player.rush_yards_2014, player.rush_yards_2015, player.rush_yards_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rush_yards'],
-                    Math.min(player.rush_yards_2014, player.rush_yards_2015, player.rush_yards_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rush_yards'],
-                    Math.max(player.rush_yards_2014, player.rush_yards_2015, player.rush_yards_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rush_yards']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Rushing TDs in 2016</h5>
-                <h2>{player.rush_td_2016}</h2>
-                <Sparklines
-                  data={[player.rush_td_2014, player.rush_td_2015, player.rush_td_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_rush_td'],
-                    Math.min(player.rush_td_2014, player.rush_td_2015, player.rush_td_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_rush_td'],
-                    Math.max(player.rush_td_2014, player.rush_td_2015, player.rush_td_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_rush_td']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          {/* <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Fumbles in 2016</h5>
-                <h2>{player.fumble_2016}</h2>
-                <Sparklines
-                  data={[player.fumble_2014, player.fumble_2015, player.fumble_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_fumble'],
-                    Math.min(player.fumble_2014, player.fumble_2015, player.fumble_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_fumble'],
-                    Math.max(player.fumble_2014, player.fumble_2015, player.fumble_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_fumble']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div> */}
+      </div>
+    </div>
+    <div className="col-sm-4">
+      <div className="ibox float-e-margins">
+        <div className="ibox-title">
+          <h5>2016</h5>
         </div>
-        <div className="row">
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Pass Attempts in 2016</h5>
-                <h2>{player.pass_attempt_2016}</h2>
-                <Sparklines
-                  data={[player.pass_attempt_2014, player.pass_attempt_2015, player.pass_attempt_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_pass_attempts'],
-                    Math.min(player.pass_attempt_2014, player.pass_attempt_2015, player.pass_attempt_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_pass_attempts'],
-                    Math.max(player.pass_attempt_2014, player.pass_attempt_2015, player.pass_attempt_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_pass_attempts']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Completions in 2016</h5>
-                <h2>{player.pass_completion_2016}</h2>
-                <Sparklines
-                  data={[player.pass_completion_2014, player.pass_completion_2015, player.pass_completion_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_pass_completions'],
-                    Math.min(player.pass_completion_2014, player.pass_completion_2015, player.pass_completion_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_pass_completions'],
-                    Math.max(player.pass_completion_2014, player.pass_completion_2015, player.pass_completion_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_pass_completions']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Pass Yards in 2016</h5>
-                <h2>{player.pass_yards_2016}</h2>
-                <Sparklines
-                  data={[player.pass_yards_2014, player.pass_yards_2015, player.pass_yards_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_pass_yards'],
-                    Math.min(player.pass_yards_2014, player.pass_yards_2015, player.pass_yards_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_pass_yards'],
-                    Math.max(player.pass_yards_2014, player.pass_yards_2015, player.pass_yards_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_pass_yards']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-3 col-xs-6">
-            <div className="ibox">
-              <div className="ibox-content">
-                <h5>Passing TDs in 2016</h5>
-                <h2>{player.pass_td_2016}</h2>
-                <Sparklines
-                  data={[player.pass_td_2014, player.pass_td_2015, player.pass_td_2016]}
-                  min={Math.min(
-                    StatMedians[player.position.toLowerCase() + '_pass_td'],
-                    Math.min(player.pass_td_2014, player.pass_td_2015, player.pass_td_2016))}
-                  max={Math.max(
-                    StatMedians[player.position.toLowerCase() + '_pass_td'],
-                    Math.max(player.pass_td_2014, player.pass_td_2015, player.pass_td_2016))}
-                  limit={3}
-                  width={100}
-                  height={20}
-                  margin={5}>
-                  <SparklinesLine color="#1ab394" />
-                  <SparklinesReferenceLine type="custom" value={StatMedians[player.position.toLowerCase() + '_pass_td']} />
-                </Sparklines>
-              </div>
-            </div>
-          </div>
+      <div className="ibox-content">
+        <h1 className="no-margins">{player[selectedStat + '_2016']}</h1>
+        <div className={
+          (player[selectedStat + '_2016'] / StatMedians[selectedStat][player.position.toLowerCase()])
+           * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
+        }>
+          {
+            ((player[selectedStat + '_2016'] / StatMedians[selectedStat][player.position.toLowerCase()])
+             * 100).toFixed(0)
+          }%
         </div>
+        <small>{player.position}1 Median</small>
+      </div>
+    </div>
+  </div>
+  <div className="col-xs-12">
+    <div className="adpChart">
+      <ReactHighcharts config={config} className="adpChart-container" />
+    </div>
+  </div>
       </div>
     );
   }
