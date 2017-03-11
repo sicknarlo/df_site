@@ -56,7 +56,7 @@ export default class Landing extends Component {
     <div>
       <div className="navbar-wrapper">
           <nav className="navbar navbar-default navbar-fixed-top navbar-landing" role="navigation">
-              <div className="container">
+              <div className="container landingNav">
                   <div className="navbar-header page-scroll">
                       <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                           <span className="sr-only">Toggle navigation</span>

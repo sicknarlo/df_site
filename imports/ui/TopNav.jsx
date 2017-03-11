@@ -61,7 +61,7 @@ export default class TopNav extends React.Component {
         </li>
 
       </ul>
-    )
+    );
   }
 
   render() {

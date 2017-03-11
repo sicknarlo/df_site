@@ -11,6 +11,7 @@ import DashboardLoggedOut from './DashboardLoggedOut.jsx';
 import DashboardLoggedIn from './DashboardLoggedIn.jsx';
 import PValues from './ADPConst.jsx';
 import { Button, ButtonGroup } from 'react-bootstrap';
+import ActivityStream from './ActivityStream.jsx';
 
 
 const ageCalc = function(birthdate) {
@@ -24,7 +25,6 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rotoData: null,
       topTrendersPPR: [],
       bottomTrendersPPR: [],
       topTrendersSuper: [],
@@ -138,6 +138,7 @@ export default class Dashboard extends Component {
           </div>
       );
     }
+    console.log(this.props.rotoData);
 
     const risers = this.props.currentDb === 'ppr' ? this.state.topTrendersPPR : this.state.topTrendersSuper;
     const fallers = this.props.currentDb === 'ppr' ? this.state.bottomTrendersPPR : this.state.bottomTrendersSuper;
@@ -183,6 +184,7 @@ export default class Dashboard extends Component {
           </div>
         {dashboard}
         <div className="wrapper wrapper-content">
+          <ActivityStream players={this.props.players} rotoData={this.props.rotoData} />
           <div className="row">
             <div className="col-md-6">
               <div className="ibox float-e-margins">

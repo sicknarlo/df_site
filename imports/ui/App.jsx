@@ -21,10 +21,10 @@ class App extends Component {
       playersReady: false,
       menuOpen: false,
       showConnectionIssue: false,
-      rotoData: null,
       alertIDs: null,
       db: 'ppr',
       players: [],
+      rotoData: [],
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
@@ -94,7 +94,29 @@ class App extends Component {
     // Uncomment this if you want to have boxed layout
     // $('body').addClass('boxed-layout');
     // const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
-    // let result = [];
+    let result = [];
+    const t = this;
+    console.log('foo');
+    $.ajax(
+      {
+        url: "https://dynastyfftoolsrss.herokuapp.com/v1/feed?url=http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss&key=1ab23c",
+      }
+    ).done(
+      function(data) {
+        if (data) {
+          result = data.items.map((x) => {
+            var item = x;
+            var pid = x.link.split('/')[5];
+            item.pid = pid;
+            return item;
+          })
+          console.log(result);
+          t.setState({
+            rotoData: result,
+          });
+        }
+      }
+    );
     // $.ajax({
     //   url: document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=13&callback=?&q=' + encodeURIComponent(feed),
     //   dataType: 'json',
@@ -102,6 +124,7 @@ class App extends Component {
     //   success(data) {
     //     if (data.responseData.feed && data.responseData.feed.entries) {
     //       result = data.responseData.feed.entries;
+    //       console.log(result);
     //       // const alertIDs = result.map((item) => item.link.split('/')[5]);
     //       this.setState({
     //         rotoData: result,
@@ -109,6 +132,11 @@ class App extends Component {
     //       });
     //     }
     //   },
+    //   failure(err) {
+    //     console.log(err);
+    //   }
+    // }).done(function() {
+    //   console.log('fwop');
     // });
   }
 
@@ -181,6 +209,7 @@ class App extends Component {
             teamsReady: this.props.teamsReady,
             currentUser: this.props.currentUser,
             teams: this.props.teams,
+            rotoData: this.state.rotoData,
             mixpanel,
           })}
           <Footer />
