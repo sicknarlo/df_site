@@ -15,6 +15,7 @@ import Team from '../ui/Team.jsx';
 import UpdateValues from '../ui/UpdateValues.jsx';
 import Landing from '../ui/Landing.jsx';
 import FAQ from '../ui/FAQ.jsx';
+import DraftMate from '../ui/DraftMate.jsx';
 import ReactGA from 'react-ga';
 
 ReactGA.initialize('UA-67151916-1');
@@ -42,6 +43,7 @@ export const renderRoutes = () => (
       <Route path="/tools/createteam" component={CreateTeam} />
       <Route path="/tools/hokeypokey" component={UpdateValues} />
       <Route path="/tools/faq" component={FAQ} />
+      <Route path="/tools/draft-mate" component={DraftMate} />
     </Route>
   </Router>
 );
