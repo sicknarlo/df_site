@@ -12,7 +12,7 @@ import StatMedians from './StatMedians.jsx';
 import { Votes } from '../api/votes.js';
 
 
-const nextYearsFirst = '2017 1st';
+const nextYearsFirst = '2018 1st';
 const nextYearsSecond = '2017 2nd';
 const nextYearsThird = '2017 3rd';
 const nextYearsFourth = '2017 4th';

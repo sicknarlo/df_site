@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
+import PValues from './ADPConst.jsx';
 import 'icheck/skins/all.css';
 
 
@@ -24,6 +26,7 @@ export default class DraftMate extends Component {
       playerPool: [],
       selectedPlayers: [],
       usersPlayers: [],
+      values: PValues.ppr,
     };
     this.updateOption = this.updateOption.bind(this);
     this.startDraft = this.startDraft.bind(this);
@@ -108,15 +111,17 @@ export default class DraftMate extends Component {
         }
       }
     }
-    console.log(playerPool);
+
+    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
     this.setState({
       draftStarted: true,
       picks,
       teams: t,
       playerPool,
-      pick: 1.01,
+      pick: '1.01',
       currentTeam: 1,
       nextTeam: 2,
+      values,
     });
   }
 
@@ -127,9 +132,6 @@ export default class DraftMate extends Component {
   }
 
   render() {
-
-    const currentTeam = this.state.picks[this.state.currentTeam].team;
-    const onDeck = this.state.picks[this.state.nextTeam].team;
     const component = this;
     const startButton = this.draftReady() ?
       <button
@@ -253,6 +255,20 @@ export default class DraftMate extends Component {
       </div>
     );
     }
+    const currentTeam = this.state.picks[this.state.currentTeam - 1].team;
+    const onDeck = this.state.picks[this.state.nextTeam - 1].team;
+    const playerPoolByAdp = this.state.playerPool.sort((a, b) => {
+        if (a[this.state.values.past6MonthsADP[5]] > b[this.state.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        if (a[this.state.values.past6MonthsADP[5]] < b[this.state.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    const nextPlayerByAdp = playerPoolByAdp[0];
     return (
       <div className="wrapper wrapper-content animated fadeInRight">
         <div className="row">
@@ -302,10 +318,9 @@ export default class DraftMate extends Component {
                   </table>
                   </div>
                   <div className="col-lg-6">
-                    <h2>Current Team</h2>
-                    <h4>{currentTeam}</h4>
-                    <h3>On Deck</h3>
-                    <h5>{onDeck}</h5>
+                    <h2>On the Clock - {currentTeam}</h2>
+                    <h3>On Deck - {onDeck}</h3>
+                    <h4>{nextPlayerByAdp.name}</h4>
                   </div>
                 </div>
               </div>
