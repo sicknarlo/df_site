@@ -267,8 +267,19 @@ export default class DraftMate extends Component {
         // a must be equal to b
         return 0;
     });
+    const playerPoolByRank = this.state.playerPool.sort((a, b) => {
+        if (a[this.state.values.rank] > b[this.state.values.rank]) {
+          return 1;
+        }
+        if (a[this.state.values.rank] < b[this.state.values.rank]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
 
     const nextPlayerByAdp = playerPoolByAdp[0];
+    const nextPlayerByRank = playerPoolByRank[0];
     return (
       <div className="wrapper wrapper-content animated fadeInRight">
         <div className="row">
@@ -279,6 +290,38 @@ export default class DraftMate extends Component {
               </div>
               <div className="ibox-content">
                 <div className="row">
+                  <div className="col-lg-6">
+                    <h2>On the Clock - <small>{currentTeam}</small></h2>
+                    <h3>On Deck - <small>{onDeck}</small></h3>
+                    <hr></hr>
+                    <div className="row">
+                      <div className="col-xs-12">
+                        <div className="panel panel-default">
+                          <div className="panel-heading">
+                            Pick Suggestions
+                          </div>
+                          <div className="panel-body">
+                            <div className="flexContainer spaceBetween">
+                              <div>
+                                <strong>Next Best ADP</strong>
+                              </div>
+                              <div>
+                                {nextPlayerByAdp.name}
+                              </div>
+                            </div>
+                            <div className="flexContainer spaceBetween">
+                              <div>
+                                <strong>Next Best Rank</strong>
+                              </div>
+                              <div>
+                                {nextPlayerByRank.name}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div className="col-lg-6">
                     <table className="table table-hover margin bottom">
                       <thead>
@@ -316,11 +359,6 @@ export default class DraftMate extends Component {
                         )}
                       </tbody>
                   </table>
-                  </div>
-                  <div className="col-lg-6">
-                    <h2>On the Clock - {currentTeam}</h2>
-                    <h3>On Deck - {onDeck}</h3>
-                    <h4>{nextPlayerByAdp.name}</h4>
                   </div>
                 </div>
               </div>
