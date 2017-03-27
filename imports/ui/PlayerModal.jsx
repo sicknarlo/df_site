@@ -1,0 +1,421 @@
+import React, { Component, PropTypes } from 'react';
+import { Meteor } from 'meteor/meteor';
+import classnames from 'classnames';
+import PageHeading from './PageHeading.jsx';
+import ADPGraph from './ADPGraph.jsx';
+import PlayerMetricsGraph from './PlayerMetricsGraph.jsx';
+import SimilarPlayersTable from './SimilarPlayersTable.jsx';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { Button, ButtonGroup, Modal } from 'react-bootstrap';
+import PlayerStats from './PlayerStats.jsx';
+import StatMedians from './StatMedians.jsx';
+import { Votes } from '../api/votes.js';
+
+
+const nextYearsFirst = '2018 1st';
+const nextYearsSecond = '2017 2nd';
+const nextYearsThird = '2017 3rd';
+const nextYearsFourth = '2017 4th';
+
+const _calculateAge = function(birthdate) {
+  const ageDifMs = Date.now() - birthdate.getTime();
+  const ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
+const _calculateHeight = function(inches) {
+  const ft = Math.floor(inches / 12);
+  const i = inches % 12;
+  return `${ft}'${i}"`;
+};
+
+// Player component - represents a Player profile
+export default class PlayerModal extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      player: null,
+      communityValue: 0,
+      moves: 0,
+      playerVote: null,
+      selectedStat: 'fp',
+    };
+  }
+
+  render() {
+    const player = this.props.player;
+    if (!player) {
+      return (
+          <div className="sk-spinner sk-spinner-double-bounce">
+            <div className="sk-double-bounce1"></div>
+            <div className="sk-double-bounce2"></div>
+          </div>
+      );
+    }
+
+    // const this.props.players = this.props.players.sort(function(a, b) {
+    //   if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+    //     return 1;
+    //   }
+    //   if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+    //     return -1;
+    //   }
+    //   // a must be equal to b
+    //   return 0;
+    // });
+    let sortByADP = {
+      asc: function(a, b) {
+        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      },
+      desc: function(a, b) {
+        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      },
+      _str: 'sortByADP',
+    };
+    const that = this;
+    const sortedPlayers = this.props.players.sort(function(a, b) {
+        if (a[that.props.values.past6MonthsADP[5]] > b[that.props.values.past6MonthsADP[5]]) {
+          return 1;
+        }
+        if (a[that.props.values.past6MonthsADP[5]] < b[that.props.values.past6MonthsADP[5]]) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+
+
+    const playerADPRank = sortedPlayers.findIndex((p) => p._id._str === player._id._str);
+    const previous5 = [];
+    let i = playerADPRank - 1;
+    let n = 0;
+    while (i >= 0 && n < 5) {
+      previous5.unshift(sortedPlayers[i]);
+      i--;
+      n++;
+    }
+
+    const next5 = [];
+    i = playerADPRank + 1;
+    n = 0;
+    while (i <= sortedPlayers.length && n < 5) {
+      next5.push(sortedPlayers[i]);
+      i++;
+      n++;
+    }
+
+    const similarPlayers = previous5.concat([player], next5);
+    const imgLoc = player.position === 'PICK'
+      ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
+      : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.espn_id}.png&w=350&h=254`;
+    const height = player.height === 'PICK' ? 'PICK' : _calculateHeight(player.height);
+    const weight = player.weight === 'PICK' ? 'PICK' : `${player.weight}lbs`;
+    const rotoLink = player.rotoworld_id === 'PICK' ? '#' : `http://www.rotoworld.com/player/nfl/${player.rotoworld_id}`;
+    const experience = player.draft_year === 'PICK'
+      ? 'PICK'
+      : `${_calculateAge(new Date(player.draft_year - 1, 4, 1))} years`;
+    const age = player.birthdate === 'PICK'
+      ? 'PICK'
+      : _calculateAge(new Date(player.birthdate * 1000));
+    const topDetails = `${player.team} - ${player.position}`;
+    const adpColorCls = player[this.props.values.past6MonthsADP[5]] <= player[this.props.values.past6MonthsADP[4]]
+      ? 'text-navy'
+      : 'text-danger';
+    const adpArrowCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
+      ? 'fa fa-play fa-rotate-270'
+      : 'fa fa-play fa-rotate-90';
+    const trend3ColorCls = player.trend > 0
+      ? 'text-navy'
+      : 'text-danger';
+    const trend3ArrowCls = player.trend > 0
+      ? 'fa fa-play fa-rotate-270'
+      : 'fa fa-play fa-rotate-90';
+    const trend6Months = (player[this.props.values.past6MonthsADP[0]] - player[this.props.values.past6MonthsADP[5]]).toFixed(1);
+    const trend6ColorCls = trend6Months > 0
+      ? 'text-navy'
+      : 'text-danger';
+    const trend6ArrowCls = trend6Months > 0
+      ? 'fa fa-play fa-rotate-270'
+      : 'fa fa-play fa-rotate-90';
+
+    const redraftRank = player[this.props.values.redraftRank]
+      ? player[this.props.values.redraftRank]
+      : 'N/A';
+
+    const fpRank = player[this.props.values.rank]
+      ? player[this.props.values.rank]
+      : 'N/A';
+
+    const pointsPassYards2014 = player.pass_yards_2014 * 0.04;
+    const pointsPassYards2015 = player.pass_yards_2015 * 0.04;
+    const pointsPassYards2016 = player.pass_yards_2016 * 0.04;
+
+    const pointsPassTds2014 = player.pass_td_2014 * 6;
+    const pointsPassTds2015 = player.pass_td_2015 * 6;
+    const pointsPassTds2016 = player.pass_td_2016 * 6;
+
+    const pointsReceptions2014 = player.rec_2014;
+    const pointsReceptions2015 = player.rec_2015;
+    const pointsReceptions2016 = player.rec_2016;
+
+    const pointsRecYards2014 = player.rec_yards_2014 * 0.1;
+    const pointsRecYards2015 = player.rec_yards_2015 * 0.1;
+    const pointsRecYards2016 = player.rec_yards_2016 * 0.1;
+
+    const pointsRecTds2014 = player.rec_td_2014 * 6;
+    const pointsRecTds2015 = player.rec_td_2015 * 6;
+    const pointsRecTds2016 = player.rec_td_2016 * 6;
+
+    const pointsRushYds2014 = player.rush_yards_2014 * 0.1;
+    const pointsRushYds2015 = player.rush_yards_2015 * 0.1;
+    const pointsRushYds2016 = player.rush_yards_2016 * 0.1;
+
+    const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
+    // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
+    // const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
+    // const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
+    // const firstRoundPickValue = firstRoundPick[this.props.values.past6MonthsValue[4]];
+    // const secondRoundPickValue = secondRoundPick[this.props.values.past6MonthsValue[4]];
+    // const thirdRoundPickValue = thirdRoundPick[this.props.values.past6MonthsValue[4]];
+    // const fourthRoundPickValue = fourthRoundPick[this.props.values.past6MonthsValue[4]];
+    //
+    // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
+    const buyBtnCls = classnames({ 'primary': this.state.playerVote === 'buy' });
+    const sellBtnCls = classnames({ 'danger': this.state.playerVote === 'sell' });
+    const firstRoundPickIndex = (
+        player[this.props.values.past6MonthsValue[5]] / firstRoundPick[this.props.values.past6MonthsValue[5]]).toFixed(2);
+    const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
+    const communityCls = classnames({
+      greenText: this.state.communityValue > 0,
+      redText: this.state.communityValue < 0,
+    })
+    const badges = [];
+
+    if (player[this.props.values.buyIndex] > 9 && player[this.props.values.buyIndex] < 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Value Buy">This player's average ranking is over 10 spots greater than their current ADP. They could be a good buy.</Popover>}>
+          <div className="badge badge-info playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>Good Value Buy</strong></div>
+        </OverlayTrigger>)
+      );
+    } else if (player[this.props.values.buyIndex] >= 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Value Buy">This player's average ranking is over 20 spots greater than their current ADP. They are a great buy at this value.</Popover>}>
+          <div className="badge badge-green playerBadge"><i className="fa fa-dollar badgeIcon"></i><strong>Great Value Buy</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.buyIndex] <= -20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Sell Target">This player's average ranking is over 20 spots worse than their current ADP. They are being overvalued and should be sold at this value.</Popover>}>
+          <div className="badge badge-danger playerBadge"><i className="fa fa-exclamation badgeIcon"></i><strong>Great Sell Target</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.buyIndex] < -9 && player[this.props.values.buyIndex] > 20) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Sell Target">This player's average ranking is over 10 spots worse than their current ADP. They are possibly being overvalued and could be a good guy to move.</Popover>}>
+          <div className="badge badge-warning playerBadge"><i className="fa fa-thumbs-o-down badgeIcon"></i><strong>Good Sell Target</strong></div>
+        </OverlayTrigger>)
+        );
+    }
+
+    if (player[this.props.values.winNowIndex] > 19) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Now Player">This player's redraft ranking is over 20 spots higher than their ADP. They are more valuable for win-now teams, or are more likely to provide more immediate returns for their owner.</Popover>}>
+          <div className="badge badge-warning playerBadge"><i className="fa fa-flash badgeIcon"></i><strong>Win Now</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.winNowIndex] < -19) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Later Player">This player's redraft ranking is over 20 spots lower than their ADP. They are more valuable for win-later teams and may not provide as much immediate value this season.</Popover>}>
+          <div className="badge badge-primary playerBadge"><i className="fa fa-rocket badgeIcon"></i><strong>Win Later</strong></div>
+        </OverlayTrigger>)
+        );
+    }
+
+    if (player[this.props.values.trend] > 9) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Up">This player has increased in value by over 10 spots over the last 3 months.</Popover>}>
+          <div className="badge badge-green playerBadge"><i className="fa fa-level-up badgeIcon"></i><strong>Trending Up</strong></div>
+        </OverlayTrigger>)
+        );
+    } else if (player[this.props.values.trend] < -9) {
+      badges.push(
+        (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Down">This player has decreased in value by over 10 spots over the last 3 months.</Popover>}>
+          <div className="badge badge-danger playerBadge"><i className="fa fa-level-down badgeIcon"></i><strong>Trending Down</strong></div>
+        </OverlayTrigger>)
+        );
+    }
+    return (
+      <Modal show={this.props.showPlayerViewer} bsSize="lg" onHide={this.props.closePlayerViewer} className="inmodal">
+        <Modal.Header closeButton><br />
+          <i className="fa fa-address-card modal-icon"></i><br />
+          <Modal.Title>
+            {this.props.player.name}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row animated fadeInRight">
+            <div className="col-md-4">
+              <div className="ibox float-e-margins">
+                <div>
+                  <div className="ibox-content border-left-right player-profilePic">
+                    <img alt="image" className="img-responsive playerImg" src={imgLoc} />
+                  </div>
+                  <div className="ibox-content profile-content">
+                    <div className="textCenter">
+                      {this.props.selectPlayerButton}
+                    </div>
+                    <table className="table">
+                      <tbody>
+                        <tr>
+                          <td><strong>Age</strong></td>
+                          <td>{age}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Experience</strong></td>
+                          <td>{experience}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Height</strong></td>
+                          <td>{height}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Weight</strong></td>
+                          <td>{weight}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>College</strong></td>
+                          <td>{player.college}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div className="player-profileSection-content">
+                      <h3>DynastyFFTools 1st Round Pick Index: <strong>{firstRoundPickIndex}</strong>&nbsp;
+                        <OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="DynastyFFTools 1st Round Pick Index">The players approximate worth in next year's 1st round picks.</Popover>}>
+                          <i className="fa fa-question-circle text-navy"></i>
+                        </OverlayTrigger>
+                      </h3>
+                    </div>
+                    <div className="player-badges">
+                      {badges.map(function(b) { return b })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-8">
+              <div className="row">
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel">
+                      <h5 className="m-b-md">Value</h5>
+                      <h2 className="text-success">
+                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[5]]}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel ">
+                      <h5 className="m-b-md">ADP</h5>
+                      <h2 className={adpColorCls}>
+                        {player[this.props.values.past6MonthsADP[5]]}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel ">
+                      <h5 className="m-b-md">Dynasty Rank</h5>
+                      <h2 >
+                        {fpRank}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel ">
+                      <h5 className="m-b-md">Redraft Rank</h5>
+                      <h2 >
+                        {redraftRank}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel">
+                      <h5 className="m-b-md">3-Month Trend</h5>
+                      <h2 className={trend3ColorCls}>
+                        <i className={trend3ArrowCls}></i> {player.trend}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-6">
+                  <div className="ibox">
+                    <div className="ibox-content dataPanel">
+                      <h5 className="m-b-md">6-Month Trend</h5>
+                      <h2 className={trend6ColorCls}>
+                        <i className={trend6ArrowCls}></i> {trend6Months}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div className="row playerRow">
+          <div className="col-lg-12 graphContainer">
+            <ADPGraph players={[player]} values={this.props.values} />
+          </div>
+        </div>
+        {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
+        <div className="row playerRow">
+          <div className="col-lg-12">
+            <PlayerMetricsGraph player={player} />
+          </div>
+        </div>
+        <div className="row playerRow">
+          <div className="col-lg-12">
+            <SimilarPlayersTable
+              similarPlayers={similarPlayers}
+              currentPlayer={player}
+              values={this.props.values}
+              openPlayerViewer={this.props.openPlayerViewer} />
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer className="flexContainer spaceBetween">
+        {this.props.selectPlayerButton}
+        <Button onClick={this.props.closePlayerViewer}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+    );
+  }
+}
+
+PlayerModal.propTypes = {
+  // This component gets the task to display through a React prop.
+  // We can use propTypes to indicate it is required
+  players: PropTypes.array.isRequired,
+};

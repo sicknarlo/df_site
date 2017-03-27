@@ -20,6 +20,8 @@ export default class SimilarPlayersTable extends Component {
       return null;
     }
 
+    const that = this;
+
     const currentPlayer = this.props.currentPlayer;
     const past6MonthsADP = this.props.values.past6MonthsADP;
     return (
@@ -47,9 +49,12 @@ export default class SimilarPlayersTable extends Component {
                   const isPlayer = currentPlayer === player;
                   const isPlayerClass = isPlayer ? '#d9edf7' : '#ffffff';
                   const profileLink = `/tools/players/${player._id._str}`;
+                  const nameLink = that.props.openPlayerViewer ?
+                    <td><a onClick={that.props.openPlayerViewer}>{player.name}</a></td> :
+                    <td><Link to={profileLink} onClick={that.handlePlayerClick}>{player.name}</Link></td>;
                   return (
                         <tr className={classnames({ info: isPlayer })}>
-                          <td><Link to={profileLink} onClick={this.handlePlayerClick}>{player.name}</Link></td>
+                          {nameLink}
                           <td>{player.position}</td>
                           <td>{player[past6MonthsADP[5]]}</td>
                           <td>

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
+import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
 import 'icheck/skins/all.css';
@@ -29,6 +30,7 @@ export default class DraftMate extends Component {
         is2QB: false,
         roundCount: 18,
         userPickPos: 1,
+        customRankings: false,
       },
       ready: false,
       draftStarted: false,
@@ -41,6 +43,7 @@ export default class DraftMate extends Component {
       playerPool: [],
       selectedPlayers: [],
       usersPlayers: [],
+      userRankings: [],
       values: PValues.ppr,
       e1Rankings: [],
       e2Rankings: [],
@@ -73,15 +76,19 @@ export default class DraftMate extends Component {
     this.toggleRankingViewer = this.toggleRankingViewer.bind(this);
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
+    this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
   }
 
   openPlayerViewer(p) {
-    const playerName = p.target.text.substr(0, p.target.text.indexOf("|")-1);
+    const playerName = p.target.text.substr(0, p.target.text.indexOf("|")-1) == "" ?
+      p.target.text :
+      p.target.text.substr(0, p.target.text.indexOf("|")-1);
     const player = this.props.players.find(p => p.name === playerName)
     this.setState({
       showPlayerViewer: true,
       playerInViewer: player,
-     });
+      showRankingViewer: false,
+    });
   }
 
   closePlayerViewer() {
@@ -114,6 +121,7 @@ export default class DraftMate extends Component {
 
   startDraft(e) {
     e.preventDefault();
+    let userRankings = [];
     this.setState({ draftReady: false });
     const teams = this.state.draftOptions.teamCount;
     const rounds = this.state.draftOptions.roundCount;
@@ -140,8 +148,6 @@ export default class DraftMate extends Component {
             team = team.toString();
           }
           const isUser = y + 1 == userPos;
-          console.log(isUser);
-          console.log(userPos);
 
           const teamName = isUser ? 'You' : `Team ${y + 1}`;
           picks.push({
@@ -213,6 +219,9 @@ export default class DraftMate extends Component {
       e14Rankings = sortRank(this.state.values.e14Rankings, playerPool);
       e15Rankings = sortRank(this.state.values.e15Rankings, playerPool);
       e16Rankings = sortRank(this.state.values.e16Rankings, playerPool);
+      userRankings = this.state.draftOptions.customRankings ?
+        playerPool.sort((a, b) => a[values.rank] - b[values.rank]) :
+        playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
     }
 
     this.setState({
@@ -226,6 +235,7 @@ export default class DraftMate extends Component {
       currentTeam: 1,
       nextTeam: 2,
       values,
+      userRankings,
       e1Rankings,
       e2Rankings,
       e3Rankings,
@@ -254,6 +264,66 @@ export default class DraftMate extends Component {
   setPick(val) {
     this.setState({ selectedPlayer: val });
   }
+
+  selectPlayerInViewer(e) {
+    e.preventDefault();
+    const player = this.state.playerPool.find(x => x == this.state.playerInViewer);
+    const newPlayerPool = this.state.playerPool.filter(x => x != player);
+    const newe1Rankings = this.state.e1Rankings.filter(x => x != player);
+    const newe2Rankings = this.state.e2Rankings.filter(x => x != player);
+    const newe3Rankings = this.state.e3Rankings.filter(x => x != player);
+    const newe4Rankings = this.state.e4Rankings.filter(x => x != player);
+    const newe5Rankings = this.state.e5Rankings.filter(x => x != player);
+    const newe6Rankings = this.state.e6Rankings.filter(x => x != player);
+    const newe7Rankings = this.state.e7Rankings.filter(x => x != player);
+    const newe8Rankings = this.state.e8Rankings.filter(x => x != player);
+    const newe9Rankings = this.state.e9Rankings.filter(x => x != player);
+    const newe10Rankings = this.state.e10Rankings.filter(x => x != player);
+    const newe11Rankings = this.state.e11Rankings.filter(x => x != player);
+    const newe12Rankings = this.state.e12Rankings.filter(x => x != player);
+    const newe13Rankings = this.state.e13Rankings.filter(x => x != player);
+    const newe14Rankings = this.state.e14Rankings.filter(x => x != player);
+    const newe15Rankings = this.state.e15Rankings.filter(x => x != player);
+    const newe16Rankings = this.state.e16Rankings.filter(x => x != player);
+
+    const newPicks = this.state.picks;
+    const currentPick = this.state.picks[this.state.pickNum - 1];
+    currentPick.player = player;
+    newPicks[this.state.pickNum - 1] = currentPick;
+    const nextPick = this.state.picks[this.state.pickNum];
+    const newSelectedPlayers = this.state.selectedPlayers;
+    newSelectedPlayers.push(player);
+
+    this.setState({
+      playerPool: newPlayerPool,
+      e1Rankings: newe1Rankings,
+      e2Rankings: newe2Rankings,
+      e3Rankings: newe3Rankings,
+      e4Rankings: newe4Rankings,
+      e5Rankings: newe5Rankings,
+      e6Rankings: newe6Rankings,
+      e7Rankings: newe7Rankings,
+      e8Rankings: newe8Rankings,
+      e9Rankings: newe9Rankings,
+      e10Rankings: newe10Rankings,
+      e11Rankings: newe11Rankings,
+      e12Rankings: newe12Rankings,
+      e13Rankings: newe13Rankings,
+      e14Rankings: newe14Rankings,
+      e15Rankings: newe15Rankings,
+      e16Rankings: newe16Rankings,
+      draftReady: true,
+      draftStarted: true,
+      picks: newPicks,
+      pick: nextPick.draftPick,
+      pickNum: this.state.pickNum + 1,
+      selectedPlayer: null,
+      selectedPlayers: newSelectedPlayers,
+      showPlayerViewer: false,
+      playerInViewer: null,
+    });
+  }
+
 
   toggleTeamViewer() {
     this.setState({ showTeamViewer: !this.state.showTeamViewer });
@@ -480,47 +550,76 @@ export default class DraftMate extends Component {
       expertPicks.push([player, Math.round((count / nextBest.length) * 100)]));
     const options = this.state.playerPool.map(function(player) {
       return { val: player, label: player.name }
-    })
+    });
+    const selectPlayerInViewer = !this.state.selectedPlayers.includes(this.state.playerInViewer) ?
+      <Button bsStyle="primary"
+        onClick={this.selectPlayerInViewer}>
+        Select Player
+      </Button> :
+      null;
 
+    const playerModal = this.state.playerInViewer ?
+    <PlayerModal
+      player={this.state.playerInViewer}
+      players={this.props.players}
+      showPlayerViewer={this.state.showPlayerViewer}
+      closePlayerViewer={this.closePlayerViewer}
+      values={this.state.values}
+      selectPlayerInViewer={this.selectPlayerInViewer}
+      selectPlayerButton={selectPlayerInViewer}
+      openPlayerViewer={this.openPlayerViewer} /> :
+      null;
     return (
       <div className="wrapper wrapper-content animated fadeInRight">
-        <Modal show={this.state.showPlayerViewer} bsSize="lg" onHide={this.closePlayerViewer} className="inmodal">
+        {playerModal}
+        <Modal show={this.state.showRankingViewer} bsSize="lg" onHide={this.toggleRankingViewer} className="inmodal">
           <Modal.Header closeButton><br />
           <i className="fa fa-line-chart modal-icon"></i><br />
             <Modal.Title>
-              Results
+              <h1>Draft Board</h1>
+              <h3>Current Pick - {this.state.pickNum}</h3>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="row">
-              {this.state.playerInViewer && this.state.playerInViewer.name}
-            </div>
-          </Modal.Body>
-          <Modal.Footer className="flexContainer spaceBetween">
-            <Button onClick={this.closePlayerViewer}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-        {/* <Modal show={this.state.showRankingViewer} bsSize="lg" onHide={this.toggleRankingViewer} className="inmodal">
-          <Modal.Header closeButton><br />
-          <i className="fa fa-line-chart modal-icon"></i><br />
-            <Modal.Title>
-              Results
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                {this.props.players.map(player => {
-                  if (player.position === 'PICK') return null;
-                  const wasSelected =
-                })}
+              <div className="col-lg-12 ibox float-e-margins">
+                <div className="ibox-content">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>ADP</th>
+                        <th>Value Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.userRankings.map((player, i) => {
+                        const classes = classnames({
+                          'strikeout': this.state.selectedPlayers.includes(player),
+                          'success':
+                            !this.state.selectedPlayers.includes(player) &&
+                            (this.state.pickNum - (i + 1)) > 1,
+                        })
+                        return (
+                          <tr className={classes}>
+                            <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
+                            <td>{player.position}</td>
+                            <td>{player[this.state.values.past6MonthsADP[5]]}</td>
+                            <td>{this.state.pickNum - (i + 1)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </Modal.Body>
           <Modal.Footer className="flexContainer spaceBetween">
             <Button onClick={this.toggleRankingViewer}>Close</Button>
           </Modal.Footer>
-        </Modal> */}
+        </Modal>
         <div className="row">
           <div className="col-lg-12">
             <div className="ibox float-e-margins">
@@ -532,6 +631,7 @@ export default class DraftMate extends Component {
                   <div className="col-lg-6">
                     <h2>On the Clock - {currentTeam}</h2>
                     <h3>On Deck - {onDeck}</h3>
+                    <h2><a onClick={this.toggleRankingViewer}>Draft Board</a></h2>
                     <hr></hr>
                     <div className="row">
                       <div className="col-xs-12">
@@ -595,7 +695,6 @@ export default class DraftMate extends Component {
                           <th style={{ width: '1%' }} className="text-center">Pick</th>
                           <th className="text-center">Player</th>
                           <th className="text-center">Team</th>
-                          <th className="text-center">vs ADP</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -619,9 +718,8 @@ export default class DraftMate extends Component {
                                     )}
                                 </select>
                               </td>
-                              <td className="text-center"><span className="label label-primary">{pick.vsADP || '-'}</span></td>
                             </tr>
-                          )}
+                          );}
                         )}
                       </tbody>
                   </table>
