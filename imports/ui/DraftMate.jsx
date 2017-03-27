@@ -4,6 +4,7 @@ import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
+import DragSortableList from 'react-drag-sortable'
 import 'icheck/skins/all.css';
 
 function sortRank(rankName, playerPool) {
@@ -407,6 +408,9 @@ export default class DraftMate extends Component {
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
+    const list = this.props.players.map(player => {
+      return { content: player.name }
+    });
     if (!this.state.draftStarted) {
       return (
         <div className="col-lg-12">
@@ -511,6 +515,7 @@ export default class DraftMate extends Component {
                   </div>
                 </div>
               </form>
+              <DragSortableList items={list} onSort={sortedList => console.log(sortedList)} type="vertical"/>
             </div>
           </div>
       </div>
@@ -543,6 +548,15 @@ export default class DraftMate extends Component {
     const aCount = new Map([...new Set(nextBest)].map(
       x => [x, nextBest.filter(y => y === x).length]
     ));
+
+    let rankingBpa = null;
+
+    for (let i = 0; i < this.state.userRankings.length; i++) {
+      if (!this.state.selectedPlayers.includes(this.state.userRankings[i])) {
+        rankingBpa = this.state.userRankings[i];
+        break;
+      }
+    }
 
     const sortedBest = new Map([...aCount.entries()].sort((a, b) => b > a));
     const expertPicks = [];
@@ -653,6 +667,9 @@ export default class DraftMate extends Component {
                               </div>
                               <button className="btn btn-primary" onClick={this.selectPlayer}>Submit Pick</button>
                             </form>
+                            <div>
+                              <h3>Your Best Player Available: <a onClick={this.openPlayerViewer}>{rankingBpa.name}</a></h3>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -661,7 +678,7 @@ export default class DraftMate extends Component {
                       <div className="col-xs-12">
                         <div className="panel panel-default">
                           <div className="panel-heading">
-                            Expert Suggestions
+                            Other Rankers
                           </div>
                           <div className="panel-body">
                             {expertPicks.map((pick) => {
