@@ -4,7 +4,7 @@ import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
 import { Modal, Button } from 'react-bootstrap';
-import DragSortableList from 'react-drag-sortable'
+import DragSortableList from 'react-drag-sortable';
 import 'icheck/skins/all.css';
 
 function sortRank(rankName, playerPool) {
@@ -31,8 +31,9 @@ export default class DraftMate extends Component {
         is2QB: false,
         roundCount: 18,
         userPickPos: 1,
-        customRankings: false,
+        useCustomRankings: false,
       },
+      customRankings: [],
       ready: false,
       draftStarted: false,
       selectedPlayer: null,
@@ -78,6 +79,12 @@ export default class DraftMate extends Component {
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
+    this.setCustomRankings = this.setCustomRankings.bind(this);
+  }
+
+  setCustomRankings(newList) {
+    const customRankings = newList.map(r => r.value);
+    this.setState({ customRankings });
   }
 
   openPlayerViewer(p) {
@@ -128,10 +135,13 @@ export default class DraftMate extends Component {
     const rounds = this.state.draftOptions.roundCount;
     const draftType = this.state.draftOptions.orderFormat;
     const userPos = this.state.draftOptions.userPickPos;
+    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
     const t = [];
     const playerPool = this.state.draftOptions.format === 'rookie' ?
-      this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK') :
-      this.props.players.filter((p) => p.position !== 'PICK');
+      this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
+                        .sort((a, b) => a[values.rank] - b[values.rank]) :
+      this.props.players.filter((p) => p.position !== 'PICK')
+                        .sort((a, b) => a[values.rank] - b[values.rank]);
 
     for (let i = 0; i < teams; i++) {
       const name = i + 1 == userPos ? 'You' : `Team ${i + 1}`;
@@ -185,7 +195,6 @@ export default class DraftMate extends Component {
       }
     }
 
-    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
     let e1Rankings,
         e2Rankings,
         e3Rankings,
@@ -220,8 +229,8 @@ export default class DraftMate extends Component {
       e14Rankings = sortRank(this.state.values.e14Rankings, playerPool);
       e15Rankings = sortRank(this.state.values.e15Rankings, playerPool);
       e16Rankings = sortRank(this.state.values.e16Rankings, playerPool);
-      userRankings = this.state.draftOptions.customRankings ?
-        playerPool.sort((a, b) => a[values.rank] - b[values.rank]) :
+      userRankings = this.state.draftOptions.useCustomRankings ?
+        this.state.customRankings :
         playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
     }
 
@@ -258,8 +267,23 @@ export default class DraftMate extends Component {
 
   updateOption(e) {
     const newDraftOptions = this.state.draftOptions;
-    newDraftOptions[e.target.name] = e.target.value;
-    this.setState({ draftOptions: newDraftOptions });
+    let customRankings = this.state.playerPool;
+    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
+    if (e.target.name === 'format') {
+      customRankings = this.state.draftOptions.format === 'rookie' ?
+        this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
+                          .sort((a, b) => a[values.rank] - b[values.rank]) :
+        this.props.players.filter((p) => p.position !== 'PICK')
+                          .sort((a, b) => a[values.rank] - b[values.rank]);
+      newDraftOptions[e.target.name] = e.target.value;
+      this.setState({
+        customRankings,
+        draftOptions: newDraftOptions,
+      });
+    } else {
+      newDraftOptions[e.target.name] = e.target.value;
+      this.setState({ draftOptions: newDraftOptions });
+    }
   }
 
   setPick(val) {
@@ -408,8 +432,8 @@ export default class DraftMate extends Component {
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
-    const list = this.props.players.map(player => {
-      return { content: player.name }
+    const list = this.state.customRankings.map((player, i) => {
+      return { content: (<span>{`${i + 1}. ${player.name}`}</span>), value: player };
     });
     if (!this.state.draftStarted) {
       return (
@@ -510,12 +534,27 @@ export default class DraftMate extends Component {
                   </div>
                 </div>
                 <div className="form-group">
+                  <label className="col-sm-2 control-label">Use Custom Rankings</label>
+                  <div className="col-sm-10">
+                    <select
+                      className="form-control m-b"
+                      name="useCustomRankings"
+                      onChange={this.updateOption}
+                      value={this.state.draftOptions.useCustomRankings}
+                    >
+                        <option selected disabled>Select</option>
+                        <option value={true}>Yes</option>
+                        <option value={false}>No</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
                   <div className="col-xs-4 flexContainer justifyCenter">
                     {startButton}
                   </div>
                 </div>
               </form>
-              <DragSortableList items={list} onSort={sortedList => console.log(sortedList)} type="vertical"/>
+              <DragSortableList items={list} onSort={this.setCustomRankings} type="vertical" />
             </div>
           </div>
       </div>
