@@ -31,9 +31,7 @@ export default class DraftMate extends Component {
         is2QB: false,
         roundCount: 18,
         userPickPos: 1,
-        useCustomRankings: false,
       },
-      customRankings: [],
       ready: false,
       draftStarted: false,
       selectedPlayer: null,
@@ -79,12 +77,6 @@ export default class DraftMate extends Component {
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
-    this.setCustomRankings = this.setCustomRankings.bind(this);
-  }
-
-  setCustomRankings(newList) {
-    const customRankings = newList.map(r => r.value);
-    this.setState({ customRankings });
   }
 
   openPlayerViewer(p) {
@@ -229,9 +221,7 @@ export default class DraftMate extends Component {
       e14Rankings = sortRank(this.state.values.e14Rankings, playerPool);
       e15Rankings = sortRank(this.state.values.e15Rankings, playerPool);
       e16Rankings = sortRank(this.state.values.e16Rankings, playerPool);
-      userRankings = this.state.draftOptions.useCustomRankings ?
-        this.state.customRankings :
-        playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
+      userRankings = playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
     }
 
     this.setState({
@@ -267,23 +257,8 @@ export default class DraftMate extends Component {
 
   updateOption(e) {
     const newDraftOptions = this.state.draftOptions;
-    let customRankings = this.state.playerPool;
-    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
-    if (e.target.name === 'format') {
-      customRankings = this.state.draftOptions.format === 'rookie' ?
-        this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
-                          .sort((a, b) => a[values.rank] - b[values.rank]) :
-        this.props.players.filter((p) => p.position !== 'PICK')
-                          .sort((a, b) => a[values.rank] - b[values.rank]);
-      newDraftOptions[e.target.name] = e.target.value;
-      this.setState({
-        customRankings,
-        draftOptions: newDraftOptions,
-      });
-    } else {
-      newDraftOptions[e.target.name] = e.target.value;
-      this.setState({ draftOptions: newDraftOptions });
-    }
+    newDraftOptions[e.target.name] = e.target.value;
+    this.setState({ draftOptions: newDraftOptions });
   }
 
   setPick(val) {
@@ -432,9 +407,7 @@ export default class DraftMate extends Component {
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
-    const list = this.state.customRankings.map((player, i) => {
-      return { content: (<span>{`${i + 1}. ${player.name}`}</span>), value: player };
-    });
+
     if (!this.state.draftStarted) {
       return (
         <div className="col-lg-12">
@@ -534,27 +507,11 @@ export default class DraftMate extends Component {
                   </div>
                 </div>
                 <div className="form-group">
-                  <label className="col-sm-2 control-label">Use Custom Rankings</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control m-b"
-                      name="useCustomRankings"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.useCustomRankings}
-                    >
-                        <option selected disabled>Select</option>
-                        <option value={true}>Yes</option>
-                        <option value={false}>No</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
                   <div className="col-xs-4 flexContainer justifyCenter">
                     {startButton}
                   </div>
                 </div>
               </form>
-              <DragSortableList items={list} onSort={this.setCustomRankings} type="vertical" />
             </div>
           </div>
       </div>
@@ -620,17 +577,37 @@ export default class DraftMate extends Component {
       values={this.state.values}
       selectPlayerInViewer={this.selectPlayerInViewer}
       selectPlayerButton={selectPlayerInViewer}
-      openPlayerViewer={this.openPlayerViewer} /> :
+      openPlayerViewer={this.openPlayerViewer}
+    /> :
       null;
+
+    let alertCount = 0;
+
+    this.state.userRankings.forEach((player, i) => {
+      if ((!this.state.selectedPlayers.includes(player) &&
+          (this.state.pickNum - (i + 1)) > 1) ||
+          (!this.state.selectedPlayers.includes(player) &&
+          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1)) alertCount++;
+    });
+
+    const alertButton = alertCount > 0 ?
+      <button type="button" className="btn btn-info m-r-sm">{alertCount}</button> :
+      null;
+
     return (
       <div className="wrapper wrapper-content animated fadeInRight">
         {playerModal}
-        <Modal show={this.state.showRankingViewer} bsSize="lg" onHide={this.toggleRankingViewer} className="inmodal">
+        <Modal
+          show={this.state.showRankingViewer}
+          bsSize="lg"
+          onHide={this.toggleRankingViewer}
+          className="inmodal"
+        >
           <Modal.Header closeButton><br />
           <i className="fa fa-line-chart modal-icon"></i><br />
             <Modal.Title>
               <h1>Draft Board</h1>
-              <h3>Current Pick - {this.state.pickNum}</h3>
+              <h3>Current Pick: {this.state.pickNum}</h3>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -643,23 +620,27 @@ export default class DraftMate extends Component {
                         <th>Name</th>
                         <th>Position</th>
                         <th>ADP</th>
-                        <th>Value Score</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       {this.state.userRankings.map((player, i) => {
                         const classes = classnames({
-                          'strikeout': this.state.selectedPlayers.includes(player),
-                          'success':
-                            !this.state.selectedPlayers.includes(player) &&
-                            (this.state.pickNum - (i + 1)) > 1,
-                        })
+                          strikeout: this.state.selectedPlayers.includes(player),
+                        });
+                        const valueLabel =
+                          (!this.state.selectedPlayers.includes(player) &&
+                          (this.state.pickNum - (i + 1)) > 1) ||
+                          (!this.state.selectedPlayers.includes(player) &&
+                          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1) ?
+                            <span className="label label-info">GOOD VALUE</span> :
+                              null;
                         return (
                           <tr className={classes}>
                             <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
                             <td>{player.position}</td>
                             <td>{player[this.state.values.past6MonthsADP[5]]}</td>
-                            <td>{this.state.pickNum - (i + 1)}</td>
+                            <td>{valueLabel}</td>
                           </tr>
                         );
                       })}
@@ -684,7 +665,7 @@ export default class DraftMate extends Component {
                   <div className="col-lg-6">
                     <h2>On the Clock - {currentTeam}</h2>
                     <h3>On Deck - {onDeck}</h3>
-                    <h2><a onClick={this.toggleRankingViewer}>Draft Board</a></h2>
+                    <h2><a onClick={this.toggleRankingViewer}>Draft Board {alertButton}</a></h2>
                     <hr></hr>
                     <div className="row">
                       <div className="col-xs-12">
@@ -707,7 +688,7 @@ export default class DraftMate extends Component {
                               <button className="btn btn-primary" onClick={this.selectPlayer}>Submit Pick</button>
                             </form>
                             <div>
-                              <h3>Your Best Player Available: <a onClick={this.openPlayerViewer}>{rankingBpa.name}</a></h3>
+                              <h3>DynastyFFTools Best Player Available: <a onClick={this.openPlayerViewer}>{rankingBpa.name}</a></h3>
                             </div>
                           </div>
                         </div>
