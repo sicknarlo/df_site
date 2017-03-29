@@ -3,8 +3,7 @@ import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
-import { Modal, Button } from 'react-bootstrap';
-import DragSortableList from 'react-drag-sortable';
+import { Modal, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
 function sortRank(rankName, playerPool) {
@@ -104,7 +103,9 @@ export default class DraftMate extends Component {
   }
 
   toggleRankingViewer() {
-    this.setState({ showRankingViewer: !this.state.showRankingViewer });
+    this.setState({
+      showRankingViewer: !this.state.showRankingViewer,
+     });
   }
 
   changeOwner(e) {
@@ -427,7 +428,7 @@ export default class DraftMate extends Component {
                       value={this.state.draftOptions.format}
                     >
                         <option selected disabled>Select</option>
-                        <option value="rookie">Rookie</option>
+                        <option disabled value="rookie">Rookie</option>
                         <option value="startup">Start Up</option>
                     </select>
                   </div>
@@ -582,10 +583,10 @@ export default class DraftMate extends Component {
       null;
 
     let alertCount = 0;
+    let majorAlertCount = 0;
 
-    this.state.userRankings.forEach((player, i) => {
-      if ((!this.state.selectedPlayers.includes(player) &&
-          (this.state.pickNum - (i + 1)) > 1) ||
+    this.state.userRankings.forEach((player) => {
+      if (
           (!this.state.selectedPlayers.includes(player) &&
           this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1)) alertCount++;
     });
@@ -628,13 +629,42 @@ export default class DraftMate extends Component {
                         const classes = classnames({
                           strikeout: this.state.selectedPlayers.includes(player),
                         });
-                        const valueLabel =
+                        let valueLabel = null;
+                        if (
                           (!this.state.selectedPlayers.includes(player) &&
-                          (this.state.pickNum - (i + 1)) > 1) ||
+                          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1 &&
+                          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] < 10)
+                        ) valueLabel = (
+                          <OverlayTrigger
+                            trigger={['hover', 'focus', 'click']}
+                            placement="bottom"
+                            overlay={
+                              <Popover title="Good Value Pick">
+                                This player is available {this.state.pickNum - player[this.state.values.past6MonthsADP[5]]} spots after their rank or ADP. This is a good value.
+                              </Popover>
+                            }
+                          >
+                            <span className="label label-info">GOOD VALUE</span>
+                          </OverlayTrigger>
+                        );
+
+                        if (
                           (!this.state.selectedPlayers.includes(player) &&
-                          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1) ?
-                            <span className="label label-info">GOOD VALUE</span> :
-                              null;
+                          this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 9)
+                        ) valueLabel = (
+                          <OverlayTrigger
+                            trigger={['hover', 'focus', 'click']}
+                            placement="bottom"
+                            overlay={
+                              <Popover title="Great Value Pick">
+                                This player is available {this.state.pickNum - player[this.state.values.past6MonthsADP[5]]} spots after their rank or ADP. This is a great value.
+                              </Popover>
+                            }
+                          >
+                            <span className="label label-danger">GREAT VALUE</span>
+                          </OverlayTrigger>
+                        );
+
                         return (
                           <tr className={classes}>
                             <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>

@@ -29,6 +29,7 @@
     "react-addons-pure-render-mixin": "^15.0.0",
     "react-addons-test-utils": "^15.0.0",
     "react-bootstrap": "^0.29.5",
+    "react-bootstrap-sweetalert": "^3.0.0",
     "react-chartjs": "^0.7.3",
     "react-drag-sortable": "^1.0.1",
     "react-ga": "^2.1.1",
