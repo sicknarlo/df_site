@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
-import { Modal, Button, Popover, OverlayTrigger } from 'react-bootstrap';
+import { Modal, Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
 function sortRank(rankName, playerPool) {
@@ -554,8 +554,9 @@ export default class DraftMate extends Component {
         break;
       }
     }
+    console.log(aCount);
 
-    const sortedBest = new Map([...aCount.entries()].sort((a, b) => b > a));
+    const sortedBest = new Map([...aCount.entries()].sort((a, b) => b[1] > a[1]));
     const expertPicks = [];
     sortedBest.forEach((count, player) =>
       expertPicks.push([player, Math.round((count / nextBest.length) * 100)]));
@@ -692,7 +693,7 @@ export default class DraftMate extends Component {
               </div>
               <div className="ibox-content">
                 <div className="row">
-                  <div className="col-lg-6">
+                  <div className="col-sm-6">
                     <h2>On the Clock - {currentTeam}</h2>
                     <h3>On Deck - {onDeck}</h3>
                     <h2><a onClick={this.toggleRankingViewer}>Draft Board {alertButton}</a></h2>
@@ -755,41 +756,107 @@ export default class DraftMate extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-6">
-                    <table className="table table-hover margin bottom">
-                      <thead>
-                        <tr>
-                          <th style={{ width: '1%' }} className="text-center">Pick</th>
-                          <th className="text-center">Player</th>
-                          <th className="text-center">Team</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.picks.map((pick) => {
-                          const classes = classnames({
-                            info: pick.isUser,
-                            success: pick.draftPick === this.state.pick,
-                          });
-                          return (
-                            <tr key={pick.draftPick} className={classes}>
-                              <td className="text-center">{pick.draftPick}</td>
-                              <td> {pick.player && pick.player.name}</td>
-                              <td className="text-center small">
-                                <select
-                                  name={pick.draftPick}
-                                  value={pick.team}
-                                  onChange={component.changeOwner}
-                                >
-                                    {component.state.teams.map(t =>
-                                      <option value={t.name}>{t.name}</option>
-                                    )}
-                                </select>
-                              </td>
+                  <div className="col-sm-6 draftContainer">
+                    <Tabs defaultActiveKey={2} id="tabs" className="draftBoard">
+                      <Tab eventKey={1} title="Draft">
+                        <table className="table table-hover margin bottom">
+                          <thead>
+                            <tr>
+                              <th style={{ width: '1%' }} className="text-center">Pick</th>
+                              <th className="text-center">Player</th>
+                              <th className="text-center">Team</th>
                             </tr>
-                          );}
-                        )}
-                      </tbody>
-                  </table>
+                          </thead>
+                          <tbody>
+                            {this.state.picks.map((pick) => {
+                              const classes = classnames({
+                                info: pick.isUser,
+                                success: pick.draftPick === this.state.pick,
+                              });
+                              return (
+                                <tr key={pick.draftPick} className={classes}>
+                                  <td className="text-center">{pick.draftPick}</td>
+                                  <td> {pick.player && pick.player.name}</td>
+                                  <td className="text-center small">
+                                    <select
+                                      name={pick.draftPick}
+                                      value={pick.team}
+                                      onChange={component.changeOwner}
+                                    >
+                                      {component.state.teams.map(t =>
+                                        <option value={t.name}>{t.name}</option>
+                                      )}
+                                    </select>
+                                  </td>
+                                </tr>
+                              );}
+                            )}
+                          </tbody>
+                        </table>
+                      </Tab>
+                      <Tab eventKey={2} title="Draft Board">
+                        <table className="table table-hover">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th></th>
+                              <th>Position</th>
+                              <th>ADP</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.userRankings.map((player) => {
+                              const classes = classnames({
+                                strikeout: this.state.selectedPlayers.includes(player),
+                              });
+                              let valueLabel = null;
+                              if (
+                                (!this.state.selectedPlayers.includes(player) &&
+                                this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 1 &&
+                                this.state.pickNum - player[this.state.values.past6MonthsADP[5]] < 10)
+                              ) valueLabel = (
+                                <OverlayTrigger
+                                  trigger={['hover', 'focus', 'click']}
+                                  placement="bottom"
+                                  overlay={
+                                    <Popover title="Good Value Pick">
+                                      This player is available {this.state.pickNum - player[this.state.values.past6MonthsADP[5]]} spots after their rank or ADP. This is a good value.
+                                    </Popover>
+                                  }
+                                >
+                                  <span className="label label-info">GOOD VALUE</span>
+                                </OverlayTrigger>
+                              );
+
+                              if (
+                                (!this.state.selectedPlayers.includes(player) &&
+                                this.state.pickNum - player[this.state.values.past6MonthsADP[5]] > 9)
+                              ) valueLabel = (
+                                <OverlayTrigger
+                                  trigger={['hover', 'focus', 'click']}
+                                  placement="bottom"
+                                  overlay={
+                                    <Popover title="Great Value Pick">
+                                      This player is available {this.state.pickNum - player[this.state.values.past6MonthsADP[5]]} spots after their rank or ADP. This is a great value.
+                                    </Popover>
+                                  }
+                                >
+                                  <span className="label label-danger">GREAT VALUE</span>
+                                </OverlayTrigger>
+                              );
+                              return (
+                                <tr className={classes}>
+                                  <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
+                                  <td>{valueLabel}</td>
+                                  <td>{player.position}</td>
+                                  <td>{player[this.state.values.past6MonthsADP[5]]}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </Tab>
+                    </Tabs>
                   </div>
                 </div>
               </div>
