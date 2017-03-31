@@ -23,7 +23,7 @@ export default class SimilarPlayersTable extends Component {
     const that = this;
 
     const currentPlayer = this.props.currentPlayer;
-    const past6MonthsADP = this.props.values.past6MonthsADP;
+    const values = this.props.values;
     return (
       <div className="ibox float-e-margins">
         <div className="ibox-title">
@@ -42,8 +42,8 @@ export default class SimilarPlayersTable extends Component {
                 <tbody>
                 {this.props.similarPlayers && this.props.similarPlayers.map(function(player) {
                   const data = [];
-                  for (var i=0; i<past6MonthsADP.length; i++) {
-                    data.push(player[past6MonthsADP[i]] * -1);
+                  for (var i = 0; i < 6; i++) {
+                    data.push(player.adp[i][values.adpKey] * -1);
                   }
 
                   const isPlayer = currentPlayer === player;
@@ -56,7 +56,7 @@ export default class SimilarPlayersTable extends Component {
                         <tr className={classnames({ info: isPlayer })}>
                           {nameLink}
                           <td>{player.position}</td>
-                          <td>{player[past6MonthsADP[5]]}</td>
+                          <td>{player.adp[0][values.adpKey]}</td>
                           <td>
                             <Line
                               values={data}

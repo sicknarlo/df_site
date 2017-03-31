@@ -28,9 +28,9 @@ export default class PlayerStats extends Component {
       {
         name: player.name,
         data: [
-          player[selectedStat+'_2014'],
-          player[selectedStat+'_2015'],
-          player[selectedStat+'_2016'],
+          player.stats['2014'][selectedStat],
+          player.stats['2015'][selectedStat],
+          player.stats['2016'][selectedStat],
         ]
       },
       {
@@ -114,13 +114,13 @@ export default class PlayerStats extends Component {
               <h5>2014</h5>
             </div>
           <div className="ibox-content">
-            <h1 className="no-margins">{player[selectedStat + '_2014']}</h1>
+            <h1 className="no-margins">{player.stats['2014'][selectedStat]}</h1>
             <div className={
-              (player[selectedStat + '_2014'] / StatMedians[selectedStat][player.position.toLowerCase()])
+              (player.stats['2014'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
                * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
             }>
               {
-                ((player[selectedStat + '_2014'] / StatMedians[selectedStat][player.position.toLowerCase()])
+                ((player.stats['2014'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
                  * 100).toFixed(0)
               }%
             </div>
@@ -134,13 +134,13 @@ export default class PlayerStats extends Component {
             <h5>2015</h5>
           </div>
         <div className="ibox-content">
-          <h1 className="no-margins">{player[selectedStat + '_2015']}</h1>
+          <h1 className="no-margins">{player.stats['2015'][selectedStat]}</h1>
           <div className={
-            (player[selectedStat + '_2015'] / StatMedians[selectedStat][player.position.toLowerCase()])
+            (player.stats['2015'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
              * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
           }>
             {
-              ((player[selectedStat + '_2015'] / StatMedians[selectedStat][player.position.toLowerCase()])
+              ((player.stats['2015'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
                * 100).toFixed(0)
             }%
           </div>
@@ -154,13 +154,13 @@ export default class PlayerStats extends Component {
           <h5>2016</h5>
         </div>
       <div className="ibox-content">
-        <h1 className="no-margins">{player[selectedStat + '_2016']}</h1>
+        <h1 className="no-margins">{player.stats['2016'][selectedStat]}</h1>
         <div className={
-          (player[selectedStat + '_2016'] / StatMedians[selectedStat][player.position.toLowerCase()])
+          (player.stats['2016'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
            * 100 > 99 ? 'stat-percent font-bold text-success' : 'stat-percent font-bold text-danger'
         }>
           {
-            ((player[selectedStat + '_2016'] / StatMedians[selectedStat][player.position.toLowerCase()])
+            ((player.stats['2016'][selectedStat] / StatMedians[selectedStat][player.position.toLowerCase()])
              * 100).toFixed(0)
           }%
         </div>

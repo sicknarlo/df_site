@@ -1,5 +1,8 @@
 const PValues = {
   ppr: {
+    adpKey: 'adp',
+    valueKey: 'value',
+    rankKey: 'rank',
     past6MonthsValue: [
       'oct_16_value',
       'nov_16_value',
@@ -29,6 +32,10 @@ const PValues = {
     buyIndex: 'buy_index',
     winNowIndex: 'win_now_index',
     trend: 'trend',
+    buyindex: 'buyindex',
+    win_now: 'win_now',
+    redraft: 'redraft',
+    rookie: 'rookie',
     e1Rankings: 'e1',
     e2Rankings: 'e2',
     e3Rankings: 'e3',
@@ -47,6 +54,9 @@ const PValues = {
     e16Rankings: 'e16',
   },
   super: {
+    adpKey: 'adp_2qb',
+    valueKey: 'value_2qb',
+    rankKey: 'rank_2qb',
     past6MonthsValue: [
       'oct_16_value_2qb',
       'nov_16_value_2qb',
@@ -76,6 +86,10 @@ const PValues = {
     buyIndex: 'buy_index_2qb',
     winNowIndex: 'win_now_index_2qb',
     trend: 'trend_2qb',
+    buyindex: 'buyindex_2qb',
+    win_now: 'win_now_2qb',
+    redraft: 'redraft_2qb',
+    rookie: 'rookie_2qb',
   },
 };
 

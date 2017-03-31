@@ -21,65 +21,65 @@ Meteor.methods({
   },
   'players.getSortedStandardPlayers'() {
     const sortQuery = {};
-    sortQuery[currentMonthStandard] = 1;
+    sortQuery['rankings.0.rank'] = 1;
     return Players.find({}, { sort: sortQuery }).fetch();
   },
   'players.getSorted2QBPlayers'() {
     const sortQuery = {};
-    sortQuery[currentMonth2QB] = 1;
+    sortQuery['rankings.0.rank_2qb'] = 1;
     return Players.find({}, { sort: sortQuery }).fetch();
   },
   'teams.getStandardTopTrenders'() {
-    const query = {};
+    const query = { 'position': {'$ne': 'PICK' }};
     query[currentMonthStandard] = { $lt: 151 };
     return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBTopTrenders'() {
-    const query = {};
+    const query = { 'position': {'$ne': 'PICK' }};
     query[currentMonth2QB] = { $lt: 151 };
     return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardBottomTrenders'() {
-    const query = {};
+    const query = { 'position': {'$ne': 'PICK' }};
     query[currentMonthStandard] = { $lt: 151 };
     return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBBottomTrenders'() {
-    const query = {};
+    const query = { 'position': {'$ne': 'PICK' }};
     query[currentMonth2QB] = { $lt: 151 };
     return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardUnderValuedPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { buy_index: -1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.buyindex': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBUnderValuedPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { buy_index_2qb: -1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardOverValuedPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { buy_index: 1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.buyindex': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBOverValuedPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { buy_index_2qb: 1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinNowPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { win_now_index: -1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.win_now': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinNowPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { win_now_index_2qb: -1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinLaterPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { win_now_index: 1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.win_now': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinLaterPlayers'() {
-    const query = {};
-    return Players.find(query, { sort: { win_now_index_2qb: 1 }, limit: 10 }).fetch();
+    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'players.getPlayer'({ playerId }) {
     const id = new Meteor.Collection.ObjectID(playerId);

@@ -202,7 +202,7 @@ export default class Dashboard extends Component {
                       {risers.map((player) =>
                         <tr>
                           <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
+                          <td>{player.adp[0][this.props.values.adpKey]}</td>
                           <td>+{player.trend}</td>
                         </tr>
                       )}
@@ -227,7 +227,7 @@ export default class Dashboard extends Component {
                     {fallers.map((player) =>
                       <tr>
                         <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                        <td>{player[this.props.values.past6MonthsADP[5]]}</td>
+                        <td>{player.adp[0][this.props.values.adpKey]}</td>
                         <td>{player.trend}</td>
                       </tr>
                     )}
@@ -254,8 +254,8 @@ export default class Dashboard extends Component {
                       {overs.map((player) =>
                         <tr>
                           <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
-                          <td>{player[this.props.values.rank]}</td>
+                          <td>{player.adp[0][this.props.values.adpKey]}</td>
+                          <td>{player.rankings[0][this.props.values.rankKey]}</td>
                         </tr>
                       )}
                     </tbody>
@@ -279,8 +279,8 @@ export default class Dashboard extends Component {
                     {unders.map((player) =>
                       <tr>
                         <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                        <td>{player[this.props.values.past6MonthsADP[5]]}</td>
-                        <td>{player[this.props.values.rank]}</td>
+                        <td>{player.adp[0][this.props.values.adpKey]}</td>
+                        <td>{player.rankings[0][this.props.values.rankKey]}</td>
                       </tr>
                     )}
                   </tbody>
@@ -306,8 +306,8 @@ export default class Dashboard extends Component {
                       {nows.map((player) =>
                         <tr>
                           <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                          <td>{player[this.props.values.past6MonthsADP[5]]}</td>
-                          <td>{player[this.props.values.redraftRank]}</td>
+                          <td>{player.adp[0][this.props.values.adpKey]}</td>
+                          <td>{player.rankings[0][this.props.values.redraft]}</td>
                         </tr>
                       )}
                     </tbody>

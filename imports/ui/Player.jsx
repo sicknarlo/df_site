@@ -12,7 +12,7 @@ import StatMedians from './StatMedians.jsx';
 import { Votes } from '../api/votes.js';
 
 
-const nextYearsFirst = '2018 1st';
+const nextYearsFirst = '2017 1st';
 const nextYearsSecond = '2017 2nd';
 const nextYearsThird = '2017 3rd';
 const nextYearsFourth = '2017 4th';
@@ -139,10 +139,10 @@ export default class Player extends Component {
     }
 
     // const this.props.players = this.props.players.sort(function(a, b) {
-    //   if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+    //   if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
     //     return 1;
     //   }
-    //   if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+    //   if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
     //     return -1;
     //   }
     //   // a must be equal to b
@@ -150,20 +150,20 @@ export default class Player extends Component {
     // });
     let sortByADP = {
       asc: function(a, b) {
-        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
           return 1;
         }
-        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
           return -1;
         }
         // a must be equal to b
         return 0;
       },
       desc: function(a, b) {
-        if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
           return -1;
         }
-        if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
           return 1;
         }
         // a must be equal to b
@@ -173,10 +173,10 @@ export default class Player extends Component {
     };
     const that = this;
     const sortedPlayers = this.props.players.sort(function(a, b) {
-        if (a[that.props.values.past6MonthsADP[5]] > b[that.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][that.props.values.adpKey] > b.adp[0][that.props.values.adpKey]) {
           return 1;
         }
-        if (a[that.props.values.past6MonthsADP[5]] < b[that.props.values.past6MonthsADP[5]]) {
+        if (a.adp[0][that.props.values.adpKey] < b.adp[0][that.props.values.adpKey]) {
           return -1;
         }
         // a must be equal to b
@@ -217,10 +217,10 @@ export default class Player extends Component {
       ? 'PICK'
       : _calculateAge(new Date(player.birthdate * 1000));
     const topDetails = `${player.team} - ${player.position}`;
-    const adpColorCls = player[this.props.values.past6MonthsADP[5]] <= player[this.props.values.past6MonthsADP[4]]
+    const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[2][this.props.values.adpKey]
       ? 'text-navy'
       : 'text-danger';
-    const adpArrowCls = player[this.props.values.past6MonthsADP[5]] >= player[this.props.values.past6MonthsADP[4]]
+    const adpArrowCls = player.adp[0][this.props.values.adpKey] >= player.adp[2][this.props.values.adpKey]
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
     const trend3ColorCls = player.trend > 0
@@ -229,7 +229,7 @@ export default class Player extends Component {
     const trend3ArrowCls = player.trend > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-    const trend6Months = (player[this.props.values.past6MonthsADP[0]] - player[this.props.values.past6MonthsADP[5]]).toFixed(1);
+    const trend6Months = (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
     const trend6ColorCls = trend6Months > 0
       ? 'text-navy'
       : 'text-danger';
@@ -237,37 +237,37 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const redraftRank = player[this.props.values.redraftRank]
-      ? player[this.props.values.redraftRank]
+    const redraftRank = player.adp[0][this.props.values.redraft]
+      ? player.adp[0][this.props.values.redraft]
       : 'N/A';
 
-    const fpRank = player[this.props.values.rank]
-      ? player[this.props.values.rank]
+    const fpRank = player.rankings[0][this.props.values.rankKey]
+      ? player.rankings[0][this.props.values.rankKey]
       : 'N/A';
 
-    const pointsPassYards2014 = player.pass_yards_2014 * 0.04;
-    const pointsPassYards2015 = player.pass_yards_2015 * 0.04;
-    const pointsPassYards2016 = player.pass_yards_2016 * 0.04;
+    const pointsPassYards2014 = player.stats.pass_yards_2014 * 0.04;
+    const pointsPassYards2015 = player.stats.pass_yards_2015 * 0.04;
+    const pointsPassYards2016 = player.stats.pass_yards_2016 * 0.04;
 
-    const pointsPassTds2014 = player.pass_td_2014 * 6;
-    const pointsPassTds2015 = player.pass_td_2015 * 6;
-    const pointsPassTds2016 = player.pass_td_2016 * 6;
+    const pointsPassTds2014 = player.stats.pass_td_2014 * 6;
+    const pointsPassTds2015 = player.stats.pass_td_2015 * 6;
+    const pointsPassTds2016 = player.stats.pass_td_2016 * 6;
 
-    const pointsReceptions2014 = player.rec_2014;
-    const pointsReceptions2015 = player.rec_2015;
-    const pointsReceptions2016 = player.rec_2016;
+    const pointsReceptions2014 = player.stats.rec_2014;
+    const pointsReceptions2015 = player.stats.rec_2015;
+    const pointsReceptions2016 = player.stats.rec_2016;
 
-    const pointsRecYards2014 = player.rec_yards_2014 * 0.1;
-    const pointsRecYards2015 = player.rec_yards_2015 * 0.1;
-    const pointsRecYards2016 = player.rec_yards_2016 * 0.1;
+    const pointsRecYards2014 = player.stats.rec_yards_2014 * 0.1;
+    const pointsRecYards2015 = player.stats.rec_yards_2015 * 0.1;
+    const pointsRecYards2016 = player.stats.rec_yards_2016 * 0.1;
 
-    const pointsRecTds2014 = player.rec_td_2014 * 6;
-    const pointsRecTds2015 = player.rec_td_2015 * 6;
-    const pointsRecTds2016 = player.rec_td_2016 * 6;
+    const pointsRecTds2014 = player.stats.rec_td_2014 * 6;
+    const pointsRecTds2015 = player.stats.rec_td_2015 * 6;
+    const pointsRecTds2016 = player.stats.rec_td_2016 * 6;
 
-    const pointsRushYds2014 = player.rush_yards_2014 * 0.1;
-    const pointsRushYds2015 = player.rush_yards_2015 * 0.1;
-    const pointsRushYds2016 = player.rush_yards_2016 * 0.1;
+    const pointsRushYds2014 = player.stats.rush_yards_2014 * 0.1;
+    const pointsRushYds2015 = player.stats.rush_yards_2015 * 0.1;
+    const pointsRushYds2016 = player.stats.rush_yards_2016 * 0.1;
 
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
@@ -287,7 +287,7 @@ export default class Player extends Component {
         <div className="col-sm-12 col-md-12 col-lg-12">
           <div className="ibox">
             <div className="ibox-content dataPanel">
-              <h5 className="m-b-md textCenter">At an ADP of {player[this.props.values.past6MonthsADP[5]]}, are you buying or selling?</h5>
+              <h5 className="m-b-md textCenter">At an ADP of {player.adp[0][this.props.values.adpKey]}, are you buying or selling?</h5>
               <div className="buysellContainer">
                 <ButtonGroup>
                     <Button
@@ -310,8 +310,9 @@ export default class Player extends Component {
           </div>
         </div>
       ) : null;
+    console.log(firstRoundPick);
     const firstRoundPickIndex = (
-        player[this.props.values.past6MonthsValue[5]] / firstRoundPick[this.props.values.past6MonthsValue[5]]).toFixed(2);
+        player.rankings[0][this.props.values.valueKey] / firstRoundPick.rankings[0][this.props.values.valueKey]).toFixed(2);
     const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
     const communityCls = classnames({
       greenText: this.state.communityValue > 0,
@@ -319,25 +320,25 @@ export default class Player extends Component {
     })
     const badges = [];
 
-    if (player[this.props.values.buyIndex] > 9 && player[this.props.values.buyIndex] < 20) {
+    if (player.adp[0][this.props.values.adpKey] > 9 && player.adp[0][this.props.values.adpKey] < 20) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Value Buy">This player's average ranking is over 10 spots greater than their current ADP. They could be a good buy.</Popover>}>
           <div className="badge badge-info playerBadge"><i className="fa fa-thumbs-o-up badgeIcon"></i><strong>Good Value Buy</strong></div>
         </OverlayTrigger>)
       );
-    } else if (player[this.props.values.buyIndex] >= 20) {
+    } else if (player.rankings[0][this.props.values.rankKey] >= 20) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Value Buy">This player's average ranking is over 20 spots greater than their current ADP. They are a great buy at this value.</Popover>}>
           <div className="badge badge-green playerBadge"><i className="fa fa-dollar badgeIcon"></i><strong>Great Value Buy</strong></div>
         </OverlayTrigger>)
         );
-    } else if (player[this.props.values.buyIndex] <= -20) {
+    } else if (player.rankings[0][this.props.values.rankKey] <= -20) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Great Sell Target">This player's average ranking is over 20 spots worse than their current ADP. They are being overvalued and should be sold at this value.</Popover>}>
           <div className="badge badge-danger playerBadge"><i className="fa fa-exclamation badgeIcon"></i><strong>Great Sell Target</strong></div>
         </OverlayTrigger>)
         );
-    } else if (player[this.props.values.buyIndex] < -9 && player[this.props.values.buyIndex] > 20) {
+    } else if (player.rankings[0][this.props.values.rankKey] < -9 && player.rankings[0][this.props.values.rankKey] > 20) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Good Sell Target">This player's average ranking is over 10 spots worse than their current ADP. They are possibly being overvalued and could be a good guy to move.</Popover>}>
           <div className="badge badge-warning playerBadge"><i className="fa fa-thumbs-o-down badgeIcon"></i><strong>Good Sell Target</strong></div>
@@ -345,13 +346,13 @@ export default class Player extends Component {
         );
     }
 
-    if (player[this.props.values.winNowIndex] > 19) {
+    if (player.rankings[0][this.props.values.win_now] > 19) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Now Player">This player's redraft ranking is over 20 spots higher than their ADP. They are more valuable for win-now teams, or are more likely to provide more immediate returns for their owner.</Popover>}>
           <div className="badge badge-warning playerBadge"><i className="fa fa-flash badgeIcon"></i><strong>Win Now</strong></div>
         </OverlayTrigger>)
         );
-    } else if (player[this.props.values.winNowIndex] < -19) {
+    } else if (player.rankings[0][this.props.values.win_now] < -19) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Win Later Player">This player's redraft ranking is over 20 spots lower than their ADP. They are more valuable for win-later teams and may not provide as much immediate value this season.</Popover>}>
           <div className="badge badge-primary playerBadge"><i className="fa fa-rocket badgeIcon"></i><strong>Win Later</strong></div>
@@ -359,13 +360,13 @@ export default class Player extends Component {
         );
     }
 
-    if (player[this.props.values.trend] > 9) {
+    if (player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey] > 9) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Up">This player has increased in value by over 10 spots over the last 3 months.</Popover>}>
           <div className="badge badge-green playerBadge"><i className="fa fa-level-up badgeIcon"></i><strong>Trending Up</strong></div>
         </OverlayTrigger>)
         );
-    } else if (player[this.props.values.trend] < -9) {
+    } else if (player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey] < -9) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Down">This player has decreased in value by over 10 spots over the last 3 months.</Popover>}>
           <div className="badge badge-danger playerBadge"><i className="fa fa-level-down badgeIcon"></i><strong>Trending Down</strong></div>
@@ -454,7 +455,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">Value</h5>
                       <h2 className="text-success">
-                        <i className="fa fa-tag"></i> {player[this.props.values.past6MonthsValue[5]]}
+                        <i className="fa fa-tag"></i> {player.rankings[0][this.props.values.valueKey]}
                       </h2>
                     </div>
                   </div>
@@ -464,7 +465,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel ">
                       <h5 className="m-b-md">ADP</h5>
                       <h2 className={adpColorCls}>
-                        {player[this.props.values.past6MonthsADP[5]]}
+                        {player.adp[0][this.props.values.adpKey]}
                       </h2>
                     </div>
                   </div>
@@ -494,7 +495,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">3-Month Trend</h5>
                       <h2 className={trend3ColorCls}>
-                        <i className={trend3ArrowCls}></i> {player.trend}
+                        <i className={trend3ArrowCls}></i> {player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]}
                       </h2>
                     </div>
                   </div>

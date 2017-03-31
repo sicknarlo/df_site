@@ -6,18 +6,37 @@ import PValues from './ADPConst.jsx';
 export default class ADPGraph extends Component {
 
   render() {
-    const datasets = this.props.players.map((player) => {
-      const data = [];
-      for (var i=0; i<this.props.values.chartLabels.length; i++) {
-        data.push(
-          player[this.props.values.past6MonthsADP[i]]
+
+    const series = [];
+
+    this.props.players.forEach((player) => {
+      const adpObj = {};
+      const rankObj = {};
+
+      adpObj.name = `${player.name} ADP`;
+      rankObj.name = `${player.name} Rank`;
+
+      adpObj.data = [];
+      for (var i=0; i<6; i++) {
+        console.log(player.adp[i].time);
+        const x = player.adp[i].time;
+        adpObj.data.push(
+          [Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), player.adp[i][this.props.values.adpKey]]
         )
       }
-      return {
-        name: player.name,
-        data,
-      }
-    });
+
+      series.push(adpObj);
+
+      rankObj.data = [];
+      player.rankings.forEach((r) => {
+        const x = r.time;
+        rankObj.data.push([Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), r[this.props.values.rankKey]])
+      });
+
+      series.push(rankObj);
+
+    })
+
     const config = {
       chart: {
         backgroundColor: "rgba(0,0,0,0)",
@@ -31,9 +50,16 @@ export default class ADPGraph extends Component {
       },
       colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565', '#4719B3', '#B39419', '#1985B3', '#E0294E', '#1938B3'],
       xAxis: {
-        categories: this.props.values.chartLabels,
+        type: 'datetime',
+        dateTimeLabelFormats: { // don't display the dummy year
+          month: '%e. %b',
+          year: '%b'
+        },
+        title: {
+          text: 'Date'
+        }
       },
-      series: datasets,
+      series,
       yAxis: {
         reversed: true,
         title: {
@@ -41,11 +67,12 @@ export default class ADPGraph extends Component {
         }
       },
       plotOptions: {
-        series: {
-          compare: 'percent'
+        spline: {
+          marker: {
+            enabled: true
+          }
         }
       },
-
       tooltip: {
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
         valueDecimals: 1,

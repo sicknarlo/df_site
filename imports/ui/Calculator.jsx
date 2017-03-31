@@ -64,7 +64,6 @@ class ShareUrl extends Component {
   selectLink() {
     const input = this.refs.input;
     // input.focus();
-    console.log(input.value.length);
     input.setSelectionRange(0, input.value.length);
   }
   showLink() {
@@ -76,7 +75,8 @@ class ShareUrl extends Component {
           className="form-control"
           readOnly
           value={this.state.shareURL}
-          onClick={() => this.selectLink()} />
+          onClick={() => this.selectLink()}
+        />
       </div>
     );
   }
@@ -115,19 +115,18 @@ export default class Calculator extends Component {
     const that = this;
     if (that.props.location.query.share) {
       this.props.mixpanel.track('came from link share');
-      console.log(that.props.location.query)
       if (parseInt(that.props.location.query.super) === 1) {
         that.props.setDb('2qb');
       }
       const team1 = [];
       if (!Array.isArray(that.props.location.query.t1)) {
-        const player = that.props.players.find(function(pl) {
+        const player = that.props.players.find((pl) => {
           return pl._id._str === that.props.location.query.t1;
         });
         team1.push(player);
       } else {
-        that.props.location.query.t1.forEach(function(p) {
-          const player = that.props.players.find(function(pl) {
+        that.props.location.query.t1.forEach((p) => {
+          const player = that.props.players.find((pl) => {
             return pl._id._str === p;
           });
           team1.push(player);
@@ -135,13 +134,13 @@ export default class Calculator extends Component {
       }
       const team2 = [];
       if (!Array.isArray(that.props.location.query.t2)) {
-        const player = that.props.players.find(function(pl) {
+        const player = that.props.players.find((pl) => {
           return pl._id._str === that.props.location.query.t2;
         });
         team2.push(player);
       } else {
-        that.props.location.query.t2.forEach(function(p) {
-          const player = that.props.players.find(function(pl) {
+        that.props.location.query.t2.forEach((p) => {
+          const player = that.props.players.find((pl) => {
             return pl._id._str === p;
           });
           team2.push(player);
@@ -265,7 +264,7 @@ export default class Calculator extends Component {
     let curr = this.props.players[0];
     const past6MonthsValue = this.props.values.past6MonthsValue;
     this.props.players.forEach(function(player) {
-      if (Math.abs(val - player[past6MonthsValue[5]]) < Math.abs(val - curr[past6MonthsValue[5]])) {
+      if (Math.abs(val - player.rankings[player.rankings.length - 1][this.props.values/valueKey]) < Math.abs(val - curr.rankings[player.rankings.length - 1][this.props.values/valueKey])) {
         curr = player;
       }
     })
@@ -281,11 +280,11 @@ export default class Calculator extends Component {
     let team1ValueSent = 0;
     const past6MonthsValue = this.props.values.past6MonthsValue;
     this.state.team1.forEach(function(player) {
-      team1ValueSent += player[past6MonthsValue[5]]
+      team1ValueSent += player.rankings[player.rankings.length - 1][this.props.values/valueKey]
     });
     let team2ValueSent = 0;
     this.state.team2.forEach(function(player) {
-      team2ValueSent += player[past6MonthsValue[5]]
+      team2ValueSent += player.rankings[player.rankings.length - 1][this.props.values/valueKey]
     });
     const team1ValueGained = team2ValueSent - team1ValueSent;
     const team2ValueGained = team1ValueSent - team2ValueSent;
@@ -445,7 +444,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[this.props.values.past6MonthsValue[5]]}
+                              {player.rankings[player.rankings.length - 1][this.props.values.rankKey]}
                             </div>
                           </div>
                         )}
@@ -465,7 +464,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player[this.props.values.past6MonthsValue[5]]}
+                              {player.rankings[player.rankings.length - 1][this.props.values.rankKey]}
                             </div>
                           </div>
                         )}
