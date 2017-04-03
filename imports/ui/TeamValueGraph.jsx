@@ -16,10 +16,10 @@ export default class TeamValueGraph extends Component {
 
   render() {
     const chartData = { name: this.props.team.name , data: [] };
-    for (var i = 0; i<this.props.values.past6MonthsValue.length; i++) {
+    for (var i = 0; i<12; i++) {
       let val = 0;
       for (var g=0; g<this.props.teamPlayers.length; g++) {
-        val += this.props.teamPlayers[g][this.props.values.past6MonthsValue[i]];
+        val += this.props.teamPlayers[g].adp[i][this.props.values.valueKey];
       }
       chartData.data.push(val);
     }

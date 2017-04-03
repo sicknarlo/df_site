@@ -36,20 +36,20 @@ let sortByName = {
 };
 let sortByADP = {
   asc: function(a, b) {
-    if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+    if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
       return 1;
     }
-    if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+    if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a[this.props.values.past6MonthsADP[5]] > b[this.props.values.past6MonthsADP[5]]) {
+    if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
       return -1;
     }
-    if (a[this.props.values.past6MonthsADP[5]] < b[this.props.values.past6MonthsADP[5]]) {
+    if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
       return 1;
     }
     // a must be equal to b
@@ -85,20 +85,20 @@ let sortByPosition = {
 
 let sortByTrend = {
   asc: function(a, b) {
-    if (a.trend > b.trend) {
+    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] > b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
       return 1;
     }
-    if (a.trend < b.trend) {
+    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] < b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a.trend > b.trend) {
+    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] > b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
       return -1;
     }
-    if (a.trend < b.trend) {
+    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] < b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
       return 1;
     }
     // a must be equal to b
@@ -109,20 +109,20 @@ let sortByTrend = {
 };
 let sortByValue = {
   asc: function(a, b) {
-    if (a[this.props.values.past6MonthsValue[5]] > b[this.props.values.past6MonthsValue[5]]) {
+    if (a.rankings[0][this.props.values.valueKey] > b.rankings[0][this.props.values.valueKey]) {
       return 1;
     }
-    if (a[this.props.values.past6MonthsValue[5]] < b[this.props.values.past6MonthsValue[5]]) {
+    if (a.rankings[0][this.props.values.valueKey] < b.rankings[0][this.props.values.valueKey]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a[this.props.values.past6MonthsValue[5]] > b[this.props.values.past6MonthsValue[5]]) {
+    if (a.rankings[0][this.props.values.valueKey] > b.rankings[0][this.props.values.valueKey]) {
       return -1;
     }
-    if (a[this.props.values.past6MonthsValue[5]] < b[this.props.values.past6MonthsValue[5]]) {
+    if (a.rankings[0][this.props.values.valueKey] < b.rankings[0][this.props.values.valueKey]) {
       return 1;
     }
     // a must be equal to b
@@ -403,10 +403,11 @@ export default class Players extends Component {
                     <tbody>
                       {filteredSortedSearchedData && filteredSortedSearchedData.map((player, i) =>
                         <PlayerRow
-                            key={i}
-                            player={player}
-                            sortGrp={this.state.sortGrp._str}
-                            values={this.props.values} />
+                          key={i}
+                          player={player}
+                          sortGrp={this.state.sortGrp._str}
+                          values={this.props.values}
+                        />
                       )}
                     </tbody>
                   </table>

@@ -1,22 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import 'icheck/skins/all.css';
-import { Checkbox } from 'react-icheck';
-import { Modal, Button, OverlayTrigger } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
-import GoogleURL from 'google-url';
 import $ from 'jquery';
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
 
 class ShareUrl extends Component {
   constructor(props) {
@@ -262,9 +252,8 @@ export default class Calculator extends Component {
 
   findClosestPlayer(val) {
     let curr = this.props.players[0];
-    const past6MonthsValue = this.props.values.past6MonthsValue;
-    this.props.players.forEach(function(player) {
-      if (Math.abs(val - player.rankings[player.rankings.length - 1][this.props.values/valueKey]) < Math.abs(val - curr.rankings[player.rankings.length - 1][this.props.values/valueKey])) {
+    this.props.players.forEach((player) => {
+      if (Math.abs(val - player.rankings[player.rankings.length - 1][this.props.values.valueKey]) < Math.abs(val - curr.rankings[player.rankings.length - 1][this.props.values.valueKey])) {
         curr = player;
       }
     })
@@ -274,17 +263,16 @@ export default class Calculator extends Component {
 
 
   render() {
-    const options = this.props.players.map(function(player) {
+    const options = this.props.players.map((player) => {
       return { val: player, label: player.name }
     })
     let team1ValueSent = 0;
-    const past6MonthsValue = this.props.values.past6MonthsValue;
-    this.state.team1.forEach(function(player) {
-      team1ValueSent += player.rankings[player.rankings.length - 1][this.props.values/valueKey]
+    this.state.team1.forEach((player) => {
+      team1ValueSent += player.rankings[player.rankings.length - 1][this.props.values.valueKey]
     });
     let team2ValueSent = 0;
-    this.state.team2.forEach(function(player) {
-      team2ValueSent += player.rankings[player.rankings.length - 1][this.props.values/valueKey]
+    this.state.team2.forEach((player) => {
+      team2ValueSent += player.rankings[player.rankings.length - 1][this.props.values.valueKey]
     });
     const team1ValueGained = team2ValueSent - team1ValueSent;
     const team2ValueGained = team1ValueSent - team2ValueSent;
@@ -305,7 +293,7 @@ export default class Calculator extends Component {
     const closestPlayer = this.findClosestPlayer(Math.abs(team1ValueGained));
     const closestPlayerString = closestPlayer
       ? (<div>
-          <h2>The difference is equal to <Link to={`/tools/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer[this.props.values.past6MonthsADP[5]]}</strong></h2>
+          <h2>The difference is equal to <Link to={`/tools/players/${closestPlayer._id._str}`}>{closestPlayer.name}</Link> with an ADP of <strong>{closestPlayer.adp[0][this.props.values.adpKey]}</strong></h2>
         </div>
         )
       : null;
@@ -424,7 +412,12 @@ export default class Calculator extends Component {
                 </div>
               </div>
             </div>
-            <Modal show={this.state.showResults} bsSize="lg" onHide={this.closeResults} className="inmodal">
+            <Modal
+              show={this.state.showResults}
+              bsSize="lg"
+              onHide={this.closeResults}
+              className="inmodal"
+            >
               <Modal.Header closeButton><br />
               <i className="fa fa-line-chart modal-icon"></i><br />
                 <Modal.Title>
@@ -444,7 +437,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player.rankings[player.rankings.length - 1][this.props.values.rankKey]}
+                              {player.rankings[player.rankings.length - 1][this.props.values.valueKey]}
                             </div>
                           </div>
                         )}
@@ -464,7 +457,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player.rankings[player.rankings.length - 1][this.props.values.rankKey]}
+                              {player.rankings[player.rankings.length - 1][this.props.values.valueKey]}
                             </div>
                           </div>
                         )}

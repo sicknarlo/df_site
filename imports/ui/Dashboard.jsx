@@ -1,25 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
 import 'icheck/skins/all.css';
-import { Checkbox } from 'react-icheck';
 import { Link } from 'react-router';
-import $ from 'jquery';
-import PlayerRow from './PlayerRow.jsx';
-import PageHeading from './PageHeading.jsx';
 import DashboardLoggedOut from './DashboardLoggedOut.jsx';
 import DashboardLoggedIn from './DashboardLoggedIn.jsx';
-import PValues from './ADPConst.jsx';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import ActivityStream from './ActivityStream.jsx';
-
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
 
 export default class Dashboard extends Component {
   constructor(props) {

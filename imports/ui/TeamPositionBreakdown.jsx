@@ -25,15 +25,15 @@ export default class TeamPositionBreakdown extends Component {
     for (var i=0; i< this.props.teamPlayers.length; i++) {
       const p = this.props.teamPlayers[i];
       if (p.position === 'QB') {
-        qbTotal += p[this.props.values.past6MonthsValue[5]]
+        qbTotal += p.rankings[0][this.props.values.valueKey]
       } else if (p.position === 'WR') {
-        wrTotal += p[this.props.values.past6MonthsValue[5]]
+        wrTotal += p.rankings[0][this.props.values.valueKey]
       } else if (p.position === 'RB') {
-        rbTotal += p[this.props.values.past6MonthsValue[5]]
+        rbTotal += p.rankings[0][this.props.values.valueKey]
       } else if (p.position === 'TE') {
-        teTotal += p[this.props.values.past6MonthsValue[5]]
+        teTotal += p.rankings[0][this.props.values.valueKey]
       } else if (p.position === 'PICK') {
-        pickTotal += p[this.props.values.past6MonthsValue[5]]
+        pickTotal += p.rankings[0][this.props.values.valueKey]
       }
     }
 

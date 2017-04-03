@@ -56,7 +56,7 @@ export default class TeamPage extends Component {
     newTrans.remove = removeIds;
     newTrans.type = this.state.transactionType;
     newTrans.date = new Date();
-    newTrans.valueMonth = this.state.values.past6MonthsValue[5];
+    newTrans.valueMonth = this.props.players[0].adp[0][this.props.values.adpKey];
     const nextTransArray = this.props.team.transactions.concat([newTrans]);
     const dataWrapper = {
       team: this.props.team,
@@ -134,15 +134,11 @@ export default class TeamPage extends Component {
     let lastValue = 0;
     let last3Value = 0;
     let last6Value = 0;
-    const past6MonthsValue = this.state.values.past6MonthsValue;
-    const monthLast = past6MonthsValue[5];
-    const month3 = past6MonthsValue[2];
-    const month6 = past6MonthsValue[0];
     for (var i=0; i<teamPlayers.length; i++) {
-      currentValue += teamPlayers[i][past6MonthsValue[5]];
-      lastValue += teamPlayers[i][monthLast];
-      last3Value += teamPlayers[i][month3];
-      last6Value += teamPlayers[i][month6];
+      currentValue += teamPlayers[i].adp[0][this.props.values.valueKey];
+      lastValue += teamPlayers[i].adp[1][this.props.values.valueKey];
+      last3Value += teamPlayers[i].adp[2][this.props.values.valueKey];
+      last6Value += teamPlayers[i].adp[5][this.props.values.valueKey];
     }
 
     const monthDiff1 = currentValue - lastValue;
@@ -166,9 +162,9 @@ export default class TeamPage extends Component {
     const monthDiff6Percent = (((100 * currentValue) / last6Value) - 100).toFixed(2);
 
     const sortedPlayers = teamPlayers.sort(function(a, b) {
-      if (a[this.state.values.past6MonthsADP[5]] > b[this.state.values.past6MonthsADP[5]]) {
+      if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
         return 1;
-    } else if (a[this.state.values.past6MonthsADP[5]] < b[this.state.values.past6MonthsADP[5]]) {
+    } else if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
         return -1;
       }
 

@@ -1,21 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
 import 'icheck/skins/all.css';
-import { Checkbox } from 'react-icheck';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import $ from 'jquery';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
 
 export default class Compare extends Component {
   constructor(props) {

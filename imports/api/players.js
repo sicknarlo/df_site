@@ -1,9 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import PValues from '../ui/ADPConst.jsx';
 
-const currentMonthStandard = PValues.ppr.past6MonthsADP[5];
-const currentMonth2QB = PValues.super.past6MonthsADP[5];
 export const Players = new Mongo.Collection('players');
 
 // if (Meteor.isServer) {
@@ -30,55 +27,79 @@ Meteor.methods({
     return Players.find({}, { sort: sortQuery }).fetch();
   },
   'teams.getStandardTopTrenders'() {
-    const query = { 'position': {'$ne': 'PICK' }};
-    query[currentMonthStandard] = { $lt: 151 };
+    const query = {
+      'position': {
+        '$ne': 'PICK'
+      },
+      'adp.0.adp': {
+        $lt: 151,
+      }
+    };
     return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBTopTrenders'() {
-    const query = { 'position': {'$ne': 'PICK' }};
-    query[currentMonth2QB] = { $lt: 151 };
+    const query = {
+      'position': {
+        '$ne': 'PICK'
+      },
+      'adp.0.adp_2qb': {
+        $lt: 151,
+      },
+    };
     return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardBottomTrenders'() {
-    const query = { 'position': {'$ne': 'PICK' }};
-    query[currentMonthStandard] = { $lt: 151 };
+    const query = {
+      'position': {
+        '$ne': 'PICK'
+      },
+      'adp.0.adp': {
+        $lt: 151,
+      }
+    };
     return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBBottomTrenders'() {
-    const query = { 'position': {'$ne': 'PICK' }};
-    query[currentMonth2QB] = { $lt: 151 };
+    const query = {
+      'position': {
+        '$ne': 'PICK'
+      },
+      'adp.0.adp_2qb': {
+        $lt: 151,
+      }
+    };
     return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardUnderValuedPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 }};
     return Players.find(query, { sort: { 'rankings.0.buyindex': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBUnderValuedPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardOverValuedPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.buyindex': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBOverValuedPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinNowPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.win_now': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinNowPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinLaterPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.win_now': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinLaterPlayers'() {
-    const query = { 'status': {'$ne': 'R' }, 'rankings.0.rank_2qb': {'$lt': 150}};
+    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
     return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'players.getPlayer'({ playerId }) {

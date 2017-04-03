@@ -8,13 +8,6 @@ import { Button } from 'react-bootstrap';
 import PageHeading from './PageHeading.jsx';
 import $ from 'jquery';
 
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
-
 export default class CreateTeam extends Component {
   constructor(props) {
     super(props);
@@ -128,6 +121,7 @@ export default class CreateTeam extends Component {
   createTeam() {
     const playerIds = [];
     this.state.roster.forEach((p) => playerIds.push(p._id._str));
+    const time = this.state.roster[0].rankings[0].time;
 
     const team = {
       teamName: this.state.teamName,
@@ -136,7 +130,7 @@ export default class CreateTeam extends Component {
       isPPR: this.state.isPPR,
       is2QB: this.state.is2QB,
       isIDP: this.state.isIDP,
-      valueMonth: this.props.values.past6MonthsValue[5],
+      valueMonth: time,
     };
     Meteor.call('teams.create', team);
     browserHistory.push('/tools/dashboard');
@@ -145,15 +139,16 @@ export default class CreateTeam extends Component {
     // if (! this.props.currentUser) {
     //   browserHistory.push('/login');
     // }
-    const options = this.props.players.map(function(player) {
+    const options = this.props.players.map((player) => {
       return { val: player, label: player.name };
     });
     const submitButton = this.state.teamName && this.state.roster.length > 0
       ? <Button
-          className="tradeButton"
-          bsStyle="primary"
-          bsSize="large"
-          onClick={this.createTeam}>
+        className="tradeButton"
+        bsStyle="primary"
+        bsSize="large"
+        onClick={this.createTeam}
+      >
             <i className="fa fa-check"></i>&nbsp;
             Create Team
         </Button>

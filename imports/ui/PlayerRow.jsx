@@ -3,21 +3,22 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 
-const ageCalc = function(birthdate) {
+function ageCalc(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
   const ageDate = new Date(ageDifMs); // miliseconds from epoch
   return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
+}
 
 // Player component - represents a Player profile
 export default class PlayerRow extends Component {
   render() {
     const player = this.props.player;
+    const trend = (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
     const trendCls = classnames('hide-xs', 'playerCol',
-                                { trendDanger: player.trend < 0,
-                                  trendPositive: player.trend > 0,
+                                { trendDanger: trend < 0,
+                                  trendPositive: trend > 0,
                                   sorted: this.props.sortGrp === 'sortByTrend' });
-    const trendLabel = player.trend > 0 ? `+${player.trend}` : player.trend;
+    const trendLabel = trend > 0 ? `+${trend}` : trend;
     const profileLink = `/tools/players/${player._id._str}`;
     return (
         <tr>
@@ -42,7 +43,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}
           >
-            {player[this.props.values.past6MonthsADP[5]]}
+            {player.adp[0][this.props.values.adpKey]}
           </td>
           <td
             className={trendCls}
@@ -52,7 +53,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('hide-xs', 'playerCol', { sorted: this.props.sortGrp === 'sortByValue' })}
           >
-            {player[this.props.values.past6MonthsValue[5]]}
+            {player.rankings[0][this.props.values.valueKey]}
           </td>
         </tr>
     );

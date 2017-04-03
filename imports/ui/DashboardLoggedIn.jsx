@@ -1,41 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
-import { createContainer } from 'meteor/react-meteor-data';
 import 'icheck/skins/all.css';
-import { Checkbox } from 'react-icheck';
-import $ from 'jquery';
 import { Link } from 'react-router';
-import PlayerRow from './PlayerRow.jsx';
-import PageHeading from './PageHeading.jsx';
-import { Teams } from '../api/teams.js';
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
 
 export default class DashboardLoggedIn extends Component {
-  constructor(props) {
-    super(props);
-  }
-  // componentDidMount() {
-  //   const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
-  //   let result = [];
-  //   $.ajax({
-  //     url: document.location.protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=13&callback=?&q=' + encodeURIComponent(feed),
-  //     dataType: 'json',
-  //     context: this,
-  //     success(data) {
-  //       if (data.responseData.feed && data.responseData.feed.entries) {
-  //         result = data.responseData.feed.entries;
-  //         this.setState({ rotoData: result });
-  //       }
-  //     },
-  //   });
-  // }
 
   render() {
     if (!this.props.teamsReady) {

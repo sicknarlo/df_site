@@ -48,18 +48,18 @@ Meteor.methods({
 
   'teams.addTransaction'(data) {
     const addRoster = data.team.players.concat(data.nextTrans[data.nextTrans.length - 1].add);
-    const newPlayers = addRoster.filter(function(p) {
+    const newPlayers = addRoster.filter((p) => {
       let keep = true;
-      for (var i=0; i< data.nextTrans[data.nextTrans.length - 1].remove.length; i++) {
+      for (let i = 0; i < data.nextTrans[data.nextTrans.length - 1].remove.length; i++) {
         if (p === data.nextTrans[data.nextTrans.length - 1].remove[i]) {
           keep = false;
         }
       }
       return keep;
-    })
+    });
 
-    Teams.update({_id : data.team._id}, { $set : {
-      transactions : data.nextTrans,
+    Teams.update({ _id: data.team._id }, { $set: {
+      transactions: data.nextTrans,
       players: newPlayers,
     } });
   },
@@ -67,20 +67,19 @@ Meteor.methods({
   'teams.updateValues'() {
     const teams = Teams.find({}).fetch();
     const players = Players.find({}).fetch();
-    teams.forEach(function(t) {
+    teams.forEach((t) => {
       const teamList = players.filter((p) => t.players.indexOf(p._id._str) > -1);
       let value = 0;
-      const currentMonthValue = t.is2QB ? PValues.super.past6MonthsValue[5] : PValues.ppr.past6MonthsValue[5]
-      teamList.forEach(function(p) {
-        value += p[currentMonthValue];
+      const format = t.is2QB ? PValues.super : PValues.ppr;
+      teamList.forEach((p) => {
+        value += p.rankings[0][format.valueKey];
       });
       const oldValues = t.values;
       const newValues = oldValues.concat([[new Date(), value]]);
-      Teams.update({_id : t._id}, { $set : {
+      Teams.update({ _id: t._id }, { $set: {
         values: newValues,
       } });
-    })
-    console.log('complete');
+    });
   },
 
   'teams.get'() {

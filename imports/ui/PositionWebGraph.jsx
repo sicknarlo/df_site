@@ -10,15 +10,6 @@ import Highlight from 'react-highlight';
 export default class PositionWebGraph extends Component {
 
   render() {
-    // const chartData = { name: this.props.team.name , data: [] };
-    // for (var i = 0; i<past6MonthsValue.length; i++) {
-    //   let val = 0;
-    //   for (var g=0; g<this.props.team.players.length; g++) {
-    //     val += this.props.team.players[g][past6MonthsValue[i]];
-    //   }
-    //   chartData.data.push(val);
-    // }
-    // console.log(chartData);
 
     var config = {
       chart: {

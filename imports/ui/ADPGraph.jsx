@@ -6,9 +6,7 @@ import PValues from './ADPConst.jsx';
 export default class ADPGraph extends Component {
 
   render() {
-
     const series = [];
-
     this.props.players.forEach((player) => {
       const adpObj = {};
       const rankObj = {};
@@ -17,12 +15,18 @@ export default class ADPGraph extends Component {
       rankObj.name = `${player.name} Rank`;
 
       adpObj.data = [];
-      for (var i=0; i<6; i++) {
-        console.log(player.adp[i].time);
-        const x = player.adp[i].time;
-        adpObj.data.push(
-          [Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), player.adp[i][this.props.values.adpKey]]
-        )
+      for (let i = 0; i < 12; i++) {
+        if (player.adp[i]) {
+          const x = player.adp[i].time;
+          adpObj.data.push(
+            [
+              Date.UTC(x.getFullYear(),
+              x.getMonth(),
+              x.getDate()),
+              player.adp[i][this.props.values.adpKey]
+            ]
+          );
+        }
       }
 
       series.push(adpObj);
@@ -30,7 +34,12 @@ export default class ADPGraph extends Component {
       rankObj.data = [];
       player.rankings.forEach((r) => {
         const x = r.time;
-        rankObj.data.push([Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), r[this.props.values.rankKey]])
+        rankObj.data.push([
+          Date.UTC(x.getFullYear(),
+          x.getMonth(),
+          x.getDate()),
+          r[this.props.values.rankKey]
+        ]);
       });
 
       series.push(rankObj);

@@ -8,26 +8,21 @@ import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import PlayerStats from './PlayerStats.jsx';
-import StatMedians from './StatMedians.jsx';
-import { Votes } from '../api/votes.js';
 
 
 const nextYearsFirst = '2017 1st';
-const nextYearsSecond = '2017 2nd';
-const nextYearsThird = '2017 3rd';
-const nextYearsFourth = '2017 4th';
 
-const _calculateAge = function(birthdate) {
+function _calculateAge(birthdate) {
   const ageDifMs = Date.now() - birthdate.getTime();
   const ageDate = new Date(ageDifMs); // miliseconds from epoch
   return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
+}
 
-const _calculateHeight = function(inches) {
+function _calculateHeight(inches) {
   const ft = Math.floor(inches / 12);
   const i = inches % 12;
   return `${ft}'${i}"`;
-};
+}
 
 // Player component - represents a Player profile
 export default class Player extends Component {
@@ -53,24 +48,22 @@ export default class Player extends Component {
     let playerVote = null;
     Meteor.call('votes.getPlayer', {
       playerId: this.props.params.playerID,
-    }, function(error, result){
-        if(error){
-            console.log(error);
-        } else {
-          result.forEach(function(v) {
-            moves ++;
-            if (v.moveType === 'buy') communityValue ++;
-            if (v.moveType === 'sell') communityValue --;
-            if (v.userId === that.props.currentUser._id) {
-              playerVote = v.moveType;
-            }
-          });
-          that.setState({
-            communityValue,
-            moves,
-            playerVote
-          });
-        };
+    }, (error, result) => {
+      if (!error) {
+        result.forEach((v) => {
+          moves ++;
+          if (v.moveType === 'buy') communityValue ++;
+          if (v.moveType === 'sell') communityValue --;
+          if (v.userId === that.props.currentUser._id) {
+            playerVote = v.moveType;
+          }
+        });
+        that.setState({
+          communityValue,
+          moves,
+          playerVote,
+        });
+      }
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -193,7 +186,8 @@ export default class Player extends Component {
       i--;
       n++;
     }
-
+    const trend =
+      (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
     const next5 = [];
     i = playerADPRank + 1;
     n = 0;
@@ -223,13 +217,14 @@ export default class Player extends Component {
     const adpArrowCls = player.adp[0][this.props.values.adpKey] >= player.adp[2][this.props.values.adpKey]
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-    const trend3ColorCls = player.trend > 0
+    const trend3ColorCls = trend > 0
       ? 'text-navy'
       : 'text-danger';
-    const trend3ArrowCls = player.trend > 0
+    const trend3ArrowCls = trend > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-    const trend6Months = (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
+    const trend6Months =
+      (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
     const trend6ColorCls = trend6Months > 0
       ? 'text-navy'
       : 'text-danger';
@@ -245,42 +240,10 @@ export default class Player extends Component {
       ? player.rankings[0][this.props.values.rankKey]
       : 'N/A';
 
-    const pointsPassYards2014 = player.stats.pass_yards_2014 * 0.04;
-    const pointsPassYards2015 = player.stats.pass_yards_2015 * 0.04;
-    const pointsPassYards2016 = player.stats.pass_yards_2016 * 0.04;
-
-    const pointsPassTds2014 = player.stats.pass_td_2014 * 6;
-    const pointsPassTds2015 = player.stats.pass_td_2015 * 6;
-    const pointsPassTds2016 = player.stats.pass_td_2016 * 6;
-
-    const pointsReceptions2014 = player.stats.rec_2014;
-    const pointsReceptions2015 = player.stats.rec_2015;
-    const pointsReceptions2016 = player.stats.rec_2016;
-
-    const pointsRecYards2014 = player.stats.rec_yards_2014 * 0.1;
-    const pointsRecYards2015 = player.stats.rec_yards_2015 * 0.1;
-    const pointsRecYards2016 = player.stats.rec_yards_2016 * 0.1;
-
-    const pointsRecTds2014 = player.stats.rec_td_2014 * 6;
-    const pointsRecTds2015 = player.stats.rec_td_2015 * 6;
-    const pointsRecTds2016 = player.stats.rec_td_2016 * 6;
-
-    const pointsRushYds2014 = player.stats.rush_yards_2014 * 0.1;
-    const pointsRushYds2015 = player.stats.rush_yards_2015 * 0.1;
-    const pointsRushYds2016 = player.stats.rush_yards_2016 * 0.1;
 
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
-    // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
-    // const thirdRoundPick = this.props.players.find((p) => p.name === nextYearsThird);
-    // const fourthRoundPick = this.props.players.find((p) => p.name === nextYearsFourth);
-    // const firstRoundPickValue = firstRoundPick[this.props.values.past6MonthsValue[4]];
-    // const secondRoundPickValue = secondRoundPick[this.props.values.past6MonthsValue[4]];
-    // const thirdRoundPickValue = thirdRoundPick[this.props.values.past6MonthsValue[4]];
-    // const fourthRoundPickValue = fourthRoundPick[this.props.values.past6MonthsValue[4]];
-    //
-    // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
-    const buyBtnCls = classnames({ 'primary': this.state.playerVote === 'buy' });
-    const sellBtnCls = classnames({ 'danger': this.state.playerVote === 'sell' });
+    const buyBtnCls = classnames({ primary: this.state.playerVote === 'buy' });
+    const sellBtnCls = classnames({ danger: this.state.playerVote === 'sell' });
 
     const buySell = this.props.currentUser
       ? (
@@ -310,7 +273,6 @@ export default class Player extends Component {
           </div>
         </div>
       ) : null;
-    console.log(firstRoundPick);
     const firstRoundPickIndex = (
         player.rankings[0][this.props.values.valueKey] / firstRoundPick.rankings[0][this.props.values.valueKey]).toFixed(2);
     const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
@@ -360,13 +322,13 @@ export default class Player extends Component {
         );
     }
 
-    if (player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey] > 9) {
+    if (trend > 9) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Up">This player has increased in value by over 10 spots over the last 3 months.</Popover>}>
           <div className="badge badge-green playerBadge"><i className="fa fa-level-up badgeIcon"></i><strong>Trending Up</strong></div>
         </OverlayTrigger>)
         );
-    } else if (player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey] < -9) {
+    } else if (trend < -9) {
       badges.push(
         (<OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="Trending Down">This player has decreased in value by over 10 spots over the last 3 months.</Popover>}>
           <div className="badge badge-danger playerBadge"><i className="fa fa-level-down badgeIcon"></i><strong>Trending Down</strong></div>
@@ -495,7 +457,7 @@ export default class Player extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">3-Month Trend</h5>
                       <h2 className={trend3ColorCls}>
-                        <i className={trend3ArrowCls}></i> {player.adp[3][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]}
+                        <i className={trend3ArrowCls}></i> {trend}
                       </h2>
                     </div>
                   </div>
