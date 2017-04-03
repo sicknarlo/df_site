@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
@@ -34,6 +35,8 @@ export default class DraftMate extends Component {
       ready: false,
       draftStarted: false,
       selectedPlayer: null,
+      draftReady: false,
+      rankingsReady: false,
       pick: null,
       currentTeam: null,
       nextTeam: null,
@@ -44,22 +47,7 @@ export default class DraftMate extends Component {
       usersPlayers: [],
       userRankings: [],
       values: PValues.ppr,
-      e1Rankings: [],
-      e2Rankings: [],
-      e3Rankings: [],
-      e4Rankings: [],
-      e5Rankings: [],
-      e6Rankings: [],
-      e7Rankings: [],
-      e8Rankings: [],
-      e9Rankings: [],
-      e10Rankings: [],
-      e11Rankings: [],
-      e12Rankings: [],
-      e13Rankings: [],
-      e14Rankings: [],
-      e15Rankings: [],
-      e16Rankings: [],
+      expertRankings: [],
       showTeamViewer: false,
       showRankingViewer: false,
       showPlayerViewer: false,
@@ -123,7 +111,28 @@ export default class DraftMate extends Component {
   startDraft(e) {
     e.preventDefault();
     let userRankings = [];
-    this.setState({ draftReady: false });
+    this.setState({ draftReady: false, rankingsReady: false });
+    let expertRankings = [];
+    if (this.state.draftOptions.format === 'rookie') {
+      Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
+        if (!error) {
+          this.setState({ expertRankings: result[0].rankings , rankingsReady: true })
+        }
+      });
+    } else if (this.state.draftOptions.is2QB) {
+      Meteor.call('draftMateRankings.get2QBRankings', (error, result) => {
+        if (!error) {
+          this.setState({ expertRankings: result[0].super , rankingsReady: true })
+        }
+      });
+    } else {
+      Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
+        if (!error) {
+          console.log(result);
+          this.setState({ expertRankings: result[0].standard , rankingsReady: true })
+        }
+      });
+    }
     const teams = this.state.draftOptions.teamCount;
     const rounds = this.state.draftOptions.roundCount;
     const draftType = this.state.draftOptions.orderFormat;
@@ -188,40 +197,7 @@ export default class DraftMate extends Component {
       }
     }
 
-    let e1Rankings,
-        e2Rankings,
-        e3Rankings,
-        e4Rankings,
-        e5Rankings,
-        e6Rankings,
-        e7Rankings,
-        e8Rankings,
-        e9Rankings,
-        e10Rankings,
-        e11Rankings,
-        e12Rankings,
-        e13Rankings,
-        e14Rankings,
-        e15Rankings,
-        e16Rankings;
-
     if (this.state.draftOptions.format === 'startup') {
-      e1Rankings = sortRank(this.state.values.e1Rankings, playerPool);
-      e2Rankings = sortRank(this.state.values.e2Rankings, playerPool);
-      e3Rankings = sortRank(this.state.values.e3Rankings, playerPool);
-      e4Rankings = sortRank(this.state.values.e4Rankings, playerPool);
-      e5Rankings = sortRank(this.state.values.e5Rankings, playerPool);
-      e6Rankings = sortRank(this.state.values.e6Rankings, playerPool);
-      e7Rankings = sortRank(this.state.values.e7Rankings, playerPool);
-      e8Rankings = sortRank(this.state.values.e8Rankings, playerPool);
-      e9Rankings = sortRank(this.state.values.e9Rankings, playerPool);
-      e10Rankings = sortRank(this.state.values.e10Rankings, playerPool);
-      e11Rankings = sortRank(this.state.values.e11Rankings, playerPool);
-      e12Rankings = sortRank(this.state.values.e12Rankings, playerPool);
-      e13Rankings = sortRank(this.state.values.e13Rankings, playerPool);
-      e14Rankings = sortRank(this.state.values.e14Rankings, playerPool);
-      e15Rankings = sortRank(this.state.values.e15Rankings, playerPool);
-      e16Rankings = sortRank(this.state.values.e16Rankings, playerPool);
       userRankings = playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
     }
 
@@ -237,22 +213,7 @@ export default class DraftMate extends Component {
       nextTeam: 2,
       values,
       userRankings,
-      e1Rankings,
-      e2Rankings,
-      e3Rankings,
-      e4Rankings,
-      e5Rankings,
-      e6Rankings,
-      e7Rankings,
-      e8Rankings,
-      e9Rankings,
-      e10Rankings,
-      e11Rankings,
-      e12Rankings,
-      e13Rankings,
-      e14Rankings,
-      e15Rankings,
-      e16Rankings,
+      expertRankings,
     });
   }
 
@@ -270,23 +231,7 @@ export default class DraftMate extends Component {
     e.preventDefault();
     const player = this.state.playerPool.find(x => x == this.state.playerInViewer);
     const newPlayerPool = this.state.playerPool.filter(x => x != player);
-    const newe1Rankings = this.state.e1Rankings.filter(x => x != player);
-    const newe2Rankings = this.state.e2Rankings.filter(x => x != player);
-    const newe3Rankings = this.state.e3Rankings.filter(x => x != player);
-    const newe4Rankings = this.state.e4Rankings.filter(x => x != player);
-    const newe5Rankings = this.state.e5Rankings.filter(x => x != player);
-    const newe6Rankings = this.state.e6Rankings.filter(x => x != player);
-    const newe7Rankings = this.state.e7Rankings.filter(x => x != player);
-    const newe8Rankings = this.state.e8Rankings.filter(x => x != player);
-    const newe9Rankings = this.state.e9Rankings.filter(x => x != player);
-    const newe10Rankings = this.state.e10Rankings.filter(x => x != player);
-    const newe11Rankings = this.state.e11Rankings.filter(x => x != player);
-    const newe12Rankings = this.state.e12Rankings.filter(x => x != player);
-    const newe13Rankings = this.state.e13Rankings.filter(x => x != player);
-    const newe14Rankings = this.state.e14Rankings.filter(x => x != player);
-    const newe15Rankings = this.state.e15Rankings.filter(x => x != player);
-    const newe16Rankings = this.state.e16Rankings.filter(x => x != player);
-
+    const expertRankings = this.state.expertRankings.filter(er => player.id !== er);
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player;
@@ -297,22 +242,6 @@ export default class DraftMate extends Component {
 
     this.setState({
       playerPool: newPlayerPool,
-      e1Rankings: newe1Rankings,
-      e2Rankings: newe2Rankings,
-      e3Rankings: newe3Rankings,
-      e4Rankings: newe4Rankings,
-      e5Rankings: newe5Rankings,
-      e6Rankings: newe6Rankings,
-      e7Rankings: newe7Rankings,
-      e8Rankings: newe8Rankings,
-      e9Rankings: newe9Rankings,
-      e10Rankings: newe10Rankings,
-      e11Rankings: newe11Rankings,
-      e12Rankings: newe12Rankings,
-      e13Rankings: newe13Rankings,
-      e14Rankings: newe14Rankings,
-      e15Rankings: newe15Rankings,
-      e16Rankings: newe16Rankings,
       draftReady: true,
       draftStarted: true,
       picks: newPicks,
@@ -322,6 +251,7 @@ export default class DraftMate extends Component {
       selectedPlayers: newSelectedPlayers,
       showPlayerViewer: false,
       playerInViewer: null,
+      expertRankings,
     });
   }
 
@@ -334,23 +264,7 @@ export default class DraftMate extends Component {
     e.preventDefault();
     const player = this.state.playerPool.find(x => x == this.state.selectedPlayer.val);
     const newPlayerPool = this.state.playerPool.filter(x => x != player);
-    const newe1Rankings = this.state.e1Rankings.filter(x => x != player);
-    const newe2Rankings = this.state.e2Rankings.filter(x => x != player);
-    const newe3Rankings = this.state.e3Rankings.filter(x => x != player);
-    const newe4Rankings = this.state.e4Rankings.filter(x => x != player);
-    const newe5Rankings = this.state.e5Rankings.filter(x => x != player);
-    const newe6Rankings = this.state.e6Rankings.filter(x => x != player);
-    const newe7Rankings = this.state.e7Rankings.filter(x => x != player);
-    const newe8Rankings = this.state.e8Rankings.filter(x => x != player);
-    const newe9Rankings = this.state.e9Rankings.filter(x => x != player);
-    const newe10Rankings = this.state.e10Rankings.filter(x => x != player);
-    const newe11Rankings = this.state.e11Rankings.filter(x => x != player);
-    const newe12Rankings = this.state.e12Rankings.filter(x => x != player);
-    const newe13Rankings = this.state.e13Rankings.filter(x => x != player);
-    const newe14Rankings = this.state.e14Rankings.filter(x => x != player);
-    const newe15Rankings = this.state.e15Rankings.filter(x => x != player);
-    const newe16Rankings = this.state.e16Rankings.filter(x => x != player);
-
+    const expertRankings = this.state.expertRankings.filter(er => player.id != er);
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player;
@@ -361,22 +275,6 @@ export default class DraftMate extends Component {
 
     this.setState({
       playerPool: newPlayerPool,
-      e1Rankings: newe1Rankings,
-      e2Rankings: newe2Rankings,
-      e3Rankings: newe3Rankings,
-      e4Rankings: newe4Rankings,
-      e5Rankings: newe5Rankings,
-      e6Rankings: newe6Rankings,
-      e7Rankings: newe7Rankings,
-      e8Rankings: newe8Rankings,
-      e9Rankings: newe9Rankings,
-      e10Rankings: newe10Rankings,
-      e11Rankings: newe11Rankings,
-      e12Rankings: newe12Rankings,
-      e13Rankings: newe13Rankings,
-      e14Rankings: newe14Rankings,
-      e15Rankings: newe15Rankings,
-      e16Rankings: newe16Rankings,
       draftReady: true,
       draftStarted: true,
       picks: newPicks,
@@ -384,6 +282,7 @@ export default class DraftMate extends Component {
       pickNum: this.state.pickNum + 1,
       selectedPlayer: null,
       selectedPlayers: newSelectedPlayers,
+      expertRankings,
     });
   }
 
@@ -521,26 +420,9 @@ export default class DraftMate extends Component {
     const currentTeam = this.state.picks[this.state.currentTeam - 1].team;
     const onDeck = this.state.picks[this.state.nextTeam - 1].team;
 
-    let expert1, expert2, expert3, expert4;
-
-    const nextBest = [
-      this.state.e1Rankings[0],
-      this.state.e2Rankings[0],
-      this.state.e3Rankings[0],
-      this.state.e4Rankings[0],
-      this.state.e5Rankings[0],
-      this.state.e6Rankings[0],
-      this.state.e7Rankings[0],
-      this.state.e8Rankings[0],
-      this.state.e9Rankings[0],
-      this.state.e10Rankings[0],
-      this.state.e11Rankings[0],
-      this.state.e12Rankings[0],
-      this.state.e13Rankings[0],
-      this.state.e14Rankings[0],
-      this.state.e15Rankings[0],
-      this.state.e16Rankings[0],
-    ];
+    console.log(this.state.expertRankings);
+    const nextBest = this.state.expertRankings &&
+      this.state.expertRankings.map(x => this.props.players.find(p => p.id === x[0]));
 
     const aCount = new Map([...new Set(nextBest)].map(
       x => [x, nextBest.filter(y => y === x).length]
@@ -559,7 +441,7 @@ export default class DraftMate extends Component {
     const expertPicks = [];
     sortedBest.forEach((count, player) =>
       expertPicks.push([player, Math.round((count / nextBest.length) * 100)]));
-    const options = this.state.playerPool.map(function(player) {
+    const options = this.state.playerPool.map((player) => {
       return { val: player, label: player.name }
     });
     const selectPlayerInViewer = !this.state.selectedPlayers.includes(this.state.playerInViewer) ?
@@ -598,7 +480,7 @@ export default class DraftMate extends Component {
       <span className="label label-info draftBoardAlert">{alertCount}</span> :
         null;
 
-    return (
+    if (this.state.rankingsReady) return (
       <div className="wrapper wrapper-content animated fadeInRight">
         {playerModal}
         <Modal
@@ -875,6 +757,7 @@ export default class DraftMate extends Component {
         </div>
       </div>
     );
+    return null;
   }
 }
 
