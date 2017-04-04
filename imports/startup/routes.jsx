@@ -44,6 +44,7 @@ export const renderRoutes = () => (
       <Route path="/tools/hokeypokey" component={UpdateValues} />
       <Route path="/tools/faq" component={FAQ} />
       <Route path="/tools/draft-mate" component={DraftMate} />
+      <Route path="/tools/draft-mate/:draftMateID" component={DraftMate} />
     </Route>
   </Router>
 );

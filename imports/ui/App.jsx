@@ -96,7 +96,6 @@ class App extends Component {
     // const feed = 'http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss';
     let result = [];
     const t = this;
-    console.log('foo');
     $.ajax(
       {
         url: "https://dynastyfftoolsrss.herokuapp.com/v1/feed?url=http://www.rotoworld.com/rss/feed.aspx?sport=nfl&ftype=news&count=12&format=rss&key=1ab23c",

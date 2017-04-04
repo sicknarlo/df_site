@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
+import { browserHistory } from 'react-router';
 import { Modal, Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
@@ -66,6 +67,35 @@ export default class DraftMate extends Component {
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
   }
 
+  componentWillMount() {
+    // const that = this;
+    // console.log('mrrrr');
+    // if (this.props.params.draftMateID) {
+    //   Meteor.call('drafts.get', this.props.params.draftMateID, function(error, result) {
+    //     if (error) console.log('error', error);
+    //     that.setState(result);
+    //   })
+    // }
+  }
+
+  componentDidMount() {
+    Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
+      if (!error) {
+        this.setState({ rookieRankings: result[0].rankings })
+      }
+    });
+    Meteor.call('draftMateRankings.get2QBRankings', (error, result) => {
+      if (!error) {
+        this.setState({ superRankings: result[0].super })
+      }
+    });
+    Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
+      if (!error) {
+        this.setState({ standardRankings: result[0].standard })
+      }
+    });
+  }
+
   openPlayerViewer(p) {
     const playerName = p.target.text.substr(0, p.target.text.indexOf("|")-1) == "" ?
       p.target.text :
@@ -111,27 +141,14 @@ export default class DraftMate extends Component {
   startDraft(e) {
     e.preventDefault();
     let userRankings = [];
-    this.setState({ draftReady: false, rankingsReady: false });
     let expertRankings = [];
+    this.setState({ draftReady: false, rankingsReady: false });
     if (this.state.draftOptions.format === 'rookie') {
-      Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
-        if (!error) {
-          this.setState({ expertRankings: result[0].rankings , rankingsReady: true })
-        }
-      });
+        expertRankings = this.state.rookieRankings;
     } else if (this.state.draftOptions.is2QB) {
-      Meteor.call('draftMateRankings.get2QBRankings', (error, result) => {
-        if (!error) {
-          this.setState({ expertRankings: result[0].super , rankingsReady: true })
-        }
-      });
+        expertRankings = this.state.superRankings;
     } else {
-      Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
-        if (!error) {
-          console.log(result);
-          this.setState({ expertRankings: result[0].standard , rankingsReady: true })
-        }
-      });
+        expertRankings = this.state.standardRankings;
     }
     const teams = this.state.draftOptions.teamCount;
     const rounds = this.state.draftOptions.roundCount;
@@ -201,6 +218,18 @@ export default class DraftMate extends Component {
       userRankings = playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
     }
 
+    const state = this.state;
+    state.draftReady = true;
+    state.draftStarted = true;
+    state.picks = picks;
+    state.teams = t;
+    state.pick = '1.01';
+    state.pickNum = 1;
+    state.currentTeam = 1;
+    state.nextTeam = 2;
+    state.values = values;
+    state.expertRankings = expertRankings;
+
     this.setState({
       draftReady: true,
       draftStarted: true,
@@ -214,6 +243,9 @@ export default class DraftMate extends Component {
       values,
       userRankings,
       expertRankings,
+    });
+    Meteor.call('drafts.create', state, function(error, result) {
+      browserHistory.push(`/tools/draft-mate/${result}`);
     });
   }
 
@@ -231,7 +263,12 @@ export default class DraftMate extends Component {
     e.preventDefault();
     const player = this.state.playerPool.find(x => x == this.state.playerInViewer);
     const newPlayerPool = this.state.playerPool.filter(x => x != player);
-    const expertRankings = this.state.expertRankings.filter(er => player.id !== er);
+    const expertRankings = this.state.expertRankings.map(er => {
+      const wrapper = er;
+      const newSet = er.players.filter(x => x !== player.id);
+      wrapper.players = newSet;
+      return wrapper;
+    });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player;
@@ -264,7 +301,12 @@ export default class DraftMate extends Component {
     e.preventDefault();
     const player = this.state.playerPool.find(x => x == this.state.selectedPlayer.val);
     const newPlayerPool = this.state.playerPool.filter(x => x != player);
-    const expertRankings = this.state.expertRankings.filter(er => player.id != er);
+    const expertRankings = this.state.expertRankings.map(er => {
+      const wrapper = er;
+      const newSet = er.players.filter(x => x !== player.id);
+      wrapper.players = newSet;
+      return wrapper;
+    });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player;
@@ -422,7 +464,7 @@ export default class DraftMate extends Component {
 
     console.log(this.state.expertRankings);
     const nextBest = this.state.expertRankings &&
-      this.state.expertRankings.map(x => this.props.players.find(p => p.id === x[0]));
+      this.state.expertRankings.map(x => this.props.players.find(p => p.id === x.players[0]));
 
     const aCount = new Map([...new Set(nextBest)].map(
       x => [x, nextBest.filter(y => y === x).length]
@@ -480,7 +522,7 @@ export default class DraftMate extends Component {
       <span className="label label-info draftBoardAlert">{alertCount}</span> :
         null;
 
-    if (this.state.rankingsReady) return (
+    return (
       <div className="wrapper wrapper-content animated fadeInRight">
         {playerModal}
         <Modal
@@ -578,8 +620,8 @@ export default class DraftMate extends Component {
               <div className="ibox-content">
                 <div className="row">
                   <div className="col-sm-6">
-                    <h2>On the Clock - {currentTeam}</h2>
-                    <h3>On Deck - {onDeck}</h3>
+                    <h2>On the Clock - {this.state.picks[this.state.pickNum - 1].team}</h2>
+                    <h3>On Deck - {this.state.picks[this.state.pickNum].team}</h3>
                     <h2><a onClick={this.toggleRankingViewer}>Draft Board {alertButton}</a></h2>
                     <hr></hr>
                     <div className="row">
