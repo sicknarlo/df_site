@@ -5,14 +5,23 @@ import { check } from 'meteor/check';
 export const Drafts = new Mongo.Collection('drafts');
 
 Meteor.methods({
-  'drafts.create'(draft) {
+  'drafts.create'(state) {
     if (!this.userId) {
       throw new Meteor.error('not-authorized');
     }
-    const newDraft = draft;
-    newDraft.user = this.userId;
-    newDraft.date = new Date();
-    return Drafts.insert(newDraft);
+    const newState = state;
+    newState.date = new Date();
+    newState.user = this.userId;
+
+    return Drafts.insert(newState);
+  },
+
+  'drafts.update'(data) {
+    const state = data.state;
+    const id = data.id;
+
+    Drafts.update({ _id: id }, state);
+    return Drafts.find({ _id: id }).fetch();
   },
 
   'drafts.delete'(draftId) {
@@ -21,7 +30,7 @@ Meteor.methods({
     Drafts.remove(draftId);
   },
 
-  'drafts.get'() {
-    Drafts.find({ userId: this.userId });
+  'drafts.get'(draftMateID) {
+    return Drafts.find({ _id: draftMateID }).fetch();
   },
 });

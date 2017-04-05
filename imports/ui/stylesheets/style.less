@@ -72,3 +72,27 @@ tr.strikeout {
 .draftBoardAlert {
   margin-left: 10px;
 }
+
+.draftMate > .sk-spinner {
+  display: none;
+}
+.draftMate.sk-loading {
+  position: relative;
+}
+.draftMate.sk-loading:after {
+  content: '';
+  background-color: rgba(255, 255, 255, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.draftMate.sk-loading > .sk-spinner {
+  display: block;
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+}

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
+import { Players } from '../api/players.js';
 import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
@@ -24,39 +25,11 @@ function sortRank(rankName, playerPool) {
 export default class DraftMate extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      draftOptions: {
-        format: '',
-        orderFormat: '',
-        teamCount: 12,
-        is2QB: false,
-        roundCount: 18,
-        userPickPos: 1,
-      },
-      ready: false,
-      draftStarted: false,
-      selectedPlayer: null,
-      draftReady: false,
-      rankingsReady: false,
-      pick: null,
-      currentTeam: null,
-      nextTeam: null,
-      picks: [],
-      teams: [],
-      playerPool: [],
-      selectedPlayers: [],
-      usersPlayers: [],
-      userRankings: [],
-      values: PValues.ppr,
-      expertRankings: [],
-      showTeamViewer: false,
-      showRankingViewer: false,
-      showPlayerViewer: false,
-      playerInViewer: null,
+      draftLoaded: false,
+      draftUpdating: false,
     };
-    this.updateOption = this.updateOption.bind(this);
-    this.startDraft = this.startDraft.bind(this);
-    this.draftReady = this.draftReady.bind(this);
     this.changeOwner = this.changeOwner.bind(this);
     this.setPick = this.setPick.bind(this);
     this.selectPlayer = this.selectPlayer.bind(this);
@@ -65,42 +38,34 @@ export default class DraftMate extends Component {
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
+    this.cleanInput = this.cleanInput.bind(this);
+    this.cleanOutput = this.cleanOutput.bind(this);
   }
 
   componentWillMount() {
-    // const that = this;
-    // console.log('mrrrr');
-    // if (this.props.params.draftMateID) {
-    //   Meteor.call('drafts.get', this.props.params.draftMateID, function(error, result) {
-    //     if (error) console.log('error', error);
-    //     that.setState(result);
-    //   })
-    // }
-  }
-
-  componentDidMount() {
-    Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
-      if (!error) {
-        this.setState({ rookieRankings: result[0].rankings })
-      }
-    });
-    Meteor.call('draftMateRankings.get2QBRankings', (error, result) => {
-      if (!error) {
-        this.setState({ superRankings: result[0].super })
-      }
-    });
-    Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
-      if (!error) {
-        this.setState({ standardRankings: result[0].standard })
-      }
+    const that = this;
+    Meteor.call('drafts.get', this.props.params.draftMateID, function(error, result) {
+      if (error) console.log('error', error);
+      const state = result[0];
+      state.draftLoaded = true;
+      const serializedState = that.cleanInput(state);
+      that.setState(serializedState);
     });
   }
 
+  cleanInput(oldState) {
+    const newState = oldState;
+    newState.userRankings = newState.userRankings.map(
+      id => this.props.players.find(player => player.id === id));
+    newState.playerPool = newState.playerPool.map(
+      id => this.props.players.find(player => player.id === id));
+    return newState;
+  }
   openPlayerViewer(p) {
     const playerName = p.target.text.substr(0, p.target.text.indexOf("|")-1) == "" ?
       p.target.text :
       p.target.text.substr(0, p.target.text.indexOf("|")-1);
-    const player = this.props.players.find(p => p.name === playerName)
+    const player = this.props.players.find(p => p.name === playerName);
     this.setState({
       showPlayerViewer: true,
       playerInViewer: player,
@@ -109,21 +74,16 @@ export default class DraftMate extends Component {
   }
 
   closePlayerViewer() {
-    this.setState ({
+    this.setState({
       showPlayerViewer: false,
       playerInViewer: null,
     });
   }
 
-  draftReady() {
-    return this.state.draftOptions.format !== '' &&
-      this.state.draftOptions.orderFormat !== '';
-  }
-
   toggleRankingViewer() {
     this.setState({
       showRankingViewer: !this.state.showRankingViewer,
-     });
+    });
   }
 
   changeOwner(e) {
@@ -135,124 +95,17 @@ export default class DraftMate extends Component {
         break;
       }
     }
-    this.setState({ picks: newPicks });
-  }
-
-  startDraft(e) {
-    e.preventDefault();
-    let userRankings = [];
-    let expertRankings = [];
-    this.setState({ draftReady: false, rankingsReady: false });
-    if (this.state.draftOptions.format === 'rookie') {
-        expertRankings = this.state.rookieRankings;
-    } else if (this.state.draftOptions.is2QB) {
-        expertRankings = this.state.superRankings;
-    } else {
-        expertRankings = this.state.standardRankings;
-    }
-    const teams = this.state.draftOptions.teamCount;
-    const rounds = this.state.draftOptions.roundCount;
-    const draftType = this.state.draftOptions.orderFormat;
-    const userPos = this.state.draftOptions.userPickPos;
-    const values = this.state.draftOptions.is2QB ? PValues.super : PValues.ppr;
-    const t = [];
-    const playerPool = this.state.draftOptions.format === 'rookie' ?
-      this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
-                        .sort((a, b) => a[values.rank] - b[values.rank]) :
-      this.props.players.filter((p) => p.position !== 'PICK')
-                        .sort((a, b) => a[values.rank] - b[values.rank]);
-
-    for (let i = 0; i < teams; i++) {
-      const name = i + 1 == userPos ? 'You' : `Team ${i + 1}`;
-      t.push({ name, picks: [] });
-    }
-    const picks = [];
-    if (draftType === 'standard') {
-      for (let i = 0; i < rounds; i++) {
-        const round = (i + 1).toString();
-        for (let y = 0; y < teams; y++) {
-          let team = y + 1;
-          if (team < 10) {
-            team = `0${team}`;
-          } else {
-            team = team.toString();
-          }
-          const isUser = y + 1 == userPos;
-
-          const teamName = isUser ? 'You' : `Team ${y + 1}`;
-          picks.push({
-            draftPick: `${round}.${team}`,
-            team: teamName,
-            player: null,
-            vsADP: null,
-            isUser,
-          });
-        }
-      }
-    } else {
-      for (let i = 0; i < rounds; i++) {
-        const round = (i + 1).toString();
-        const reverse = i % 2 === 0;
-        for (let y = 0; y < teams; y++) {
-          let pick = y + 1;
-          if (pick < 10) {
-            pick = `0${pick}`;
-          } else {
-            pick = pick.toString();
-          }
-          const teamNum = reverse ? y + 1 : 12 - y;
-          const isUser = teamNum == userPos;
-          const teamName = isUser ? 'You' : `Team ${teamNum}`;
-          picks.push({
-            draftPick: `${round}.${pick}`,
-            team: teamName,
-            player: null,
-            vsADP: null,
-            isUser,
-          });
-        }
-      }
-    }
-
-    if (this.state.draftOptions.format === 'startup') {
-      userRankings = playerPool.sort((a, b) => a[values.rank] - b[values.rank]);
-    }
-
-    const state = this.state;
-    state.draftReady = true;
-    state.draftStarted = true;
-    state.picks = picks;
-    state.teams = t;
-    state.pick = '1.01';
-    state.pickNum = 1;
-    state.currentTeam = 1;
-    state.nextTeam = 2;
-    state.values = values;
-    state.expertRankings = expertRankings;
-
-    this.setState({
-      draftReady: true,
-      draftStarted: true,
-      picks,
-      teams: t,
-      playerPool,
-      pick: '1.01',
-      pickNum: 1,
-      currentTeam: 1,
-      nextTeam: 2,
-      values,
-      userRankings,
-      expertRankings,
+    const data = {};
+    data.state = this.state;
+    data.state.picks = newPicks;
+    data.id = this.props.params.draftMateID;
+    const that = this;
+    data.state = this.cleanOutput(data.state);
+    this.setState({ draftUpdating: true });
+    Meteor.call('drafts.update', data, (error, result) => {
+      const serializedState = that.cleanInput(state);
+      that.setState(serializedState);
     });
-    Meteor.call('drafts.create', state, function(error, result) {
-      browserHistory.push(`/tools/draft-mate/${result}`);
-    });
-  }
-
-  updateOption(e) {
-    const newDraftOptions = this.state.draftOptions;
-    newDraftOptions[e.target.name] = e.target.value;
-    this.setState({ draftOptions: newDraftOptions });
   }
 
   setPick(val) {
@@ -277,21 +130,35 @@ export default class DraftMate extends Component {
     const newSelectedPlayers = this.state.selectedPlayers;
     newSelectedPlayers.push(player);
 
-    this.setState({
-      playerPool: newPlayerPool,
-      draftReady: true,
-      draftStarted: true,
-      picks: newPicks,
-      pick: nextPick.draftPick,
-      pickNum: this.state.pickNum + 1,
-      selectedPlayer: null,
-      selectedPlayers: newSelectedPlayers,
-      showPlayerViewer: false,
-      playerInViewer: null,
-      expertRankings,
+    const data = {};
+    data.state = this.state;
+    data.state.playerPool = newPlayerPool;
+    data.state.draftReady = true;
+    data.state.draftStarted = true;
+    data.state.picks = newPicks;
+    data.state.pick = nextPick.draftPick;
+    data.state.pickNum = this.state.pickNum + 1;
+    data.state.selectedPlayer = null;
+    data.state.selectedPlayers = newSelectedPlayers;
+    data.state.showPlayerViewer = false;
+    data.state.playerInViewer = null;
+    data.state.expertRankings = expertRankings;
+    data.id = this.props.params.draftMateID;
+    const that = this;
+    data.state = this.cleanOutput(data.state);
+    this.setState({ draftUpdating: true });
+    Meteor.call('drafts.update', data, (error, result) => {
+      const serializedState = that.cleanInput(result[0]);
+      that.setState(serializedState);
     });
   }
 
+  cleanOutput(output) {
+    const newData = output;
+    newData.playerPool = output.playerPool.map(p => p.id);
+    newData.userRankings = output.userRankings.map(p => p.id);
+    return newData;
+  }
 
   toggleTeamViewer() {
     this.setState({ showTeamViewer: !this.state.showTeamViewer });
@@ -299,8 +166,8 @@ export default class DraftMate extends Component {
 
   selectPlayer(e) {
     e.preventDefault();
-    const player = this.state.playerPool.find(x => x == this.state.selectedPlayer.val);
-    const newPlayerPool = this.state.playerPool.filter(x => x != player);
+    const player = this.state.playerPool.find(x => x === this.state.selectedPlayer.val);
+    const newPlayerPool = this.state.playerPool.filter(x => x !== player);
     const expertRankings = this.state.expertRankings.map(er => {
       const wrapper = er;
       const newSet = er.players.filter(x => x !== player.id);
@@ -315,157 +182,41 @@ export default class DraftMate extends Component {
     const newSelectedPlayers = this.state.selectedPlayers;
     newSelectedPlayers.push(player);
 
-    this.setState({
-      playerPool: newPlayerPool,
-      draftReady: true,
-      draftStarted: true,
-      picks: newPicks,
-      pick: nextPick.draftPick,
-      pickNum: this.state.pickNum + 1,
-      selectedPlayer: null,
-      selectedPlayers: newSelectedPlayers,
-      expertRankings,
+    const data = {};
+    data.state = this.state;
+    data.state.playerPool = newPlayerPool;
+    data.state.draftReady = true;
+    data.state.draftStarted = true;
+    data.state.picks = newPicks;
+    data.state.pick = nextPick.draftPick;
+    data.state.pickNum = this.state.pickNum + 1;
+    data.state.selectedPlayer = null;
+    data.state.selectedPlayers = newSelectedPlayers;
+    data.state.showPlayerViewer = false;
+    data.state.playerInViewer = null;
+    data.state.expertRankings = expertRankings;
+    data.id = this.props.params.draftMateID;
+    const that = this;
+    data.state = this.cleanOutput(data.state);
+    this.setState({ draftUpdating: true });
+    Meteor.call('drafts.update', data, (error, result) => {
+      const serializedState = that.cleanInput(result[0]);
+      that.setState(serializedState);
     });
   }
 
   render() {
+    if (!this.state.draftLoaded) return null;
+    console.log(this.props.playerMap);
     const component = this;
-    const startButton = this.draftReady() ?
-      <button
-        className="btn btn-primary"
-        onClick={this.startDraft}
-      >
-        Start Draft
-      </button> :
-      <button
-        className="btn btn-danger"
-        disabled
-        onClick={this.startDraft}
-      >
-        Select Options
-      </button>;
     const teamOptions = [];
-
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
-
-    if (!this.state.draftStarted) {
-      return (
-        <div className="col-lg-12">
-          <div className="ibox float-e-margins">
-            <div className="ibox-title">
-              <h3>Set up <small>Customize Your Draft</small></h3>
-            </div>
-            <div className="ibox-content">
-              <form className="form-horizontal">
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">Draft Type</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control m-b"
-                      name="format"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.format}
-                    >
-                        <option selected disabled>Select</option>
-                        <option disabled value="rookie">Rookie</option>
-                        <option value="startup">Start Up</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">Draft Format</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control m-b"
-                      name="orderFormat"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.orderFormat}
-                    >
-                        <option selected disabled>Select</option>
-                        <option value="standard">Standard</option>
-                        <option value="snake">Snake</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">Number of Teams</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control m-b"
-                      name="teamCount"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.teamCount}
-                    >
-                        <option selected disabled>Select</option>
-                        <option value={8}>8</option>
-                        <option value={10}>10</option>
-                        <option value={12}>12</option>
-                        <option value={14}>14</option>
-                        <option value={16}>16</option>
-                        <option value={18}>18</option>
-                        <option value={20}>20</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">Number of Rounds</label>
-                  <div className="col-sm-10">
-                    <input type="number"
-                      name="roundCount"
-                      className="form-control"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.roundCount}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">2QB</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control m-b"
-                      name="is2QB"
-                      onChange={this.updateOption}
-                      value={this.state.draftOptions.is2QB}
-                    >
-                        <option selected disabled>Select</option>
-                        <option value={true}>Yes</option>
-                        <option value={false}>No</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="col-sm-2 control-label">Player Pick Position</label>
-                  <div className="col-sm-10">
-                    <select
-                      className="form-control"
-                      name="userPickPos"
-                      value={this.state.draftOptions.userPickPos}
-                      onChange={this.updateOption}
-                    >
-                      {teamOptions.map(o => <option value={o}>{o}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <div className="col-xs-4 flexContainer justifyCenter">
-                    {startButton}
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-      </div>
-    );
-    }
     const currentTeam = this.state.picks[this.state.currentTeam - 1].team;
     const onDeck = this.state.picks[this.state.nextTeam - 1].team;
-
-    console.log(this.state.expertRankings);
     const nextBest = this.state.expertRankings &&
       this.state.expertRankings.map(x => this.props.players.find(p => p.id === x.players[0]));
-
     const aCount = new Map([...new Set(nextBest)].map(
       x => [x, nextBest.filter(y => y === x).length]
     ));
@@ -507,7 +258,6 @@ export default class DraftMate extends Component {
       null;
 
     let alertCount = 0;
-    let majorAlertCount = 0;
 
     this.state.userRankings.forEach((player) => {
       if (
@@ -521,9 +271,17 @@ export default class DraftMate extends Component {
     const draftboardAlert = alertCount > 0 ?
       <span className="label label-info draftBoardAlert">{alertCount}</span> :
         null;
-
+    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
+      { 'sk-loading': this.state.updating });
     return (
-      <div className="wrapper wrapper-content animated fadeInRight">
+      <div className={mainclasses}>
+        <div className="sk-spinner sk-spinner-wave">
+          <div cNamelass="sk-rect1"></div>
+          <div className="sk-rect2"></div>
+          <div className="sk-rect3"></div>
+          <div className="sk-rect4"></div>
+          <div className="sk-rect5"></div>
+        </div>
         {playerModal}
         <Modal
           show={this.state.showRankingViewer}

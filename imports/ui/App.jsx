@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
-import { Players } from '../api/players.js';
 import { Teams } from '../api/teams.js';
 import PValues from './ADPConst.jsx';
 import Navigation from './Navigation.jsx';
@@ -11,6 +10,8 @@ import $ from 'jquery';
 import mixpanel from 'mixpanel-browser';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
+
+let playerMap = null;
 
 mixpanel.init("b3957d78fe49d65a13ad277d691d3a8b")
 // App component - represents the whole app
@@ -35,7 +36,8 @@ class App extends Component {
     Meteor.call('players.getPlayers', function(error, result){
       if (error) {
       } else {
-        that.setState({ players: result, playersReady: true })
+        playerMap = new Map(result.map((x) => [x.id, x]));
+        that.setState({ players: result, playersReady: true, playerMap });
       }
     });
     setTimeout(() => {
@@ -210,6 +212,7 @@ class App extends Component {
             teams: this.props.teams,
             rotoData: this.state.rotoData,
             mixpanel,
+            playerMap: this.state.playerMap,
           })}
           <Footer />
         </div>
