@@ -1,27 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Players } from '../api/players.js';
 import classnames from 'classnames';
-import PValues from './ADPConst.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
-import { browserHistory } from 'react-router';
 import { Modal, Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
-function sortRank(rankName, playerPool) {
-  const test = playerPool.slice().sort((a, b) => {
-    if (a[rankName] > b[rankName]) {
-      return 1;
-    }
-    if (a[rankName] < b[rankName]) {
-      return -1;
-    }
-    // a must be equal to b
-    return 0;
-  });
-  return test;
-}
 export default class DraftMate extends Component {
   constructor(props) {
     super(props);
@@ -38,34 +22,19 @@ export default class DraftMate extends Component {
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
-    this.cleanInput = this.cleanInput.bind(this);
-    this.cleanOutput = this.cleanOutput.bind(this);
   }
 
   componentWillMount() {
     const that = this;
-    Meteor.call('drafts.get', this.props.params.draftMateID, function(error, result) {
-      if (error) console.log('error', error);
+    Meteor.call('drafts.get', this.props.params.draftMateID, (error, result) => {
       const state = result[0];
       state.draftLoaded = true;
-      const serializedState = that.cleanInput(state);
-      that.setState(serializedState);
+      that.setState(state);
     });
   }
 
-  cleanInput(oldState) {
-    const newState = oldState;
-    newState.userRankings = newState.userRankings.map(
-      id => this.props.players.find(player => player.id === id));
-    newState.playerPool = newState.playerPool.map(
-      id => this.props.players.find(player => player.id === id));
-    return newState;
-  }
   openPlayerViewer(p) {
-    const playerName = p.target.text.substr(0, p.target.text.indexOf("|")-1) == "" ?
-      p.target.text :
-      p.target.text.substr(0, p.target.text.indexOf("|")-1);
-    const player = this.props.players.find(p => p.name === playerName);
+    const player = this.props.playerMap.get(parseInt(p.target.dataset.value, 10));
     this.setState({
       showPlayerViewer: true,
       playerInViewer: player,
@@ -100,11 +69,9 @@ export default class DraftMate extends Component {
     data.state.picks = newPicks;
     data.id = this.props.params.draftMateID;
     const that = this;
-    data.state = this.cleanOutput(data.state);
     this.setState({ draftUpdating: true });
     Meteor.call('drafts.update', data, (error, result) => {
-      const serializedState = that.cleanInput(state);
-      that.setState(serializedState);
+      that.setState(result[0]);
     });
   }
 
@@ -114,8 +81,8 @@ export default class DraftMate extends Component {
 
   selectPlayerInViewer(e) {
     e.preventDefault();
-    const player = this.state.playerPool.find(x => x == this.state.playerInViewer);
-    const newPlayerPool = this.state.playerPool.filter(x => x != player);
+    const player = this.state.playerInViewer;
+    const newPlayerPool = this.state.playerPool.filter(x => x !== player.id);
     const expertRankings = this.state.expertRankings.map(er => {
       const wrapper = er;
       const newSet = er.players.filter(x => x !== player.id);
@@ -128,7 +95,7 @@ export default class DraftMate extends Component {
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
-    newSelectedPlayers.push(player);
+    newSelectedPlayers.push(player.id);
 
     const data = {};
     data.state = this.state;
@@ -145,19 +112,11 @@ export default class DraftMate extends Component {
     data.state.expertRankings = expertRankings;
     data.id = this.props.params.draftMateID;
     const that = this;
-    data.state = this.cleanOutput(data.state);
     this.setState({ draftUpdating: true });
     Meteor.call('drafts.update', data, (error, result) => {
-      const serializedState = that.cleanInput(result[0]);
-      that.setState(serializedState);
+      console.log(result);
+      that.setState(result[0]);
     });
-  }
-
-  cleanOutput(output) {
-    const newData = output;
-    newData.playerPool = output.playerPool.map(p => p.id);
-    newData.userRankings = output.userRankings.map(p => p.id);
-    return newData;
   }
 
   toggleTeamViewer() {
@@ -166,8 +125,8 @@ export default class DraftMate extends Component {
 
   selectPlayer(e) {
     e.preventDefault();
-    const player = this.state.playerPool.find(x => x === this.state.selectedPlayer.val);
-    const newPlayerPool = this.state.playerPool.filter(x => x !== player);
+    const player = this.props.playerMap.get(this.state.selectedPlayer.val);
+    const newPlayerPool = this.state.playerPool.filter(x => x !== player.id);
     const expertRankings = this.state.expertRankings.map(er => {
       const wrapper = er;
       const newSet = er.players.filter(x => x !== player.id);
@@ -180,7 +139,7 @@ export default class DraftMate extends Component {
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
-    newSelectedPlayers.push(player);
+    newSelectedPlayers.push(player.id);
 
     const data = {};
     data.state = this.state;
@@ -197,26 +156,22 @@ export default class DraftMate extends Component {
     data.state.expertRankings = expertRankings;
     data.id = this.props.params.draftMateID;
     const that = this;
-    data.state = this.cleanOutput(data.state);
     this.setState({ draftUpdating: true });
     Meteor.call('drafts.update', data, (error, result) => {
-      const serializedState = that.cleanInput(result[0]);
-      that.setState(serializedState);
+      console.log(result);
+      that.setState(result[0]);
     });
   }
 
   render() {
     if (!this.state.draftLoaded) return null;
-    console.log(this.props.playerMap);
     const component = this;
     const teamOptions = [];
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
-    const currentTeam = this.state.picks[this.state.currentTeam - 1].team;
-    const onDeck = this.state.picks[this.state.nextTeam - 1].team;
     const nextBest = this.state.expertRankings &&
-      this.state.expertRankings.map(x => this.props.players.find(p => p.id === x.players[0]));
+      this.state.expertRankings.map(x => this.props.playerMap.get(x.players[0]));
     const aCount = new Map([...new Set(nextBest)].map(
       x => [x, nextBest.filter(y => y === x).length]
     ));
@@ -225,7 +180,7 @@ export default class DraftMate extends Component {
 
     for (let i = 0; i < this.state.userRankings.length; i++) {
       if (!this.state.selectedPlayers.includes(this.state.userRankings[i])) {
-        rankingBpa = this.state.userRankings[i];
+        rankingBpa = this.props.playerMap.get(this.state.userRankings[i]);
         break;
       }
     }
@@ -234,10 +189,14 @@ export default class DraftMate extends Component {
     const expertPicks = [];
     sortedBest.forEach((count, player) =>
       expertPicks.push([player, Math.round((count / nextBest.length) * 100)]));
-    const options = this.state.playerPool.map((player) => {
-      return { val: player, label: player.name }
+    const options = this.state.playerPool.map((playerId) => {
+      const p = this.props.playerMap.get(playerId);
+      return { val: p.id, label: p.name }
     });
-    const selectPlayerInViewer = !this.state.selectedPlayers.includes(this.state.playerInViewer) ?
+    const selectPlayerInViewer =
+      this.state.playerInViewer &&
+      !this.state.selectedPlayers.includes(this.state.playerInViewer.id) &&
+      this.state.playerPool.includes(this.state.playerInViewer.id) ?
       <Button bsStyle="primary"
         onClick={this.selectPlayerInViewer}>
         Select Player
@@ -245,24 +204,24 @@ export default class DraftMate extends Component {
       null;
 
     const playerModal = this.state.playerInViewer ?
-    <PlayerModal
-      player={this.state.playerInViewer}
-      players={this.props.players}
-      showPlayerViewer={this.state.showPlayerViewer}
-      closePlayerViewer={this.closePlayerViewer}
-      values={this.state.values}
-      selectPlayerInViewer={this.selectPlayerInViewer}
-      selectPlayerButton={selectPlayerInViewer}
-      openPlayerViewer={this.openPlayerViewer}
-    /> :
-      null;
+      <PlayerModal
+        player={this.state.playerInViewer}
+        players={this.props.players}
+        showPlayerViewer={this.state.showPlayerViewer}
+        closePlayerViewer={this.closePlayerViewer}
+        values={this.state.values}
+        selectPlayerInViewer={this.selectPlayerInViewer}
+        selectPlayerButton={selectPlayerInViewer}
+        openPlayerViewer={this.openPlayerViewer}
+      /> :
+        null;
 
     let alertCount = 0;
 
-    this.state.userRankings.forEach((player) => {
+    this.state.userRankings.forEach((playerId) => {
       if (
-          (!this.state.selectedPlayers.includes(player) &&
-          this.state.pickNum - player.adp[0][this.state.values.adpKey] > 1)) alertCount++;
+          (!this.state.selectedPlayers.includes(playerId) &&
+          this.state.pickNum - this.props.playerMap.get(playerId).adp[0][this.state.values.adpKey] > 1)) alertCount++;
     });
 
     const alertButton = alertCount > 0 ?
@@ -273,6 +232,8 @@ export default class DraftMate extends Component {
         null;
     const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
       { 'sk-loading': this.state.updating });
+
+    console.log(this.state);
     return (
       <div className={mainclasses}>
         <div className="sk-spinner sk-spinner-wave">
@@ -310,13 +271,14 @@ export default class DraftMate extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.userRankings.map((player, i) => {
+                      {this.state.userRankings.map((playerId, i) => {
+                        const player = this.props.playerMap.get(playerId);
                         const classes = classnames({
-                          strikeout: this.state.selectedPlayers.includes(player),
+                          strikeout: this.state.selectedPlayers.includes(playerId),
                         });
                         let valueLabel = null;
                         if (
-                          (!this.state.selectedPlayers.includes(player) &&
+                          (!this.state.selectedPlayers.includes(playerId) &&
                           this.state.pickNum - player.adp[0][this.props.values.adpKey] > 1 &&
                           this.state.pickNum - player.adp[0][this.props.values.adpKey] < 10)
                         ) valueLabel = (
@@ -334,7 +296,7 @@ export default class DraftMate extends Component {
                         );
 
                         if (
-                          (!this.state.selectedPlayers.includes(player) &&
+                          (!this.state.selectedPlayers.includes(playerId) &&
                           this.state.pickNum - player.adp[0][this.props.values.adpKey] > 9)
                         ) valueLabel = (
                           <OverlayTrigger
@@ -400,10 +362,17 @@ export default class DraftMate extends Component {
                                   />
                                 }
                               </div>
-                              <button className="btn btn-primary" onClick={this.selectPlayer}>Submit Pick</button>
+                              <button
+                                className="btn btn-primary"
+                                onClick={this.selectPlayer}
+                              >
+                                Submit Pick
+                              </button>
                             </form>
                             <div>
-                              <h3>DynastyFFTools Best Player Available: <a onClick={this.openPlayerViewer}>{rankingBpa.name}</a></h3>
+                              <h3>
+                                DynastyFFTools Best Player Available: <a data-value={rankingBpa.id} onClick={this.openPlayerViewer}>{rankingBpa.name}</a>
+                              </h3>
                             </div>
                           </div>
                         </div>
@@ -417,23 +386,28 @@ export default class DraftMate extends Component {
                           </div>
                           <div className="panel-body">
                             {expertPicks.map((pick) => {
+                              const player = pick[0];
                               const classes = classnames({
                                 'progress-bar': true,
                                 'progress-bar-info': pick[1] > 75,
                                 'progress-bar-success': pick[1] < 76 && pick[1] > 19,
                                 'progress-bar-warning': pick[1] < 20,
-                              })
+                              });
                               return (
                                 <div>
                                   <div>
-                                    <span><a onClick={this.openPlayerViewer}>{`${pick[0].name} | ${pick[0].position} | ${pick[0].team}`}</a></span>
+                                    <span>
+                                      <a data-value={player.id} onClick={this.openPlayerViewer}>
+                                        {`${player.name} | ${player.position} | ${player.team}`}
+                                      </a>
+                                    </span>
                                     <small className="pull-right">{`${pick[1]}%`}</small>
                                   </div>
                                   <div className="progress progress-small">
                                     <div style={{ width: `${pick[1]}%` }} className={classes}></div>
                                   </div>
                                 </div>
-                              )
+                              );
                             })}
                           </div>
                         </div>
@@ -457,10 +431,11 @@ export default class DraftMate extends Component {
                                 info: pick.isUser,
                                 success: pick.draftPick === this.state.pick,
                               });
+                              const player = this.props.playerMap.get(pick.player);
                               return (
                                 <tr key={pick.draftPick} className={classes}>
                                   <td className="text-center">{pick.draftPick}</td>
-                                  <td> {pick.player && pick.player.name}</td>
+                                  <td> {player && player.name}</td>
                                   <td className="text-center small">
                                     <select
                                       name={pick.draftPick}
@@ -497,13 +472,14 @@ export default class DraftMate extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.userRankings.map((player) => {
+                            {this.state.userRankings.map((playerId) => {
+                              const player = this.props.playerMap.get(playerId);
                               const classes = classnames({
-                                strikeout: this.state.selectedPlayers.includes(player),
+                                strikeout: this.state.selectedPlayers.includes(playerId),
                               });
                               let valueLabel = null;
                               if (
-                                (!this.state.selectedPlayers.includes(player) &&
+                                (!this.state.selectedPlayers.includes(playerId) &&
                                 this.state.pickNum - player.adp[0][this.props.values.adpKey] > 1 &&
                                 this.state.pickNum - player.adp[0][this.props.values.adpKey] < 10)
                               ) valueLabel = (
@@ -521,7 +497,7 @@ export default class DraftMate extends Component {
                               );
 
                               if (
-                                (!this.state.selectedPlayers.includes(player) &&
+                                (!this.state.selectedPlayers.includes(playerId) &&
                                 this.state.pickNum - player.adp[0][this.props.values.adpKey] > 9)
                               ) valueLabel = (
                                 <OverlayTrigger
@@ -538,7 +514,7 @@ export default class DraftMate extends Component {
                               );
                               return (
                                 <tr className={classes}>
-                                  <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
+                                  <td><a data-value={player.id} onClick={this.openPlayerViewer}>{player.name}</a></td>
                                   <td>{valueLabel}</td>
                                   <td>{player.position}</td>
                                   <td>{player.adp[0][this.props.values.adpKey]}</td>

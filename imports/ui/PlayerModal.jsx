@@ -11,6 +11,25 @@ import PlayerStats from './PlayerStats.jsx';
 import StatMedians from './StatMedians.jsx';
 import { Votes } from '../api/votes.js';
 
+function testImage(url) {
+    // Define the promise
+  const imgPromise = new Promise((resolve, reject) => {
+        // Create the image
+    const imgElement = new Image();
+    // When image is loaded, resolve the promise
+    imgElement.addEventListener('load', function imgOnLoad() {
+      resolve(this);
+    });
+
+       // When there's an error during load, reject the promise
+    imgElement.addEventListener('error', function imgOnError() {
+      reject();
+    })
+    // Assign URL
+    imgElement.src = url;
+  });
+  return imgPromise;
+}
 
 const nextYearsFirst = '2018 1st';
 const nextYearsSecond = '2017 2nd';
@@ -40,7 +59,22 @@ export default class PlayerModal extends Component {
       moves: 0,
       playerVote: null,
       selectedStat: 'fp',
+      imgUrl: null,
     };
+  }
+
+  componentWillMount() {
+    const component = this;
+    if (this.state.imgUrl === null) {
+      testImage(`http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${this.props.player.espn_id}.png&w=350&h=254`).then(
+        function fulfilled(img) {
+          component.setState({ imgUrl: img });
+        },
+        function rejected() {
+          component.setState({ imgUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png' })
+        }
+      );
+    }
   }
 
   render() {
@@ -123,6 +157,7 @@ export default class PlayerModal extends Component {
     const imgLoc = player.position === 'PICK'
       ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
       : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.espn_id}.png&w=350&h=254`;
+
     const height = player.height === 'PICK' ? 'PICK' : _calculateHeight(player.height);
     const weight = player.weight === 'PICK' ? 'PICK' : `${player.weight}lbs`;
     const rotoLink = player.rotoworld_id === 'PICK' ? '#' : `http://www.rotoworld.com/player/nfl/${player.rotoworld_id}`;
@@ -275,7 +310,7 @@ export default class PlayerModal extends Component {
               <div className="ibox float-e-margins">
                 <div>
                   <div className="ibox-content border-left-right player-profilePic">
-                    <img alt="image" className="img-responsive playerImg" src={imgLoc} />
+                    <img alt="image" className="img-responsive playerImg" src={this.state.imgUrl} />
                   </div>
                   <div className="ibox-content profile-content">
                     <div className="textCenter">

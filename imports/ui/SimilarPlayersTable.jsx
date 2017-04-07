@@ -43,14 +43,14 @@ export default class SimilarPlayersTable extends Component {
                 {this.props.similarPlayers && this.props.similarPlayers.map(function(player) {
                   const data = [];
                   for (var i = 0; i < 6; i++) {
-                    data.push(player.adp[i][values.adpKey] * -1);
+                    data.unshift(player.adp[i][values.adpKey] * -1);
                   }
 
                   const isPlayer = currentPlayer === player;
                   const isPlayerClass = isPlayer ? '#d9edf7' : '#ffffff';
                   const profileLink = `/tools/players/${player._id._str}`;
                   const nameLink = that.props.openPlayerViewer ?
-                    <td><a onClick={that.props.openPlayerViewer}>{player.name}</a></td> :
+                    <td><a data-value={player.id} onClick={that.props.openPlayerViewer}>{player.name}</a></td> :
                     <td><Link to={profileLink} onClick={that.handlePlayerClick}>{player.name}</Link></td>;
                   return (
                         <tr className={classnames({ info: isPlayer })}>

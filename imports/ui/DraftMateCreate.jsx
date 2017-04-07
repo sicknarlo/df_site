@@ -1,26 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
-import classnames from 'classnames';
 import PValues from './ADPConst.jsx';
-import PlayerModal from './PlayerModal.jsx';
-import Select from 'react-select';
 import { browserHistory } from 'react-router';
-import { Modal, Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
-function sortRank(rankName, playerPool) {
-  const test = playerPool.slice().sort((a, b) => {
-    if (a[rankName] > b[rankName]) {
-      return 1;
-    }
-    if (a[rankName] < b[rankName]) {
-      return -1;
-    }
-    // a must be equal to b
-    return 0;
-  });
-  return test;
-}
 export default class DraftMateCreate extends Component {
   constructor(props) {
     super(props);
@@ -62,24 +45,23 @@ export default class DraftMateCreate extends Component {
   componentDidMount() {
     Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
       if (!error) {
-        this.setState({ rookieRankings: result[0].rankings })
+        this.setState({ rookieRankings: result[0].rankings });
       }
     });
     Meteor.call('draftMateRankings.get2QBRankings', (error, result) => {
       if (!error) {
-        this.setState({ superRankings: result[0].super })
+        this.setState({ superRankings: result[0].super });
       }
     });
     Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
       if (!error) {
-        this.setState({ standardRankings: result[0].standard })
+        this.setState({ standardRankings: result[0].standard });
       }
     });
   }
 
-  draftReady() {
-    return this.state.draftOptions.format !== '' &&
-      this.state.draftOptions.orderFormat !== '';
+  setPick(val) {
+    this.setState({ selectedPlayer: val });
   }
 
   startDraft(e) {
@@ -102,9 +84,15 @@ export default class DraftMateCreate extends Component {
     const t = [];
     const playerPool = this.state.draftOptions.format === 'rookie' ?
       this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
-                        .sort((a, b) => a[values.rank] - b[values.rank]) :
+                        .sort((a, b) =>
+                          a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey]
+                        )
+                        .map((x) => x.id) :
       this.props.players.filter((p) => p.position !== 'PICK')
-                        .sort((a, b) => a[values.rank] - b[values.rank]);
+                        .sort((a, b) =>
+                          a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey]
+                        )
+                        .map((x) => x.id);
 
     for (let i = 0; i < teams; i++) {
       const name = i + 1 === userPos ? 'You' : `Team ${i + 1}`;
@@ -158,9 +146,7 @@ export default class DraftMateCreate extends Component {
       }
     }
 
-    if (this.state.draftOptions.format === 'startup') {
-      userRankings = playerPool.sort((a, b) => a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey]);
-    }
+    userRankings = playerPool;
 
     const state = this.state;
     state.draftReady = true;
@@ -173,8 +159,8 @@ export default class DraftMateCreate extends Component {
     state.nextTeam = 2;
     state.values = values;
     state.expertRankings = expertRankings;
-    state.playerPool = playerPool.map(p => p.id);
-    state.userRankings = userRankings.map(p => p.id);
+    state.playerPool = playerPool;
+    state.userRankings = userRankings;
     state.rookieRankings = null;
     state.standardRankings = null;
     state.superRankings = null;
@@ -189,12 +175,12 @@ export default class DraftMateCreate extends Component {
     this.setState({ draftOptions: newDraftOptions });
   }
 
-  setPick(val) {
-    this.setState({ selectedPlayer: val });
+  draftReady() {
+    return this.state.draftOptions.format !== '' &&
+      this.state.draftOptions.orderFormat !== '';
   }
 
   render() {
-    const component = this;
     const startButton = this.draftReady() ?
       <button
         className="btn btn-primary"
@@ -234,7 +220,7 @@ export default class DraftMateCreate extends Component {
                       value={this.state.draftOptions.format}
                     >
                         <option selected disabled>Select</option>
-                        <option disabled value="rookie">Rookie</option>
+                        <option value="rookie">Rookie</option>
                         <option value="startup">Start Up</option>
                     </select>
                   </div>
