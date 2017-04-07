@@ -91,7 +91,7 @@ export default class DraftMate extends Component {
     });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
-    currentPick.player = player;
+    currentPick.player = player.id;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
