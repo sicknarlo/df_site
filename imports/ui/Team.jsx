@@ -5,13 +5,6 @@ import 'icheck/skins/all.css';
 import { Link, browserHistory } from 'react-router';
 import TeamPage from './TeamPage.jsx';
 
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
-
 export default class Team extends Component {
   renderLoggedOut() {
     return (

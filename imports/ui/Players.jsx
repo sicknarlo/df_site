@@ -5,6 +5,20 @@ import { Checkbox } from 'react-icheck';
 import PlayerRow from './PlayerRow.jsx';
 import PageHeading from './PageHeading.jsx';
 
+function ageCalc(dateString) {
+  if (dateString) {
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+  return null;
+}
+
 let sortByName = {
   asc: function(a, b) {
     const nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -133,20 +147,24 @@ let sortByValue = {
 
 let sortByAge = {
   asc: function(a, b) {
-    if (ageCalc(new Date(a.birthdate * 1000)) > ageCalc(new Date(b.birthdate * 1000))) {
+    if (a === null) return 1;
+    if (b === null) return -1;
+    if (ageCalc(a.birthdate) > ageCalc(b.birthdate)) {
       return 1;
     }
-    if (ageCalc(new Date(a.birthdate * 1000)) < ageCalc(new Date(b.birthdate * 1000))) {
+    if (ageCalc(a.birthdate) < ageCalc(b.birthdate)) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (ageCalc(new Date(a.birthdate * 1000)) > ageCalc(new Date(b.birthdate * 1000))) {
+    if (a === null) return 1;
+    if (b === null) return -1;
+    if (ageCalc(a.birthdate) > ageCalc(b.birthdate)) {
       return -1;
     }
-    if (ageCalc(new Date(a.birthdate * 1000)) < ageCalc(new Date(b.birthdate * 1000))) {
+    if (ageCalc(a.birthdate) < ageCalc(b.birthdate)) {
       return 1;
     }
     // a must be equal to b
@@ -154,13 +172,6 @@ let sortByAge = {
   },
   _str: 'sortByAge',
 };
-
-const ageCalc = function(birthdate) {
-  const bdate = birthdate ? birthdate : 680000000;
-  const ageDifMs = Date.now() - bdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
 
 // Player component - represents a Player profile
 export default class Players extends Component {

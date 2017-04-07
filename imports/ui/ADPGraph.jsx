@@ -32,13 +32,17 @@ export default class ADPGraph extends Component {
       series.push(adpObj);
 
       rankObj.data = [];
+      const key = this.props.isRookie ?
+        'rookie' :
+        this.props.values.rankKey;
+
       player.rankings.forEach((r) => {
         const x = r.time;
         rankObj.data.push([
           Date.UTC(x.getFullYear(),
           x.getMonth(),
           x.getDate()),
-          r[this.props.values.rankKey]
+          r[key]
         ]);
       });
 

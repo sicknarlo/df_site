@@ -4,12 +4,6 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import { Line } from 'react-peity';
 
-const ageCalc = function(birthdate) {
-  const ageDifMs = Date.now() - birthdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
-
 // Player component - represents a Player profile
 export default class SimilarPlayersTable extends Component {
   handlePlayerClick() {

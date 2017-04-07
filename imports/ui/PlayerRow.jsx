@@ -3,10 +3,18 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 
-function ageCalc(birthdate) {
-  const ageDifMs = Date.now() - birthdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+function ageCalc(dateString) {
+  if (dateString) {
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+  return null;
 }
 
 // Player component - represents a Player profile
@@ -36,8 +44,8 @@ export default class PlayerRow extends Component {
             className={classnames('playerCol', 'hide-xs', { sorted: this.props.sortGrp === 'sortByAge' })}
           >
             {player.birthdate
-              ? ageCalc(new Date(player.birthdate * 1000))
-              : ageCalc(new Date(680000000 * 1000))
+              ? ageCalc(player.birthdate * 1000)
+              : null
             }
           </td>
           <td

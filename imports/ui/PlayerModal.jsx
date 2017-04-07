@@ -11,6 +11,20 @@ import PlayerStats from './PlayerStats.jsx';
 import StatMedians from './StatMedians.jsx';
 import { Votes } from '../api/votes.js';
 
+function getAge(dateString) {
+  if (dateString) {
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+  return null;
+}
+
 function testImage(url) {
     // Define the promise
   const imgPromise = new Promise((resolve, reject) => {
@@ -79,6 +93,13 @@ export default class PlayerModal extends Component {
 
   render() {
     const player = this.props.player;
+
+    if (this.props.isRookie) {
+      player.adp = player.rookieAdp;
+      while (player.adp.length < 6) {
+        player.adp.push(player.adp[player.adp.length - 1]);
+      }
+    }
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
@@ -98,29 +119,6 @@ export default class PlayerModal extends Component {
     //   // a must be equal to b
     //   return 0;
     // });
-    let sortByADP = {
-      asc: function(a, b) {
-        if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
-          return 1;
-        }
-        if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
-          return -1;
-        }
-        // a must be equal to b
-        return 0;
-      },
-      desc: function(a, b) {
-        if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
-          return -1;
-        }
-        if (a.rankings[0][this.props.values.rankKey] < b.rankings[0][this.props.values.rankKey]) {
-          return 1;
-        }
-        // a must be equal to b
-        return 0;
-      },
-      _str: 'sortByADP',
-    };
     const that = this;
     const sortedPlayers = this.props.players.sort(function(a, b) {
         if (a.rankings[0][that.props.values.rankKey] > b.rankings[0][that.props.values.rankKey]) {
@@ -166,7 +164,7 @@ export default class PlayerModal extends Component {
       : `${_calculateAge(new Date(player.draft_year - 1, 4, 1))} years`;
     const age = player.birthdate === 'PICK'
       ? 'PICK'
-      : _calculateAge(new Date(player.birthdate * 1000));
+      : getAge(player.birthdate);
     const topDetails = `${player.team} - ${player.position}`;
     const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[1][this.props.values.adpKey]
       ? 'text-navy'
@@ -190,8 +188,27 @@ export default class PlayerModal extends Component {
       : 'fa fa-play fa-rotate-90';
 
     const redraftRank = player.rankings[0][this.props.values.redraft]
-      ? player.rankings[0][this.props.values.redraft]
-      : 'N/A';
+    ? player.rankings[0][this.props.values.redraft]
+    : 'N/A';
+
+    const secondRank = this.props.isRookie ?
+      (
+        <div className="ibox-content dataPanel ">
+          <h5 className="m-b-md">Rookie Rank</h5>
+          <h2 >
+            {player.rankings[0].rookie}
+          </h2>
+        </div>
+      ) :
+      (
+        <div className="ibox-content dataPanel ">
+          <h5 className="m-b-md">Redraft Rank</h5>
+          <h2 >
+            {redraftRank}
+          </h2>
+        </div>
+      );
+
 
     const fpRank = player.rankings[0][this.props.values.rankKey]
       ? player.rankings[0][this.props.values.rankKey]
@@ -240,7 +257,7 @@ export default class PlayerModal extends Component {
       greenText: this.state.communityValue > 0,
       redText: this.state.communityValue < 0,
     })
-    const badges = [];
+    let badges = [];
 
     if (player.rankings[0][this.props.values.buyindex] > 9 && player.rankings[0][this.props.values.buyindex] < 20) {
       badges.push(
@@ -296,6 +313,8 @@ export default class PlayerModal extends Component {
         </OverlayTrigger>)
         );
     }
+
+    if (this.props.isRookie) badges = [];
     return (
       <Modal show={this.props.showPlayerViewer} bsSize="lg" onHide={this.props.closePlayerViewer} className="inmodal">
         <Modal.Header closeButton><br />
@@ -379,7 +398,7 @@ export default class PlayerModal extends Component {
                 <div className="col-xs-6">
                   <div className="ibox">
                     <div className="ibox-content dataPanel ">
-                      <h5 className="m-b-md">Dynasty Rank</h5>
+                      <h5 className="m-b-md">DynastyFFTools Rank</h5>
                       <h2 >
                         {fpRank}
                       </h2>
@@ -388,12 +407,7 @@ export default class PlayerModal extends Component {
                 </div>
                 <div className="col-xs-6">
                   <div className="ibox">
-                    <div className="ibox-content dataPanel ">
-                      <h5 className="m-b-md">Redraft Rank</h5>
-                      <h2 >
-                        {redraftRank}
-                      </h2>
-                    </div>
+                    {secondRank}
                   </div>
                 </div>
               </div>
@@ -423,7 +437,7 @@ export default class PlayerModal extends Component {
           </div>
         <div className="row playerRow">
           <div className="col-lg-12 graphContainer">
-            <ADPGraph players={[player]} values={this.props.values} />
+            <ADPGraph players={[player]} values={this.props.values} isRookie={this.props.isRookie} />
           </div>
         </div>
         {player.position !== "PICK" ? <PlayerStats player={player} /> : null}

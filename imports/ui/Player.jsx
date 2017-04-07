@@ -12,10 +12,18 @@ import PlayerStats from './PlayerStats.jsx';
 
 const nextYearsFirst = '2017 1st';
 
-function _calculateAge(birthdate) {
-  const ageDifMs = Date.now() - birthdate.getTime();
-  const ageDate = new Date(ageDifMs); // miliseconds from epoch
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+function _calculateAge(dateString) {
+  if (dateString) {
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+  return null;
 }
 
 function _calculateHeight(inches) {
@@ -209,7 +217,7 @@ export default class Player extends Component {
       : `${_calculateAge(new Date(player.draft_year - 1, 4, 1))} years`;
     const age = player.birthdate === 'PICK'
       ? 'PICK'
-      : _calculateAge(new Date(player.birthdate * 1000));
+      : _calculateAge(player.birthdate * 1000);
     const topDetails = `${player.team} - ${player.position}`;
     const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[2][this.props.values.adpKey]
       ? 'text-navy'
@@ -435,7 +443,7 @@ export default class Player extends Component {
                 <div className="col-xs-6 col-lg-3">
                   <div className="ibox">
                     <div className="ibox-content dataPanel ">
-                      <h5 className="m-b-md">Dynasty Rank</h5>
+                      <h5 className="m-b-md">DynastyFFTools Rank</h5>
                       <h2 >
                         {fpRank}
                       </h2>

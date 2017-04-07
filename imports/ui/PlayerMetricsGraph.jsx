@@ -44,12 +44,12 @@ export default class PlayerMetricsGraph extends Component {
         series: [{
             name: player.name,
             data: [
-              player.forty_percentile * 100,
-              player.bench_percentile * 100,
-              player.vertical_percentile * 100,
-              player.broad_percentile * 100,
-              player.shuttle_percentile * 100,
-              player.cone_percentile * 100
+              player.metrics.forty_percentile * 100,
+              player.metrics.bench_percentile * 100,
+              player.metrics.vertical_percentile * 100,
+              player.metrics.broad_percentile * 100,
+              player.metrics.shuttle_percentile * 100,
+              player.metrics.cone_percentile * 100
             ],
             pointPlacement: 'on'
         }]

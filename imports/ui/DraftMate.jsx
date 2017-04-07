@@ -213,15 +213,23 @@ export default class DraftMate extends Component {
         selectPlayerInViewer={this.selectPlayerInViewer}
         selectPlayerButton={selectPlayerInViewer}
         openPlayerViewer={this.openPlayerViewer}
+        isRookie={this.state.draftOptions.format === 'rookie'}
       /> :
         null;
 
     let alertCount = 0;
 
+    let adp = 'adp';
+    if (this.state.draftOptions.format === 'rookie') {
+      adp = 'rookieAdp';
+    }
+
     this.state.userRankings.forEach((playerId) => {
       if (
-          (!this.state.selectedPlayers.includes(playerId) &&
-          this.state.pickNum - this.props.playerMap.get(playerId).adp[0][this.state.values.adpKey] > 1)) alertCount++;
+          (
+            !this.state.selectedPlayers.includes(playerId) &&
+            this.props.playerMap.get(playerId)[adp] &&
+            this.state.pickNum - this.props.playerMap.get(playerId)[adp][0][this.state.values.adpKey] > 1)) alertCount++;
     });
 
     const alertButton = alertCount > 0 ?
@@ -278,16 +286,18 @@ export default class DraftMate extends Component {
                         });
                         let valueLabel = null;
                         if (
-                          (!this.state.selectedPlayers.includes(playerId) &&
-                          this.state.pickNum - player.adp[0][this.props.values.adpKey] > 1 &&
-                          this.state.pickNum - player.adp[0][this.props.values.adpKey] < 10)
+                          (
+                            !this.state.selectedPlayers.includes(playerId) &&
+                            player[adp] &&
+                            this.state.pickNum - player[adp][0][this.props.values.adpKey] > 1 &&
+                            this.state.pickNum - player[adp][0][this.props.values.adpKey] < 10)
                         ) valueLabel = (
                           <OverlayTrigger
                             trigger={['hover', 'focus', 'click']}
                             placement="bottom"
                             overlay={
                               <Popover title="Good Value Pick">
-                                This player is available {this.state.pickNum - player.adp[0][this.props.values.adpKey]} spots after their ADP. This is a good value.
+                                This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their ADP. This is a good value.
                               </Popover>
                             }
                           >
@@ -296,15 +306,17 @@ export default class DraftMate extends Component {
                         );
 
                         if (
-                          (!this.state.selectedPlayers.includes(playerId) &&
-                          this.state.pickNum - player.adp[0][this.props.values.adpKey] > 9)
+                          (
+                            !this.state.selectedPlayers.includes(playerId) &&
+                            player[adp] &&
+                            this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9)
                         ) valueLabel = (
                           <OverlayTrigger
                             trigger={['hover', 'focus', 'click']}
                             placement="bottom"
                             overlay={
                               <Popover title="Great Value Pick">
-                                This player is available {this.state.pickNum - player.adp[0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
+                                This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
                               </Popover>
                             }
                           >
@@ -316,7 +328,7 @@ export default class DraftMate extends Component {
                           <tr className={classes}>
                             <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
                             <td>{player.position}</td>
-                            <td>{player.adp[0][this.props.values.adpKey]}</td>
+                            <td>{player[adp] && player[adp][0][this.props.values.adpKey]}</td>
                             <td>{valueLabel}</td>
                           </tr>
                         );
@@ -480,15 +492,16 @@ export default class DraftMate extends Component {
                               let valueLabel = null;
                               if (
                                 (!this.state.selectedPlayers.includes(playerId) &&
-                                this.state.pickNum - player.adp[0][this.props.values.adpKey] > 1 &&
-                                this.state.pickNum - player.adp[0][this.props.values.adpKey] < 10)
+                                player[adp] &&
+                                this.state.pickNum - player[adp][0][this.props.values.adpKey] > 1 &&
+                                this.state.pickNum - player[adp][0][this.props.values.adpKey] < 10)
                               ) valueLabel = (
                                 <OverlayTrigger
                                   trigger={['hover', 'focus', 'click']}
                                   placement="bottom"
                                   overlay={
                                     <Popover title="Good Value Pick">
-                                      This player is available {this.state.pickNum - player.adp[0][this.props.values.adpKey]} spots after their rank or ADP. This is a good value.
+                                      This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a good value.
                                     </Popover>
                                   }
                                 >
@@ -498,14 +511,15 @@ export default class DraftMate extends Component {
 
                               if (
                                 (!this.state.selectedPlayers.includes(playerId) &&
-                                this.state.pickNum - player.adp[0][this.props.values.adpKey] > 9)
+                                player[adp] &&
+                                this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9)
                               ) valueLabel = (
                                 <OverlayTrigger
                                   trigger={['hover', 'focus', 'click']}
                                   placement="bottom"
                                   overlay={
                                     <Popover title="Great Value Pick">
-                                      This player is available {this.state.pickNum - player.adp[0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
+                                      This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
                                     </Popover>
                                   }
                                 >
@@ -517,7 +531,7 @@ export default class DraftMate extends Component {
                                   <td><a data-value={player.id} onClick={this.openPlayerViewer}>{player.name}</a></td>
                                   <td>{valueLabel}</td>
                                   <td>{player.position}</td>
-                                  <td>{player.adp[0][this.props.values.adpKey]}</td>
+                                  <td>{player[adp] && player[adp][0][this.props.values.adpKey]}</td>
                                 </tr>
                               );
                             })}
