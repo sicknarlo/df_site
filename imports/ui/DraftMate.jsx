@@ -13,6 +13,7 @@ export default class DraftMate extends Component {
     this.state = {
       draftLoaded: false,
       draftUpdating: false,
+      teamInViewer: 0,
     };
     this.changeOwner = this.changeOwner.bind(this);
     this.setPick = this.setPick.bind(this);
@@ -96,14 +97,14 @@ export default class DraftMate extends Component {
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
     newSelectedPlayers.push(player.id);
-
     const data = {};
+    data.draftComplete = this.state.nextPick ? false : true;
     data.state = this.state;
     data.state.playerPool = newPlayerPool;
     data.state.draftReady = true;
     data.state.draftStarted = true;
     data.state.picks = newPicks;
-    data.state.pick = nextPick.draftPick;
+    data.state.pick = nextPick ? nextPick.draftPick : null;
     data.state.pickNum = this.state.pickNum + 1;
     data.state.selectedPlayer = null;
     data.state.selectedPlayers = newSelectedPlayers;
@@ -135,7 +136,7 @@ export default class DraftMate extends Component {
     });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
-    currentPick.player = player;
+    currentPick.player = player.id;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -143,11 +144,12 @@ export default class DraftMate extends Component {
 
     const data = {};
     data.state = this.state;
+    data.draftComplete = this.state.nextPick ? false : true;
     data.state.playerPool = newPlayerPool;
     data.state.draftReady = true;
     data.state.draftStarted = true;
     data.state.picks = newPicks;
-    data.state.pick = nextPick.draftPick;
+    data.state.pick = nextPick ? nextPick.draftPick : null;
     data.state.pickNum = this.state.pickNum + 1;
     data.state.selectedPlayer = null;
     data.state.selectedPlayers = newSelectedPlayers;
@@ -158,7 +160,6 @@ export default class DraftMate extends Component {
     const that = this;
     this.setState({ draftUpdating: true });
     Meteor.call('drafts.update', data, (error, result) => {
-      console.log(result);
       that.setState(result[0]);
     });
   }
@@ -241,7 +242,9 @@ export default class DraftMate extends Component {
     const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
       { 'sk-loading': this.state.updating });
 
-    console.log(this.state);
+    const teams = this.state.teams;
+    const teamMap = new Map(teams.map(team => [team.id, team]));
+
     return (
       <div className={mainclasses}>
         <div className="sk-spinner sk-spinner-wave">
@@ -343,6 +346,35 @@ export default class DraftMate extends Component {
             <Button onClick={this.toggleRankingViewer}>Close</Button>
           </Modal.Footer>
         </Modal>
+        <Modal
+          show={this.state.showTeamViewer}
+          bsSize="lg"
+          onHide={this.toggleTeamViewer}
+          className="inmodal"
+        >
+          <Modal.Header closeButton><br />
+          <i className="fa fa-line-chart modal-icon"></i><br />
+            <Modal.Title>
+              <h1>Teams</h1>
+              <h3>Test</h3>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row">
+              <div className="col-lg-12 ibox float-e-margins">
+                <div className="ibox-content">
+                  {this.state.teams.map(team => {
+                    console.log(team);
+                    return <div>{team.name}</div>}
+                  )}
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer className="flexContainer spaceBetween">
+            <Button onClick={this.toggleTeamViewer}>Close</Button>
+          </Modal.Footer>
+        </Modal>
         <div className="row">
           <div className="col-lg-12">
             <div className="ibox float-e-margins">
@@ -353,8 +385,9 @@ export default class DraftMate extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h2>On the Clock - {this.state.picks[this.state.pickNum - 1].team}</h2>
-                    <h3>On Deck - {this.state.picks[this.state.pickNum].team}</h3>
+                    {this.state.picks[this.state.pickNum] && <h3>On Deck - {this.state.picks[this.state.pickNum].team}</h3>}
                     <h2><a onClick={this.toggleRankingViewer}>Draft Board {alertButton}</a></h2>
+                    <h2><a onClick={this.toggleTeamViewer}>Teams</a></h2>
                     <hr></hr>
                     <div className="row">
                       <div className="col-xs-12">
@@ -439,8 +472,9 @@ export default class DraftMate extends Component {
                           </thead>
                           <tbody>
                             {this.state.picks.map((pick) => {
+                              const team = teamMap.get(pick.team);
                               const classes = classnames({
-                                info: pick.isUser,
+                                info: team.isUser,
                                 success: pick.draftPick === this.state.pick,
                               });
                               const player = this.props.playerMap.get(pick.player);
@@ -455,7 +489,7 @@ export default class DraftMate extends Component {
                                       onChange={component.changeOwner}
                                     >
                                       {component.state.teams.map(t =>
-                                        <option value={t.name}>{t.name}</option>
+                                        <option value={t.id}>{t.name}</option>
                                       )}
                                     </select>
                                   </td>

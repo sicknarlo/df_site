@@ -96,7 +96,7 @@ export default class PlayerModal extends Component {
 
     if (this.props.isRookie) {
       player.adp = player.rookieAdp;
-      while (player.adp.length < 6) {
+      while (player.adp && player.adp.length < 6) {
         player.adp.push(player.adp[player.adp.length - 1]);
       }
     }
@@ -166,10 +166,10 @@ export default class PlayerModal extends Component {
       ? 'PICK'
       : getAge(player.birthdate);
     const topDetails = `${player.team} - ${player.position}`;
-    const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[1][this.props.values.adpKey]
+    const adpColorCls = player.adp && player.adp[0][this.props.values.adpKey] <= player.adp[1][this.props.values.adpKey]
       ? 'text-navy'
       : 'text-danger';
-    const adpArrowCls = player.adp[0][this.props.values.adpKey] >= player.adp[1][this.props.values.adpKey]
+    const adpArrowCls = player.adp && player.adp[0][this.props.values.adpKey] >= player.adp[1][this.props.values.adpKey]
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
     const trend3ColorCls = trend > 0
@@ -178,12 +178,12 @@ export default class PlayerModal extends Component {
     const trend3ArrowCls = trend > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-    const trend6Months =
+    const trend6Months = player.adp &&
       (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
-    const trend6ColorCls = trend6Months > 0
+    const trend6ColorCls = player.adp && trend6Months > 0
       ? 'text-navy'
       : 'text-danger';
-    const trend6ArrowCls = trend6Months > 0
+    const trend6ArrowCls = player.adp && trend6Months > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
@@ -298,7 +298,7 @@ export default class PlayerModal extends Component {
         </OverlayTrigger>)
         );
     }
-    const trend =
+    const trend = player.adp &&
       (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
     if (trend > 9) {
       badges.push(
@@ -390,7 +390,7 @@ export default class PlayerModal extends Component {
                     <div className="ibox-content dataPanel ">
                       <h5 className="m-b-md">ADP</h5>
                       <h2 className={adpColorCls}>
-                        {player.adp[0][this.props.values.adpKey]}
+                        {player.adp ? player.adp[0][this.props.values.adpKey] : '--'}
                       </h2>
                     </div>
                   </div>
@@ -437,13 +437,18 @@ export default class PlayerModal extends Component {
           </div>
         <div className="row playerRow">
           <div className="col-lg-12 graphContainer">
-            <ADPGraph players={[player]} values={this.props.values} isRookie={this.props.isRookie} />
+            {player.adp &&
+              <ADPGraph
+                players={[player]}
+                values={this.props.values}
+                isRookie={this.props.isRookie}
+              />}
           </div>
         </div>
-        {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
+        {player.status !== "R" ? <PlayerStats player={player} /> : null}
         <div className="row playerRow">
           <div className="col-lg-12">
-            <PlayerMetricsGraph player={player} />
+            {player.metrics && <PlayerMetricsGraph player={player} />}
           </div>
         </div>
         <div className="row playerRow">
@@ -452,7 +457,8 @@ export default class PlayerModal extends Component {
               similarPlayers={similarPlayers}
               currentPlayer={player}
               values={this.props.values}
-              openPlayerViewer={this.props.openPlayerViewer} />
+              openPlayerViewer={this.props.openPlayerViewer}
+              isRookie={this.props.isRookie} />
           </div>
         </div>
       </Modal.Body>

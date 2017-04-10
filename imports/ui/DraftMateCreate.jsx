@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PValues from './ADPConst.jsx';
+import classnames from 'classnames';
 import { browserHistory } from 'react-router';
 import 'icheck/skins/all.css';
 
@@ -95,29 +96,23 @@ export default class DraftMateCreate extends Component {
                         .map((x) => x.id);
 
     for (let i = 0; i < teams; i++) {
-      const name = i + 1 === userPos ? 'You' : `Team ${i + 1}`;
-      t.push({ name, picks: [] });
+      const isUser = i + 1 === userPos;
+      const name = isUser ? 'You' : `Team ${i + 1}`;
+      const id = i;
+      t.push({ name, id, isUser, picks: [] });
     }
     const picks = [];
     if (draftType === 'standard') {
       for (let i = 0; i < rounds; i++) {
         const round = (i + 1).toString();
-        for (let y = 0; y < teams; y++) {
-          let team = y + 1;
-          if (team < 10) {
-            team = `0${team}`;
-          } else {
-            team = team.toString();
-          }
-          const isUser = y + 1 === userPos;
-
-          const teamName = isUser ? 'You' : `Team ${y + 1}`;
+        for (let y = 0; y < t.length; y++) {
+          const team = t[y];
+          const pick = y + 1 < 10 ? `0${y + 1}` : (y + 1).toString();
           picks.push({
-            draftPick: `${round}.${team}`,
-            team: teamName,
+            draftPick: `${round}.${pick}`,
+            team: team.id,
             player: null,
             vsADP: null,
-            isUser,
           });
         }
       }
@@ -125,22 +120,18 @@ export default class DraftMateCreate extends Component {
       for (let i = 0; i < rounds; i++) {
         const round = (i + 1).toString();
         const reverse = i % 2 === 0;
-        for (let y = 0; y < teams; y++) {
-          let pick = y + 1;
+        for (let y = 0; y < t.length; y++) {
+          let pick = reverse ? y + 1 : 12 - y;
           if (pick < 10) {
             pick = `0${pick}`;
           } else {
             pick = pick.toString();
           }
-          const teamNum = reverse ? y + 1 : 12 - y;
-          const isUser = teamNum === userPos;
-          const teamName = isUser ? 'You' : `Team ${teamNum}`;
           picks.push({
             draftPick: `${round}.${pick}`,
-            team: teamName,
+            team: t[y].name,
             player: null,
             vsADP: null,
-            isUser,
           });
         }
       }
@@ -309,9 +300,18 @@ export default class DraftMateCreate extends Component {
           </div>
       </div>
     );}
+    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
+      { 'sk-loading': this.state.draftStarted });
+
     return (
-      <div className="wrapper wrapper-content animated fadeInRight">
-        Starting
+      <div className={mainclasses}>
+        <div className="sk-spinner sk-spinner-wave">
+          <div cNamelass="sk-rect1"></div>
+          <div className="sk-rect2"></div>
+          <div className="sk-rect3"></div>
+          <div className="sk-rect4"></div>
+          <div className="sk-rect5"></div>
+        </div>
       </div>
     );
   }
