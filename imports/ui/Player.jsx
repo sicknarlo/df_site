@@ -217,7 +217,7 @@ export default class Player extends Component {
       : `${_calculateAge(new Date(player.draft_year - 1, 4, 1))} years`;
     const age = player.birthdate === 'PICK'
       ? 'PICK'
-      : _calculateAge(player.birthdate * 1000);
+      : _calculateAge(player.birthdate);
     const topDetails = `${player.team} - ${player.position}`;
     const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[2][this.props.values.adpKey]
       ? 'text-navy'

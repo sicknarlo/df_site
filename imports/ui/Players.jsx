@@ -145,10 +145,34 @@ let sortByValue = {
   _str: 'sortByValue',
 };
 
+let sortByRank = {
+  asc: function(a, b) {
+    if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
+      return 1;
+    }
+    if (a.rankings[0][this.props.values.rankKey] < b.rankings[0][this.props.values.rankKey]) {
+      return -1;
+    }
+    // a must be equal to b
+    return 0;
+  },
+  desc: function(a, b) {
+    if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
+      return -1;
+    }
+    if (a.rankings[0][this.props.values.rankKey] < b.rankings[0][this.props.values.rankKey]) {
+      return 1;
+    }
+    // a must be equal to b
+    return 0;
+  },
+  _str: 'sortByRank',
+};
+
 let sortByAge = {
   asc: function(a, b) {
-    if (a === null) return 1;
-    if (b === null) return -1;
+    if (!a.birthdate) return 1;
+    if (!b.birthdate) return -1;
     if (ageCalc(a.birthdate) > ageCalc(b.birthdate)) {
       return 1;
     }
@@ -159,8 +183,8 @@ let sortByAge = {
     return 0;
   },
   desc: function(a, b) {
-    if (a === null) return 1;
-    if (b === null) return -1;
+    if (!a.birthdate) return 1;
+    if (!b.birthdate) return -1;
     if (ageCalc(a.birthdate) > ageCalc(b.birthdate)) {
       return -1;
     }
@@ -180,9 +204,9 @@ export default class Players extends Component {
 
     this.state = {
       filter: [],
-      sortGrp: sortByADP,
+      sortGrp: sortByRank,
       sortDirection: 'asc',
-      sort: sortByADP.asc.bind(this),
+      sort: sortByRank.asc.bind(this),
       search: '',
     };
     // sortByADP = this.sortByADP.bind(this);
@@ -312,6 +336,13 @@ export default class Players extends Component {
               className="sortToggle"
               onClick={this.toggleSort.bind(this, sortByAge)}>
               Age <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByAge })}></i>
+            </div>
+          </th>
+          <th>
+            <div
+              className="sortToggle"
+              onClick={this.toggleSort.bind(this, sortByRank)}>
+              Rank <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByRank })}></i>
             </div>
           </th>
           <th>
