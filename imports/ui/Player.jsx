@@ -231,8 +231,8 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const redraftRank = player.adp[0][this.props.values.redraft]
-      ? player.adp[0][this.props.values.redraft]
+    const redraftRank = player.rankings[0][this.props.values.redraft]
+      ? player.rankings[0][this.props.values.redraft]
       : 'N/A';
 
     const fpRank = player.rankings[0][this.props.values.rankKey]
