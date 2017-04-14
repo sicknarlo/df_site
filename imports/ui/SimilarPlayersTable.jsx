@@ -46,8 +46,7 @@ export default class SimilarPlayersTable extends Component {
                   let nameLink = that.props.openPlayerViewer ?
                     <td><a data-value={player.id} onClick={that.props.openPlayerViewer}>{player.name}</a></td> :
                     <td><Link to={profileLink} onClick={that.handlePlayerClick}>{player.name}</Link></td>;
-                  console.log(player);
-                  if (player.status !== 'R' || player.position !== 'PICK') nameLink = <td>{player.name}</td>
+                  if (that.props.openPlayerViewer && (player.status !== 'R' || player.position !== 'PICK')) nameLink = <td>{player.name}</td>
                   return (
                         <tr className={classnames({ info: isPlayer })}>
                           {nameLink}

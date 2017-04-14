@@ -72,7 +72,7 @@ Meteor.methods({
       let value = 0;
       const format = t.is2QB ? PValues.super : PValues.ppr;
       teamList.forEach((p) => {
-        value += p.rankings[0][format.valueKey];
+        value += p.adp[0][format.valueKey];
       });
       const oldValues = t.values;
       const newValues = oldValues.concat([[new Date(), value]]);

@@ -66,7 +66,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('hide-xs', 'playerCol', { sorted: this.props.sortGrp === 'sortByValue' })}
           >
-            {player.rankings[0][this.props.values.valueKey]}
+            {player.adp[0][this.props.values.valueKey]}
           </td>
         </tr>
     );

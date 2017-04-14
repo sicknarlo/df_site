@@ -115,7 +115,6 @@ export default class DraftMate extends Component {
     const that = this;
     this.setState({ draftUpdating: true });
     Meteor.call('drafts.update', data, (error, result) => {
-      console.log(result);
       that.setState(result[0]);
     });
   }
@@ -363,9 +362,7 @@ export default class DraftMate extends Component {
             <div className="row">
               <div className="col-lg-12 ibox float-e-margins">
                 <div className="ibox-content">
-                  {this.state.teams.map(team => {
-                    console.log(team);
-                    return <div>{team.name}</div>}
+                  {this.state.teams.map(team => <div>{team.name}</div>
                   )}
                 </div>
               </div>

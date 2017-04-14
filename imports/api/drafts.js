@@ -6,9 +6,6 @@ export const Drafts = new Mongo.Collection('drafts');
 
 Meteor.methods({
   'drafts.create'(state) {
-    if (!this.userId) {
-      throw new Meteor.error('not-authorized');
-    }
     const newState = state;
     newState.date = new Date();
     newState.user = this.userId;

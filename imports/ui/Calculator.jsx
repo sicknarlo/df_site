@@ -253,7 +253,7 @@ export default class Calculator extends Component {
   findClosestPlayer(val) {
     let curr = this.props.players[0];
     this.props.players.forEach((player) => {
-      if (Math.abs(val - player.rankings[player.rankings.length - 1][this.props.values.valueKey]) < Math.abs(val - curr.rankings[player.rankings.length - 1][this.props.values.valueKey])) {
+      if (Math.abs(val - player.adp[0][this.props.values.valueKey]) < Math.abs(val - curr.adp[0][this.props.values.valueKey])) {
         curr = player;
       }
     })
@@ -268,11 +268,11 @@ export default class Calculator extends Component {
     })
     let team1ValueSent = 0;
     this.state.team1.forEach((player) => {
-      team1ValueSent += player.rankings[player.rankings.length - 1][this.props.values.valueKey]
+      team1ValueSent += player.adp[0][this.props.values.valueKey]
     });
     let team2ValueSent = 0;
     this.state.team2.forEach((player) => {
-      team2ValueSent += player.rankings[player.rankings.length - 1][this.props.values.valueKey]
+      team2ValueSent += player.adp[0][this.props.values.valueKey]
     });
     const team1ValueGained = team2ValueSent - team1ValueSent;
     const team2ValueGained = team1ValueSent - team2ValueSent;
@@ -437,7 +437,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player.rankings[player.rankings.length - 1][this.props.values.valueKey]}
+                              {player.adp[0][this.props.values.valueKey]}
                             </div>
                           </div>
                         )}
@@ -457,7 +457,7 @@ export default class Calculator extends Component {
                               <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
                             <div>
-                              {player.rankings[player.rankings.length - 1][this.props.values.valueKey]}
+                              {player.adp[0][this.props.values.valueKey]}
                             </div>
                           </div>
                         )}

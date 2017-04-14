@@ -123,20 +123,20 @@ let sortByTrend = {
 };
 let sortByValue = {
   asc: function(a, b) {
-    if (a.rankings[0][this.props.values.valueKey] > b.rankings[0][this.props.values.valueKey]) {
+    if (a.adp[0][this.props.values.valueKey] > b.adp[0][this.props.values.valueKey]) {
       return 1;
     }
-    if (a.rankings[0][this.props.values.valueKey] < b.rankings[0][this.props.values.valueKey]) {
+    if (a.adp[0][this.props.values.valueKey] < b.adp[0][this.props.values.valueKey]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a.rankings[0][this.props.values.valueKey] > b.rankings[0][this.props.values.valueKey]) {
+    if (a.adp[0][this.props.values.valueKey] > b.adp[0][this.props.values.valueKey]) {
       return -1;
     }
-    if (a.rankings[0][this.props.values.valueKey] < b.rankings[0][this.props.values.valueKey]) {
+    if (a.adp[0][this.props.values.valueKey] < b.adp[0][this.props.values.valueKey]) {
       return 1;
     }
     // a must be equal to b
@@ -204,17 +204,11 @@ export default class Players extends Component {
 
     this.state = {
       filter: [],
-      sortGrp: sortByRank,
+      sortGrp: sortByADP,
       sortDirection: 'asc',
-      sort: sortByRank.asc.bind(this),
+      sort: sortByADP.asc.bind(this),
       search: '',
     };
-    // sortByADP = this.sortByADP.bind(this);
-    // sortByAge = this.sortByAge.bind(this);
-    // sortByValue = this.sortByValue.bind(this);
-    // sortByTrend = this.sortByTrend.bind(this);
-    // sortByName = this.sortByName.bind(this);
-    // sortByPosition = this.sortByPosition.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
 

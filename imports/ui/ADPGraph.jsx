@@ -13,21 +13,24 @@ export default class ADPGraph extends Component {
 
       adpObj.name = `${player.name} ADP`;
       rankObj.name = `${player.name} Rank`;
+      adpObj.type = 'spline';
+      rankObj.type = 'spline';
 
       adpObj.data = [];
-      for (let i = 0; i < 12; i++) {
-        if (player.adp[i]) {
-          const x = player.adp[i].time;
-          adpObj.data.push(
-            [
-              Date.UTC(x.getFullYear(),
-              x.getMonth(),
-              x.getDate()),
-              player.adp[i][this.props.values.adpKey]
-            ]
-          );
-        }
-      }
+
+      const sortedPlayerData = [...player.adp].sort((a, b) =>
+        new Date(a.time).getTime() - new Date(b.time).getTime());
+      sortedPlayerData.forEach(data => {
+        const x = data.time;
+        adpObj.data.push(
+          [
+            Date.UTC(x.getFullYear(),
+            x.getMonth(),
+            x.getDate()),
+            data[this.props.values.adpKey]
+          ]
+        );
+      });
 
       series.push(adpObj);
 
@@ -36,19 +39,21 @@ export default class ADPGraph extends Component {
         'rookie' :
         this.props.values.rankKey;
 
-      player.rankings.forEach((r) => {
+      const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
+        new Date(a.time).getTime() - new Date(b.time).getTime());
+
+      sortedPlayerRankings.forEach((r) => {
         const x = r.time;
         rankObj.data.push([
           Date.UTC(x.getFullYear(),
           x.getMonth(),
           x.getDate()),
-          r[key]
+          r[key],
         ]);
       });
 
       series.push(rankObj);
-
-    })
+    });
 
     const config = {
       chart: {
@@ -65,8 +70,7 @@ export default class ADPGraph extends Component {
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: { // don't display the dummy year
-          month: '%e. %b',
-          year: '%b'
+          month: '%m-%Y'
         },
         title: {
           text: 'Date'

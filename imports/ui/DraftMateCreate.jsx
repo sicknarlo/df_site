@@ -129,7 +129,7 @@ export default class DraftMateCreate extends Component {
           }
           picks.push({
             draftPick: `${round}.${pick}`,
-            team: t[y].name,
+            team: t[y].id,
             player: null,
             vsADP: null,
           });
