@@ -244,7 +244,7 @@ export default class Player extends Component {
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     const buyBtnCls = classnames({ primary: this.state.playerVote === 'buy' });
     const sellBtnCls = classnames({ danger: this.state.playerVote === 'sell' });
-    const aavValue = player.adp && `${player.adp[0][this.props.values.aav] * 100}%`;
+    const aavValue = player.adp && `${(player.adp[0][this.props.values.aav] * 100).toFixed(3)}%`;
 
     const buySell = this.props.currentUser
       ? (
