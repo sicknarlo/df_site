@@ -147,6 +147,8 @@ let sortByValue = {
 
 let sortByRank = {
   asc: function(a, b) {
+    if (!a.rankings) return 1;
+    if (!b.rankings) return -1;
     if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
       return 1;
     }
@@ -157,6 +159,8 @@ let sortByRank = {
     return 0;
   },
   desc: function(a, b) {
+    if (!a.rankings) return -1;
+    if (!b.rankings) return 1;
     if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
       return -1;
     }

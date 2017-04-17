@@ -20,8 +20,9 @@ function ageCalc(dateString) {
 export default class PlayerRow extends Component {
   render() {
     const player = this.props.player;
-    const trend =
-      (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
+    const trend = player.adp && player.adp[2]
+      ? +((player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1))
+      : 0;
     const trendCls = classnames('hide-xs', 'playerCol',
                                 { trendDanger: trend < 0,
                                   trendPositive: trend > 0,
@@ -51,7 +52,7 @@ export default class PlayerRow extends Component {
           <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByRank' })}
           >
-            {player.rankings[0][this.props.values.rankKey]}
+            {player.rankings && player.rankings[0][this.props.values.rankKey]}
           </td>
           <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}

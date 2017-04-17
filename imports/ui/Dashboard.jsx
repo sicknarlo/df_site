@@ -189,7 +189,7 @@ export default class Dashboard extends Component {
                         <tr>
                           <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player.adp[0][this.props.values.adpKey]}</td>
-                          <td>+{player.trend}</td>
+                          <td>+{(player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(2)}</td>
                         </tr>
                       )}
                     </tbody>
@@ -214,7 +214,7 @@ export default class Dashboard extends Component {
                       <tr>
                         <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                         <td>{player.adp[0][this.props.values.adpKey]}</td>
-                        <td>{player.trend}</td>
+                        <td>{(player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(2)}</td>
                       </tr>
                     )}
                   </tbody>

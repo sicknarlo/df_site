@@ -184,9 +184,9 @@ export default class Player extends Component {
       i--;
       n++;
     }
-    const trend = player.adp[2]
-    ? (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1)
-    : 0;
+    const trend = player.adp && player.adp[2]
+      ? (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1)
+      : 0;
     const next5 = [];
     i = playerADPRank + 1;
     n = 0;
@@ -210,10 +210,10 @@ export default class Player extends Component {
       ? 'PICK'
       : _calculateAge(player.birthdate);
     const topDetails = `${player.team} - ${player.position}`;
-    const adpColorCls = player.adp[0][this.props.values.adpKey] <= player.adp[2][this.props.values.adpKey]
+    const adpColorCls = player.adp && player.adp[2] && player.adp[0][this.props.values.adpKey] <= player.adp[2][this.props.values.adpKey]
       ? 'text-navy'
       : 'text-danger';
-    const adpArrowCls = player.adp[0][this.props.values.adpKey] >= player.adp[2][this.props.values.adpKey]
+    const adpArrowCls = player.adp && player.adp[2] && player.adp[0][this.props.values.adpKey] >= player.adp[2][this.props.values.adpKey]
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
     const trend3ColorCls = trend > 0
@@ -222,8 +222,9 @@ export default class Player extends Component {
     const trend3ArrowCls = trend > 0
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
-    const trend6Months =
-      (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1);
+    const trend6Months = player.adp && player.adp[5]
+      ? (player.adp[5][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1)
+      : 0;
     const trend6ColorCls = trend6Months > 0
       ? 'text-navy'
       : 'text-danger';
@@ -231,11 +232,11 @@ export default class Player extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const redraftRank = player.rankings[0][this.props.values.redraft]
+    const redraftRank = player.rankings && player.rankings[0][this.props.values.redraft]
       ? player.rankings[0][this.props.values.redraft]
       : 'N/A';
 
-    const fpRank = player.rankings[0][this.props.values.rankKey]
+    const fpRank = player.rankings && player.rankings[0][this.props.values.rankKey]
       ? player.rankings[0][this.props.values.rankKey]
       : 'N/A';
 
@@ -243,6 +244,7 @@ export default class Player extends Component {
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     const buyBtnCls = classnames({ primary: this.state.playerVote === 'buy' });
     const sellBtnCls = classnames({ danger: this.state.playerVote === 'sell' });
+    const aavValue = player.adp && `${player.adp[0][this.props.values.aav] * 100}%`;
 
     const buySell = this.props.currentUser
       ? (
@@ -553,9 +555,13 @@ export default class Player extends Component {
                 <div className="col-xs-6 col-lg-3">
                   <div className="ibox">
                     <div className="ibox-content dataPanel ">
-                      <h5 className="m-b-md">Redraft Rank</h5>
+                      <h5 className="m-b-md">AAV Value&nbsp;
+                        <OverlayTrigger trigger={['hover', 'focus', 'click']} placement="bottom" overlay={<Popover title="AAV Value">What percentage of the total auction budget for all teams this player is worth based on MFL data. Multiply value by the total number to get the amount.</Popover>}>
+                          <i className="fa fa-question-circle text-navy"></i>
+                        </OverlayTrigger>
+                      </h5>
                       <h2 >
-                        {redraftRank}
+                        {aavValue}
                       </h2>
                     </div>
                   </div>
