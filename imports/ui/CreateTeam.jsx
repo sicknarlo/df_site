@@ -58,7 +58,7 @@ export default class CreateTeam extends Component {
     }
     this.props.mixpanel.track('import team');
     const that = this;
-    const site = `http://www59.myfantasyleague.com/2016/export?TYPE=rosters&L=${this.state.leagueID}&FRANCHISE=${this.state.franchiseID}`
+    const site = `http://www59.myfantasyleague.com/2017/export?TYPE=rosters&L=${this.state.leagueID}&FRANCHISE=${this.state.franchiseID}`
     var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + site + '"') + '&format=xml&callback=?';
     $.getJSON(yql, function(data){
       const xmlDoc = $.parseXML(data.results[0]);
