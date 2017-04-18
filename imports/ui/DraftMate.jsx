@@ -15,7 +15,6 @@ export default class DraftMate extends Component {
       draftUpdating: false,
       teamInViewer: 0,
     };
-    
     this.changeOwner = this.changeOwner.bind(this);
     this.setPick = this.setPick.bind(this);
     this.selectPlayer = this.selectPlayer.bind(this);
