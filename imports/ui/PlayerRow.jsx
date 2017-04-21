@@ -49,11 +49,11 @@ export default class PlayerRow extends Component {
               : null
             }
           </td>
-          <td
+          {/* <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByRank' })}
           >
             {player.rankings && player.rankings[0][this.props.values.rankKey]}
-          </td>
+          </td> */}
           <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}
           >

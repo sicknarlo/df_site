@@ -86,7 +86,7 @@ export default class PlayerStats extends Component {
     return (
       <div className="row playerRow">
         <div className="col-lg-12">
-          <h1>Advanced Stats</h1>
+          <h1>Player Stats</h1>
           <select
             className="form-control m-b"
             name="account"

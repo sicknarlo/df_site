@@ -35,9 +35,7 @@ export default class ADPGraph extends Component {
       series.push(adpObj);
 
       rankObj.data = [];
-      const key = this.props.isRookie ?
-        'rookie' :
-        this.props.values.rankKey;
+      const key = this.props.values.rankKey;
 
       const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
         new Date(a.time).getTime() - new Date(b.time).getTime());
@@ -58,7 +56,7 @@ export default class ADPGraph extends Component {
     const config = {
       chart: {
         backgroundColor: "rgba(0,0,0,0)",
-        type: 'line',
+        type: 'areaspline',
         style: {
           fontFamily: 'open sans',
         },

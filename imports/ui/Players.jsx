@@ -336,13 +336,13 @@ export default class Players extends Component {
               Age <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByAge })}></i>
             </div>
           </th>
-          <th>
+          {/* <th>
             <div
               className="sortToggle"
               onClick={this.toggleSort.bind(this, sortByRank)}>
               Rank <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByRank })}></i>
             </div>
-          </th>
+          </th> */}
           <th>
             <div
               className="sortToggle"

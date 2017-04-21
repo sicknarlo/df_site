@@ -598,14 +598,24 @@ export default class Player extends Component {
             </div>
           </div>
           <div className="row playerRow">
-            <div className="col-lg-12 flexContainer justifyCenter">
+            <div className="col-md-6 flexContainer justifyCenter">
               {
                 player.position !== 'PICK' &&
-                <iframe src={`https://www.mockdraftable.com/embed/${mockdraftableName}?position=${player.position}&page=GRAPH`} width="480" height="651" frameBorder="0" scrolling="no"></iframe>
+                <iframe
+                  src={`https://www.mockdraftable.com/embed/${mockdraftableName}?position=${player.position}&page=GRAPH`}
+                  height="651"
+                  width="100%"
+                  frameBorder="0"
+                  scrolling="yes"
+                  width="480"
+                >
+                </iframe>
               }
             </div>
+            <div className="col-md-6">
+              {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
+            </div>
           </div>
-          {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
           <div className="row playerRow">
             <div className="col-lg-12">
               <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} values={this.props.values} />

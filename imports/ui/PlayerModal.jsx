@@ -165,8 +165,8 @@ export default class PlayerModal extends Component {
       : 'fa fa-play fa-rotate-90';
 
     const redraftRank = player.rankings[0][this.props.values.redraft]
-    ? player.rankings[0][this.props.values.redraft]
-    : 'N/A';
+      ? player.rankings[0][this.props.values.redraft]
+      : 'N/A';
 
     const secondRank = this.props.isRookie ?
       (

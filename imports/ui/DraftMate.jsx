@@ -23,6 +23,7 @@ export default class DraftMate extends Component {
     this.openPlayerViewer = this.openPlayerViewer.bind(this);
     this.closePlayerViewer = this.closePlayerViewer.bind(this);
     this.selectPlayerInViewer = this.selectPlayerInViewer.bind(this);
+    this.updateTeamInViewer = this.updateTeamInViewer.bind(this);
   }
 
   componentWillMount() {
@@ -56,6 +57,10 @@ export default class DraftMate extends Component {
     });
   }
 
+  updateTeamInViewer(e) {
+    this.setState({ teamInViewer: parseInt(e.target.value) });
+  }
+
   changeOwner(e) {
     const newPicks = this.state.picks;
     const targetNum = parseInt(e.target.value);
@@ -83,6 +88,10 @@ export default class DraftMate extends Component {
 
   selectPlayerInViewer(e) {
     e.preventDefault();
+    let adp = 'adp';
+    if (this.state.draftOptions.format === 'rookie') {
+      adp = 'rookieAdp';
+    }
     const player = this.state.playerInViewer;
     const newPlayerPool = this.state.playerPool.filter(x => x !== player.id);
     const expertRankings = this.state.expertRankings.map(er => {
@@ -94,6 +103,7 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
+    currentPick.vsAdp = this.state.pickNum - player[adp][0][this.state.values.adpKey];
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -126,6 +136,10 @@ export default class DraftMate extends Component {
 
   selectPlayer(e) {
     e.preventDefault();
+    let adp = 'adp';
+    if (this.state.draftOptions.format === 'rookie') {
+      adp = 'rookieAdp';
+    }
     const player = this.props.playerMap.get(this.state.selectedPlayer.val);
     const newPlayerPool = this.state.playerPool.filter(x => x !== player.id);
     const expertRankings = this.state.expertRankings.map(er => {
@@ -137,11 +151,11 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
+    currentPick.vsAdp = this.state.pickNum - player[adp][0][this.state.values.adpKey];
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
     newSelectedPlayers.push(player.id);
-
     const data = {};
     data.state = this.state;
     data.draftComplete = this.state.nextPick ? false : true;
@@ -203,7 +217,6 @@ export default class DraftMate extends Component {
         Select Player
       </Button> :
       null;
-    console.log(this.props.players);
     const playerModal = this.state.playerInViewer ?
       <PlayerModal
         player={this.state.playerInViewer}
@@ -244,6 +257,8 @@ export default class DraftMate extends Component {
 
     const teams = this.state.teams;
     const teamMap = new Map(teams.map(team => [team.id, team]));
+
+    const teamPicks = this.state.picks.filter(pick => pick.team === this.state.teamInViewer);
 
     return (
       <div className={mainclasses}>
@@ -451,8 +466,15 @@ export default class DraftMate extends Component {
                       </Tab>
                       <Tab eventKey={3} title="Teams">
                         <div className="col-sm-12">
-                          {this.state.teams.map(team => <div>{team.name}</div>
-                          )}
+                          <select
+                            className="form-control m-b"
+                            name="teamInViewer"
+                            onChange={this.updateTeamInViewer}
+                            value={this.state.teamInViewer}
+                          >
+                            {this.state.teams.map(team => <option value={parseInt(team.id)}>{team.name}</option>)}
+                          </select>
+                          {teamPicks.map(teamPick => <div>{teamPick.draftPick} | {teamPick.player && this.props.playerMap.get(teamPick.player).name}</div>)}
                         </div>
                       </Tab>
                     </Tabs>
