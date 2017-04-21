@@ -94,12 +94,12 @@ export default class PlayerModal extends Component {
   render() {
     const player = this.props.player;
 
-    if (this.props.isRookie) {
-      player.adp = player.rookieAdp;
-      while (player.adp && player.adp.length < 6) {
-        player.adp.push(player.adp[player.adp.length - 1]);
-      }
-    }
+    // if (this.props.isRookie) {
+    //   player.adp = player.rookieAdp;
+    //   while (player.adp && player.adp.length < 6) {
+    //     player.adp.push(player.adp[player.adp.length - 1]);
+    //   }
+    // }
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
@@ -121,18 +121,13 @@ export default class PlayerModal extends Component {
     // });
     const that = this;
     const sortedPlayers = this.props.players.sort(function(a, b) {
-        if (a.rankings[0][that.props.values.rankKey] > b.rankings[0][that.props.values.rankKey]) {
-          return 1;
-        }
-        if (a.rankings[0][that.props.values.rankKey] < b.rankings[0][that.props.values.rankKey]) {
-          return -1;
-        }
-        // a must be equal to b
-        return 0;
-      });
-
+      if (!a.adp) return 1;
+      if (!b.adp) return -1;
+      return a.adp[0][that.props.values.adpKey] - b.adp[0][that.props.values.adpKey];
+    });
 
     const playerADPRank = sortedPlayers.findIndex((p) => p._id._str === player._id._str);
+    console.log(playerADPRank);
     const previous5 = [];
     let i = playerADPRank - 1;
     let n = 0;
@@ -257,13 +252,14 @@ export default class PlayerModal extends Component {
       greenText: this.state.communityValue > 0,
       redText: this.state.communityValue < 0,
     });
-    const trend = player.adp[2]
+    const trend = player.adp && player.adp[2]
     ? (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1)
     : 0;
 
     let badges = [];
 
     if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] > 9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] < 20
     ) {
@@ -284,6 +280,7 @@ export default class PlayerModal extends Component {
         </OverlayTrigger>)
       );
     } else if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] >= 20
     ) {
       badges.push(
@@ -302,6 +299,7 @@ export default class PlayerModal extends Component {
         </OverlayTrigger>)
         );
     } else if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] <= -20
     ) {
       badges.push(
@@ -322,6 +320,7 @@ export default class PlayerModal extends Component {
       )
         );
     } else if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < -9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 20
     ) {
@@ -344,6 +343,7 @@ export default class PlayerModal extends Component {
     }
 
     if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] > 19
     ) {
       badges.push(
@@ -363,6 +363,7 @@ export default class PlayerModal extends Component {
         </OverlayTrigger>)
         );
     } else if (
+      player.adp && player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] < -19
     ) {
       badges.push(
