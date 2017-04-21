@@ -58,10 +58,11 @@ export default class DraftMate extends Component {
 
   changeOwner(e) {
     const newPicks = this.state.picks;
+    const targetNum = parseInt(e.target.value);
     for (let i = 0; i < newPicks.length; i++) {
       const pick = newPicks[i];
       if (pick.draftPick === e.target.name) {
-        pick.team = e.target.value;
+        pick.team = targetNum;
         break;
       }
     }
@@ -202,7 +203,7 @@ export default class DraftMate extends Component {
         Select Player
       </Button> :
       null;
-
+    console.log(this.props.players);
     const playerModal = this.state.playerInViewer ?
       <PlayerModal
         player={this.state.playerInViewer}
@@ -254,210 +255,89 @@ export default class DraftMate extends Component {
           <div className="sk-rect5"></div>
         </div>
         {playerModal}
-        <Modal
-          show={this.state.showRankingViewer}
-          bsSize="lg"
-          onHide={this.toggleRankingViewer}
-          className="inmodal"
-        >
-          <Modal.Header closeButton><br />
-          <i className="fa fa-line-chart modal-icon"></i><br />
-            <Modal.Title>
-              <h1>Draft Board</h1>
-              <h3>Current Pick: {this.state.pickNum}</h3>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12 ibox float-e-margins">
-                <div className="ibox-content">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>ADP</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.userRankings.map((playerId, i) => {
-                        const player = this.props.playerMap.get(playerId);
-                        const classes = classnames({
-                          strikeout: this.state.selectedPlayers.includes(playerId),
-                        });
-                        let valueLabel = null;
-                        if (
-                          (
-                            !this.state.selectedPlayers.includes(playerId) &&
-                            player[adp] &&
-                            this.state.pickNum - player[adp][0][this.props.values.adpKey] > 1 &&
-                            this.state.pickNum - player[adp][0][this.props.values.adpKey] < 10)
-                        ) valueLabel = (
-                          <OverlayTrigger
-                            trigger={['hover', 'focus', 'click']}
-                            placement="bottom"
-                            overlay={
-                              <Popover title="Good Value Pick">
-                                This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their ADP. This is a good value.
-                              </Popover>
-                            }
-                          >
-                            <span className="label label-info">GOOD VALUE</span>
-                          </OverlayTrigger>
-                        );
-
-                        if (
-                          (
-                            !this.state.selectedPlayers.includes(playerId) &&
-                            player[adp] &&
-                            this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9)
-                        ) valueLabel = (
-                          <OverlayTrigger
-                            trigger={['hover', 'focus', 'click']}
-                            placement="bottom"
-                            overlay={
-                              <Popover title="Great Value Pick">
-                                This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
-                              </Popover>
-                            }
-                          >
-                            <span className="label label-danger">GREAT VALUE</span>
-                          </OverlayTrigger>
-                        );
-
-                        return (
-                          <tr className={classes}>
-                            <td><a onClick={this.openPlayerViewer}>{player.name}</a></td>
-                            <td>{player.position}</td>
-                            <td>{player[adp] && player[adp][0][this.props.values.adpKey]}</td>
-                            <td>{valueLabel}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer className="flexContainer spaceBetween">
-            <Button onClick={this.toggleRankingViewer}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={this.state.showTeamViewer}
-          bsSize="lg"
-          onHide={this.toggleTeamViewer}
-          className="inmodal"
-        >
-          <Modal.Header closeButton><br />
-          <i className="fa fa-line-chart modal-icon"></i><br />
-            <Modal.Title>
-              <h1>Teams</h1>
-              <h3>Test</h3>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12 ibox float-e-margins">
-                <div className="ibox-content">
-                  {this.state.teams.map(team => <div>{team.name}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer className="flexContainer spaceBetween">
-            <Button onClick={this.toggleTeamViewer}>Close</Button>
-          </Modal.Footer>
-        </Modal>
         <div className="row">
           <div className="col-lg-12">
             <div className="ibox float-e-margins">
               <div className="ibox-title">
-                <h5>Draft</h5>
+                <h2>On the Clock - {teamMap.get(this.state.picks[this.state.pickNum - 1].team).name}</h2>
               </div>
               <div className="ibox-content">
                 <div className="row">
-                  <div className="col-sm-6">
-                    <h2>On the Clock - {this.state.picks[this.state.pickNum - 1].team}</h2>
-                    {this.state.picks[this.state.pickNum] && <h3>On Deck - {this.state.picks[this.state.pickNum].team}</h3>}
-                    <h2><a onClick={this.toggleRankingViewer}>Draft Board {alertButton}</a></h2>
-                    <h2><a onClick={this.toggleTeamViewer}>Teams</a></h2>
-                    <hr></hr>
-                    <div className="row">
-                      <div className="col-xs-12">
-                        <div className="panel panel-default">
-                          <div className="panel-heading">
-                            Select the Next Pick
-                          </div>
-                          <div className="panel-body">
-                            <form role="form" className="form-inline">
-                              <div className="form-group compareSearch">
-                                {this.state.playerPool &&
-                                  <Select
-                                    name="form-field-name"
-                                    value={this.state.selectedPlayer}
-                                    options={options}
-                                    onChange={this.setPick}
-                                  />
-                                }
+                  <div className="col-sm-12 draftContainer">
+                    <Tabs defaultActiveKey={0} id="tabs" className="draftBoard">
+                      <Tab eventKey={0} title="Player Select">
+                        <div className="col-sm-12">
+                          <div className="row">
+                            <div className="col-xs-12">
+                              <div className="panel panel-default">
+                                <div className="panel-heading">
+                                  Select the Next Pick
+                                </div>
+                                <div className="panel-body">
+                                  <form role="form" className="form-inline">
+                                    <div className="form-group compareSearch">
+                                      {this.state.playerPool &&
+                                        <Select
+                                          name="form-field-name"
+                                          value={this.state.selectedPlayer}
+                                          options={options}
+                                          onChange={this.setPick}
+                                        />
+                                      }
+                                    </div>
+                                    <button
+                                      className="btn btn-primary"
+                                      onClick={this.selectPlayer}
+                                    >
+                                      Submit Pick
+                                    </button>
+                                  </form>
+                                  <div>
+                                    <h3>
+                                      DynastyFFTools Best Player Available: <a data-value={rankingBpa.id} onClick={this.openPlayerViewer}>{rankingBpa.name}</a>
+                                    </h3>
+                                  </div>
+                                </div>
                               </div>
-                              <button
-                                className="btn btn-primary"
-                                onClick={this.selectPlayer}
-                              >
-                                Submit Pick
-                              </button>
-                            </form>
-                            <div>
-                              <h3>
-                                DynastyFFTools Best Player Available: <a data-value={rankingBpa.id} onClick={this.openPlayerViewer}>{rankingBpa.name}</a>
-                              </h3>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-xs-12">
+                              <div className="panel panel-default">
+                                <div className="panel-heading">
+                                  Other Rankers
+                                </div>
+                                <div className="panel-body">
+                                  {expertPicks.map((pick) => {
+                                    const player = pick[0];
+                                    const classes = classnames({
+                                      'progress-bar': true,
+                                      'progress-bar-info': pick[1] > 75,
+                                      'progress-bar-success': pick[1] < 76 && pick[1] > 19,
+                                      'progress-bar-warning': pick[1] < 20,
+                                    });
+                                    return (
+                                      <div>
+                                        <div>
+                                          <span>
+                                            <a data-value={player.id} onClick={this.openPlayerViewer}>
+                                              {`${player.name} | ${player.position} | ${player.team}`}
+                                            </a>
+                                          </span>
+                                          <small className="pull-right">{`${pick[1]}%`}</small>
+                                        </div>
+                                        <div className="progress progress-small">
+                                          <div style={{ width: `${pick[1]}%` }} className={classes}></div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-xs-12">
-                        <div className="panel panel-default">
-                          <div className="panel-heading">
-                            Other Rankers
-                          </div>
-                          <div className="panel-body">
-                            {expertPicks.map((pick) => {
-                              const player = pick[0];
-                              const classes = classnames({
-                                'progress-bar': true,
-                                'progress-bar-info': pick[1] > 75,
-                                'progress-bar-success': pick[1] < 76 && pick[1] > 19,
-                                'progress-bar-warning': pick[1] < 20,
-                              });
-                              return (
-                                <div>
-                                  <div>
-                                    <span>
-                                      <a data-value={player.id} onClick={this.openPlayerViewer}>
-                                        {`${player.name} | ${player.position} | ${player.team}`}
-                                      </a>
-                                    </span>
-                                    <small className="pull-right">{`${pick[1]}%`}</small>
-                                  </div>
-                                  <div className="progress progress-small">
-                                    <div style={{ width: `${pick[1]}%` }} className={classes}></div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-sm-6 draftContainer">
-                    <Tabs defaultActiveKey={2} id="tabs" className="draftBoard">
+                      </Tab>
                       <Tab eventKey={1} title="Draft">
                         <table className="table table-hover margin bottom">
                           <thead>
@@ -568,6 +448,12 @@ export default class DraftMate extends Component {
                             })}
                           </tbody>
                         </table>
+                      </Tab>
+                      <Tab eventKey={3} title="Teams">
+                        <div className="col-sm-12">
+                          {this.state.teams.map(team => <div>{team.name}</div>
+                          )}
+                        </div>
                       </Tab>
                     </Tabs>
                   </div>

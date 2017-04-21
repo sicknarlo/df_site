@@ -85,14 +85,18 @@ export default class DraftMateCreate extends Component {
     const t = [];
     const playerPool = this.state.draftOptions.format === 'rookie' ?
       this.props.players.filter((p) => p.status === 'R' && p.position !== 'PICK')
-                        .sort((a, b) =>
-                          a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey]
-                        )
+                        .sort((a, b) => {
+                          if (!a.rankings) return 1;
+                          if (!b.rankings) return -1;
+                          return a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey];
+                        })
                         .map((x) => x.id) :
       this.props.players.filter((p) => p.position !== 'PICK')
-                        .sort((a, b) =>
-                          a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey]
-                        )
+                        .sort((a, b) => {
+                          if (!a.rankings) return 1;
+                          if (!b.rankings) return -1;
+                          return a.rankings[0][values.rankKey] - b.rankings[0][values.rankKey];
+                        })
                         .map((x) => x.id);
 
     for (let i = 0; i < teams; i++) {
