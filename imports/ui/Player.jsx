@@ -240,6 +240,9 @@ export default class Player extends Component {
       ? player.rankings[0][this.props.values.rankKey]
       : 'N/A';
 
+    const mockdraftableName = player.name === 'Odell Beckham' ?
+      'odell-beckhamjr' :
+      player.name.toLowerCase().replace("'", "").split(' ').join('-');
 
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     const buyBtnCls = classnames({ primary: this.state.playerVote === 'buy' });
@@ -594,12 +597,15 @@ export default class Player extends Component {
               <ADPGraph players={[player]} values={this.props.values} />
             </div>
           </div>
-          {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
           <div className="row playerRow">
-            <div className="col-lg-12">
-              <PlayerMetricsGraph player={player} />
+            <div className="col-lg-12 flexContainer justifyCenter">
+              {
+                player.position !== 'PICK' &&
+                <iframe src={`https://www.mockdraftable.com/embed/${mockdraftableName}?position=${player.position}&page=GRAPH`} width="480" height="651" frameBorder="0" scrolling="no"></iframe>
+              }
             </div>
           </div>
+          {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
           <div className="row playerRow">
             <div className="col-lg-12">
               <SimilarPlayersTable similarPlayers={similarPlayers} currentPlayer={player} values={this.props.values} />

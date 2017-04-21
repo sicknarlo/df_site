@@ -93,13 +93,6 @@ export default class PlayerModal extends Component {
 
   render() {
     const player = this.props.player;
-
-    // if (this.props.isRookie) {
-    //   player.adp = player.rookieAdp;
-    //   while (player.adp && player.adp.length < 6) {
-    //     player.adp.push(player.adp[player.adp.length - 1]);
-    //   }
-    // }
     if (!player) {
       return (
           <div className="sk-spinner sk-spinner-double-bounce">
@@ -109,16 +102,6 @@ export default class PlayerModal extends Component {
       );
     }
 
-    // const this.props.players = this.props.players.sort(function(a, b) {
-    //   if (a.rankings[0][this.props.values.rankKey] > b.rankings[0][this.props.values.rankKey]) {
-    //     return 1;
-    //   }
-    //   if (a.rankings[0][this.props.values.rankKey] < b.rankings[0][this.props.values.rankKey]) {
-    //     return -1;
-    //   }
-    //   // a must be equal to b
-    //   return 0;
-    // });
     const that = this;
     const sortedPlayers = this.props.players.sort(function(a, b) {
       if (!a.adp) return 1;
@@ -127,7 +110,6 @@ export default class PlayerModal extends Component {
     });
 
     const playerADPRank = sortedPlayers.findIndex((p) => p._id._str === player._id._str);
-    console.log(playerADPRank);
     const previous5 = [];
     let i = playerADPRank - 1;
     let n = 0;
@@ -232,6 +214,9 @@ export default class PlayerModal extends Component {
     const pointsRushYds2014 = player.rush_yards_2014 * 0.1;
     const pointsRushYds2015 = player.rush_yards_2015 * 0.1;
     const pointsRushYds2016 = player.rush_yards_2016 * 0.1;
+    const mockdraftableName = player.name === 'Odell Beckham' ?
+      'odell-beckhamjr' :
+      player.name.toLowerCase().replace("'","").split(' ').join('-');
 
     const firstRoundPick = sortedPlayers.find((p) => p.name === nextYearsFirst);
     // const secondRoundPick = this.props.players.find((p) => p.name === nextYearsSecond);
@@ -556,12 +541,15 @@ export default class PlayerModal extends Component {
               />}
           </div>
         </div>
-        {player.status !== "R" ? <PlayerStats player={player} /> : null}
         <div className="row playerRow">
-          <div className="col-lg-12">
-            {player.metrics && <PlayerMetricsGraph player={player} />}
+          <div className="col-lg-12 flexContainer justifyCenter">
+            {
+              player.position !== 'PICK' &&
+              <iframe src={`https://www.mockdraftable.com/embed/${mockdraftableName}?position=${player.position}&page=GRAPH`} width="480" height="651" frameBorder="0" scrolling="no"></iframe>
+            }
           </div>
         </div>
+        {player.status !== "R" ? <PlayerStats player={player} /> : null}
         <div className="row playerRow">
           <div className="col-lg-12">
             <SimilarPlayersTable

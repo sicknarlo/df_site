@@ -124,7 +124,6 @@ export default class Dashboard extends Component {
           </div>
       );
     }
-    console.log(this.props.rotoData);
 
     const risers = this.props.currentDb === 'ppr' ? this.state.topTrendersPPR : this.state.topTrendersSuper;
     const fallers = this.props.currentDb === 'ppr' ? this.state.bottomTrendersPPR : this.state.bottomTrendersSuper;

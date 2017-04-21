@@ -46,7 +46,7 @@ Meteor.methods({
         $lt: 151,
       },
     };
-    return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend_2qb: -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardBottomTrenders'() {
     const query = {
@@ -68,7 +68,7 @@ Meteor.methods({
         $lt: 151,
       }
     };
-    return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend_2qb: 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardUnderValuedPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 }};
