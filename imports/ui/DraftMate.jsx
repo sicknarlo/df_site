@@ -81,10 +81,16 @@ export default class DraftMate extends Component {
 
     let player = null;
     if (expertPicks.length) {
+      let current = 0;
+      const ranges = expertPicks.map(x => {
+        const val = current + x[1];
+        current += x[1];
+        return [x, val];
+      })
       const roll = Math.random() * 100;
-      expertPicks.slice().reverse().some(x => {
+      ranges.some(x => {
         if (roll < x[1]) {
-          player = x[0];
+          player = x[0][0];
           return true;
         }
       });

@@ -101,7 +101,7 @@ export default class DraftMateCreate extends Component {
                         .map((x) => x.id);
 
     for (let i = 0; i < teams; i++) {
-      const isUser = i + 1 === userPos;
+      const isUser = i + 1 == userPos;
       const name = isUser ? 'You' : `Team ${i + 1}`;
       const id = i;
       t.push({ name, id, isUser, picks: [] });
