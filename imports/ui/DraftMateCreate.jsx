@@ -16,6 +16,7 @@ export default class DraftMateCreate extends Component {
         is2QB: false,
         roundCount: 18,
         userPickPos: 1,
+        isSim: false,
       },
       ready: false,
       draftStarted: false,
