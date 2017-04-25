@@ -28,44 +28,76 @@ export default class DashboardLoggedIn extends Component {
             <h2>Welcome {user.username}</h2>
           </div>
         </div>
-        <div className="ibox">
+        <div className="col-sm-12">
+          <div className="ibox">
             <div className="ibox-title">
-                <h5>Your Teams</h5>
-                <div className="ibox-tools">
-                    <Link to='/tools/createteam' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Create new team</Link>
-                </div>
+              <h5>Your Teams</h5>
+              <div className="ibox-tools">
+                <Link to='/tools/createteam' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Create new team</Link>
+              </div>
             </div>
             <div className="ibox-content">
-                  <table className="table table-hover">
-                    <thead>
-                      <th>Team Name</th>
-                      <th># Teams</th>
-                      <th># Assets</th>
-                    </thead>
-                      <tbody>
-                        {this.props.teams && this.props.teams.map(function(t) {
-                          const playerCount = t.players.length;
-                          const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
-                          const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
-                          const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
-                          return (
-                            <tr>
-                              <td>
-                              <Link to={`/tools/teams/${t._id}`}>
-                                {t.name}
-                              </Link>
-                              </td>
-                              <td>
-                                {t.teamCount}
-                              </td>
-                              <td>
-                                  {playerCount}
-                              </td>
-                            </tr>
-                        )})}
-                      </tbody>
-                  </table>
+              <table className="table table-hover">
+                <thead>
+                  <th>Team Name</th>
+                  <th># Teams</th>
+                  <th># Assets</th>
+                </thead>
+                <tbody>
+                  {this.props.teams && this.props.teams.map(function(t) {
+                    const playerCount = t.players.length;
+                    const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
+                    const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;
+                    const is2QB = t.is2QB ? <span className='label label-success'>2QB</span> : null;
+                    return (
+                      <tr>
+                        <td>
+                          <Link to={`/tools/teams/${t._id}`}>
+                          {t.name}
+                        </Link>
+                      </td>
+                      <td>
+                        {t.teamCount}
+                      </td>
+                      <td>
+                        {playerCount}
+                      </td>
+                    </tr>
+                  )})}
+                </tbody>
+              </table>
             </div>
+          </div>
+        </div>
+        <div className="col-sm-12">
+          <div className="ibox">
+            <div className="ibox-title">
+              <h5>Your Drafts</h5>
+              <div className="ibox-tools">
+                <Link to='/tools/draftmate/create' className="btn btn-primary btn-xs"><i className="fa fa-plus"></i> Draft Mate</Link>
+              </div>
+            </div>
+            <div className="ibox-content">
+              <table className="table table-hover">
+                <thead>
+                  <th>Draft Date</th>
+                </thead>
+                <tbody>
+                  {this.props.drafts && this.props.teams.map(function(t) {
+                    return (
+                      <tr>
+                        <td>
+                          <Link to={`/tools/draftmate/${t._id}`}>
+                            {t.date}
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     );

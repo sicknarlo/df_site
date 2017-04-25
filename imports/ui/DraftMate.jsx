@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import PlayerModal from './PlayerModal.jsx';
 import Select from 'react-select';
-import { Modal, Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
+import { Button, Popover, OverlayTrigger, Tab, Tabs } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
 export default class DraftMate extends Component {
@@ -34,8 +34,10 @@ export default class DraftMate extends Component {
 
   componentWillMount() {
     const that = this;
+    if (!this.props.currentUser) browserHistory.push('/tools/login');
     Meteor.call('drafts.get', this.props.params.draftMateID, (error, result) => {
       const state = result[0];
+      if (!state.userId === this.props.currentUser) browserHistory.push('/tools/draftmate/create');
       state.draftLoaded = true;
       that.setState(state);
     });
@@ -419,7 +421,7 @@ export default class DraftMate extends Component {
       <span className="label label-info draftBoardAlert">{alertCount}</span> :
         null;
     const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
-      { 'sk-loading': this.state.updating });
+      { 'sk-loading': this.state.updating || this.state.draftUpdating });
 
     const teams = this.state.teams;
     const teamMap = new Map(teams.map(team => [team.id, team]));
@@ -729,6 +731,7 @@ export default class DraftMate extends Component {
 
       const bestPick = sortedTeamPicks[0];
       const worstPick = sortedTeamPicks[sortedTeamPicks.length - 1];
+
       return (
         <div className={mainclasses}>
           <div className="row">

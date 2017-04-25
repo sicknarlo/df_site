@@ -32,17 +32,20 @@ export default class Login extends Component {
       this.setState({ loading: false });
       return;
     }
-
-    Meteor.loginWithPassword(username, password, err => {
-      if (err) {
-        this.setState({
-          errors: { none: err.reason },
-          loading: false,
-        });
-        return;
-      }
-      browserHistory.push('/tools/dashboard');
-    });
+    try {
+      Meteor.loginWithPassword(username, password, err => {
+        if (err) {
+          this.setState({
+            errors: { none: err.reason },
+            loading: false,
+          });
+          return;
+        }
+        browserHistory.push('/tools/dashboard');
+      });
+    } catch (err) {
+      debugger;
+    }
   }
   render() {
     const { errors } = this.state;

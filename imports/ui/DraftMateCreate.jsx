@@ -45,6 +45,7 @@ export default class DraftMateCreate extends Component {
   }
 
   componentDidMount() {
+    if (!this.props.currentUser) browserHistory.push('/tools/login');
     Meteor.call('draftMateRankings.getRookieRankings', (error, result) => {
       if (!error) {
         this.setState({ rookieRankings: result[0].rankings });
@@ -146,6 +147,7 @@ export default class DraftMateCreate extends Component {
 
     const state = this.state;
     state.draftReady = true;
+    state.userId = this.props.currentUser;
     state.draftStarted = true;
     state.picks = picks;
     state.teams = t;
@@ -161,7 +163,7 @@ export default class DraftMateCreate extends Component {
     state.standardRankings = null;
     state.superRankings = null;
     Meteor.call('drafts.create', state, (error, result) => {
-      browserHistory.push(`/tools/draft-mate/${result}`);
+      browserHistory.push(`/tools/draftmate/${result}`);
     });
   }
 

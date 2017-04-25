@@ -30,4 +30,8 @@ Meteor.methods({
   'drafts.get'(draftMateID) {
     return Drafts.find({ _id: draftMateID }).fetch();
   },
+
+  'drafts.getDrafts'() {
+    return Drafts.find({ user: this.userId }, { date: 1 });
+  }
 });

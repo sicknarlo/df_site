@@ -40,6 +40,8 @@ class App extends Component {
         that.setState({ players: result, playersReady: true, playerMap });
       }
     });
+
+    Meteor.call('drafts.getDrafts', (error, result) => that.setState({ drafts: result }));
     setTimeout(() => {
       /* eslint-disable react/no-did-mount-set-state */
       this.setState({ showConnectionIssue: true });

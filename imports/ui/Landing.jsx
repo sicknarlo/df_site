@@ -71,7 +71,7 @@ export default class Landing extends Component {
                           <li><a className="page-scroll" href="/tools/dashboard">Dashboard</a></li>
                           <li><a className="page-scroll" href="/tools/calculator">Calculator</a></li>
                           <li><a className="page-scroll" href="/tools/players">Player List</a></li>
-                          <li><a className="page-scroll" href="/tools/compare">Compare</a></li>
+                          <li><a className="page-scroll" href="/tools/draftmate">Draft Mate</a></li>
                           <li><a className="page-scroll" href="https://medium.com/dynastyfftools">Blog</a></li>
                       </ul>
                   </div>
@@ -107,12 +107,12 @@ export default class Landing extends Component {
               <div className="col-sm-3">
                   <h2>Evaluate Trades</h2>
                   <p>Stop guessing. Use real average draft position data to make value-based trades and come out on top.</p>
-                  <p><a className="navy-link" href="/tools/calculator" role="button">Evaluate a Trade Now &raquo;</a></p>
+                  <p><a className="navy-link" href="/tools/calculator" role="button">Evaluate a Trade &raquo;</a></p>
               </div>
               <div className="col-sm-3">
-                  <h2>Compare Players</h2>
-                  <p>Put players side by side and see how their average draft positions compare.</p>
-                  <p><a className="navy-link" href="/tools/compare" role="button">Compare Players Now &raquo;</a></p>
+                  <h2>Draft Assistance</h2>
+                  <p>Start-up or rookie, draft or auction -- the DynastyFF Tools Draft Mate is built for draft day.</p>
+                  <p><a className="navy-link" href="/tools/draftmate" role="button">Draft Mate &raquo;</a></p>
               </div>
               <div className="col-sm-3">
                   <h2>Track Your Teams</h2>
@@ -152,14 +152,14 @@ export default class Landing extends Component {
               </div>
               <div className="col-md-3 text-center wow fadeInRight">
                   <div>
-                      <i className="fa fa-tag features-icon"></i>
-                      <h2>First Round Index</h2>
-                      <p>Love to value players based on their worth in future first round picks? The DynastyFF 1st Round Pick Index does just that.</p>
+                      <i className="fa fa-sitemap features-icon"></i>
+                      <h2>Draft Mate</h2>
+                      <p>The Draft Mate was designed to help players win from day one. With start up and rookie support, follow your draft real-time or run simulations.</p>
                   </div>
                   <div className="m-t-lg">
                       <i className="fa fa-rocket features-icon"></i>
                       <h2>More to Come</h2>
-                      <p>Player alerts and updates, team value stock tracker, buy and sell targets, user polls, and more to be added.</p>
+                      <p>New features are constantly being released, with many more on the roadmap.</p>
                   </div>
               </div>
           </div>

@@ -65,6 +65,12 @@ export default class Navigation extends React.Component {
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/draftmate'}>
+                <i className="fa fa-sitemap"></i>
+                <span className="nav-label">Draft Mate</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
               <Link onClick={this.closeOnMobile} to={'/tools/players'}>
                 <i className="fa fa-group"></i>
                 <span className="nav-label">Players</span>
@@ -127,6 +133,12 @@ export default class Navigation extends React.Component {
               <Link onClick={this.closeOnMobile} to={'/tools/dashboard'}>
                 <i className="fa fa-dashboard"></i>
                 <span className="nav-label">Dashboard</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/draftmate'}>
+                <i className="fa fa-sitemap"></i>
+                <span className="nav-label">Draft Mate</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
