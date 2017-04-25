@@ -26,6 +26,7 @@ class App extends Component {
       db: 'ppr',
       players: [],
       rotoData: [],
+      drafts: [],
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
@@ -41,7 +42,9 @@ class App extends Component {
       }
     });
 
-    Meteor.call('drafts.getDrafts', (error, result) => that.setState({ drafts: result }));
+    Meteor.call('drafts.getDrafts', function(error, result) {
+      that.setState({ drafts: result });
+    });
     setTimeout(() => {
       /* eslint-disable react/no-did-mount-set-state */
       this.setState({ showConnectionIssue: true });
@@ -113,7 +116,6 @@ class App extends Component {
             item.pid = pid;
             return item;
           })
-          console.log(result);
           t.setState({
             rotoData: result,
           });
@@ -215,6 +217,7 @@ class App extends Component {
             rotoData: this.state.rotoData,
             mixpanel,
             playerMap: this.state.playerMap,
+            drafts: this.state.drafts,
           })}
           <Footer />
         </div>

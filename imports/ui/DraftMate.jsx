@@ -37,14 +37,10 @@ export default class DraftMate extends Component {
     if (!this.props.currentUser) browserHistory.push('/tools/login');
     Meteor.call('drafts.get', this.props.params.draftMateID, (error, result) => {
       const state = result[0];
-      if (!state.userId === this.props.currentUser) browserHistory.push('/tools/draftmate/create');
+      if (!state.userId === this.props.currentUser['_id']) browserHistory.push('/tools/draftmate/create');
       state.draftLoaded = true;
       that.setState(state);
     });
-  }
-
-  componentDidMount() {
-    if (this.state.pickNum > this.state.picks.length) alert('This draft is complete');
   }
 
   openPlayerViewer(p) {

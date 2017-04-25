@@ -16,7 +16,6 @@ export default class ActivityStream extends Component {
       const player = players.find((p) => p.rotoworld_id === parseInt(item.pid));
       return player != null && player != undefined;
     })
-    console.log(filteredData);
     const data = filteredData.map((item) => {
       const player = players.find((p) => p.rotoworld_id === parseInt(item.pid));
       const newItem = item;
@@ -26,7 +25,6 @@ export default class ActivityStream extends Component {
         : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${newItem.player.espn_id}.png&w=350&h=254`;
       return newItem;
     })
-    console.log(data);
     return (
       <div className="row">
         <div className="col-xs-12">

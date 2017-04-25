@@ -32,6 +32,6 @@ Meteor.methods({
   },
 
   'drafts.getDrafts'() {
-    return Drafts.find({ user: this.userId }, { date: 1 });
+    return Drafts.find({ user: this.userId }).fetch();
   }
 });

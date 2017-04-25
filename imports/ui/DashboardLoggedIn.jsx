@@ -83,17 +83,16 @@ export default class DashboardLoggedIn extends Component {
                   <th>Draft Date</th>
                 </thead>
                 <tbody>
-                  {this.props.drafts && this.props.teams.map(function(t) {
-                    return (
+                  {this.props.drafts && this.props.drafts.map((t) =>
                       <tr>
                         <td>
                           <Link to={`/tools/draftmate/${t._id}`}>
-                            {t.date}
+                            {t.date.getDay()}
                           </Link>
                         </td>
                       </tr>
-                    );
-                  })}
+                    )
+                  }
                 </tbody>
               </table>
             </div>

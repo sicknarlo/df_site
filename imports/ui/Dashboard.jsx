@@ -136,7 +136,8 @@ export default class Dashboard extends Component {
         newsAlerts={this.props.newsAlerts}
         currentUser={this.props.currentUser}
         teams={this.props.teams}
-        currentDb={this.props.currentDb} />
+        currentDb={this.props.currentDb}
+        drafts={this.props.drafts} />
     : <DashboardLoggedOut
         players={this.props.players}
         newsAlerts={this.props.newsAlerts}

@@ -147,7 +147,6 @@ export default class DraftMateCreate extends Component {
 
     const state = this.state;
     state.draftReady = true;
-    state.userId = this.props.currentUser;
     state.draftStarted = true;
     state.picks = picks;
     state.teams = t;
