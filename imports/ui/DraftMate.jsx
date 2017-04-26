@@ -30,6 +30,7 @@ export default class DraftMate extends Component {
     this.updateSuggestionType = this.updateSuggestionType.bind(this);
     this.selectPlayerFromList = this.selectPlayerFromList.bind(this);
     this.saveTeams = this.saveTeams.bind(this);
+    this.simulateToUser = this.simulateToUser.bind(this);
   }
 
   componentWillMount() {
@@ -45,6 +46,7 @@ export default class DraftMate extends Component {
 
   openPlayerViewer(p) {
     const player = this.props.playerMap.get(parseInt(p.target.dataset.value, 10));
+    this.props.mixpanel.track('open player viewer');
     this.setState({
       showPlayerViewer: true,
       playerInViewer: player,
@@ -59,8 +61,105 @@ export default class DraftMate extends Component {
     });
   }
 
+  simulateToUser(e) {
+    e.preventDefault();
+    this.setState({ draftUpdating: true });
+    const teams = this.state.teams;
+    const teamMap = new Map(teams.map(team => [team.id, team]));
+
+    let cont = true;
+
+    let expertRanking = this.state.expertRankings;
+    let playerPool = this.state.playerPool;
+    const newPicks = this.state.picks;
+    let pickNum = this.state.pickNum;
+    let nextPick = this.state.picks[pickNum];
+    const newSelectedPlayers = this.state.selectedPlayers;
+
+    while (cont) {
+      let adp = 'adp';
+      if (this.state.draftOptions.format === 'rookie') {
+        adp = 'rookieAdp';
+      }
+      const nextBest = expertRanking &&
+        expertRanking.map(x => this.props.playerMap.get(x.players[0]));
+      const aCount = new Map([...new Set(nextBest)].map(
+        x => [x, nextBest.filter(y => y === x).length]
+      ));
+
+      const sortedBest = new Map([...aCount.entries()].sort((a, b) => b[1] > a[1]));
+      const expertPicks = [];
+      sortedBest.forEach((count, player) => {
+        if (player) expertPicks.push([player, Math.round((count / nextBest.length) * 100)]);
+      });
+
+      let player = null;
+      if (expertPicks.length) {
+        let current = 0;
+        const ranges = expertPicks.map(x => {
+          const val = current + x[1];
+          current += x[1];
+          return [x, val];
+        })
+        const roll = Math.random() * 100;
+        ranges.some(x => {
+          if (roll < x[1]) {
+            player = x[0][0];
+            return true;
+          }
+        });
+        if (!player) player = expertPicks[0][0];
+      } else {
+        const playerPoolSlice = playerPool.slice().slice(0, 5);
+        const randomPlayer = playerPoolSlice[Math.floor(Math.random() * playerPoolSlice.length)];
+        player = randomPlayer ? this.props.playerMap.get(randomPlayer) : this.props.playerMap.get(playerPool[0]);
+      }
+      playerPool = playerPool.filter(x => x !== player.id);
+      expertRanking = expertRanking.map(er => {
+        const wrapper = er;
+        const newSet = er.players.filter(x => x !== player.id);
+        wrapper.players = newSet;
+        return wrapper;
+      });
+      const currentPick = this.state.picks[pickNum - 1];
+      currentPick.player = player.id;
+      currentPick.vsAdp = player[adp] ?
+        pickNum - player[adp][0][this.props.values.adpKey] :
+        0;
+      newPicks[pickNum - 1] = currentPick;
+      nextPick = this.state.picks[pickNum];
+      newSelectedPlayers.push(player.id);
+      pickNum++;
+      if (!nextPick || teamMap.get(nextPick.team).isUser) cont = false;
+    }
+    const data = {};
+    data.draftComplete = nextPick ? false : true;
+    data.state = this.state;
+    data.state.playerPool = playerPool;
+    data.state.draftReady = true;
+    data.state.draftStarted = true;
+    data.state.picks = newPicks;
+    data.state.pick = nextPick ? nextPick.draftPick : null;
+    data.state.pickNum = pickNum;
+    data.state.selectedPlayer = null;
+    data.state.selectedPlayers = newSelectedPlayers;
+    data.state.showPlayerViewer = false;
+    data.state.playerInViewer = null;
+    data.state.expertRankings = expertRanking;
+    data.id = this.props.params.draftMateID;
+    const that = this;
+    this.setState({ draftUpdating: true });
+    Meteor.call('drafts.update', data, (error, result) => {
+      that.setState(result[0]);
+      if (that.state.pickNum > that.state.picks.length) alert('This draft is complete');
+    });
+
+
+  }
+
   simulatePick(e) {
     e.preventDefault();
+    this.props.mixpanel.track('simulate pick');
     let adp = 'adp';
     if (this.state.draftOptions.format === 'rookie') {
       adp = 'rookieAdp';
@@ -151,6 +250,7 @@ export default class DraftMate extends Component {
   }
 
   saveTeams() {
+    this.props.mixpanel.track('change team name');
     const data = {};
     data.state = this.state;
     data.teams = this.state.tempTeams;
@@ -169,10 +269,12 @@ export default class DraftMate extends Component {
   }
 
   updateSuggestionType(e) {
+    this.props.mixpanel.track(`suggestion type: ${e.target.value}`);
     this.setState({ suggestionType: e.target.value });
   }
 
   changeOwner(e) {
+    this.props.mixpanel.track('change owner');
     const newPicks = this.state.picks;
     const targetNum = parseInt(e.target.value);
     for (let i = 0; i < newPicks.length; i++) {
@@ -200,6 +302,7 @@ export default class DraftMate extends Component {
 
   selectPlayerInViewer(e) {
     e.preventDefault();
+    this.props.mixpanel.track('select player in viewer');
     let adp = 'adp';
     if (this.state.draftOptions.format === 'rookie') {
       adp = 'rookieAdp';
@@ -251,6 +354,7 @@ export default class DraftMate extends Component {
 
   selectPlayerFromList(e) {
     e.preventDefault();
+    this.props.mixpanel.track('select player in list');
     let adp = 'adp';
     if (this.state.draftOptions.format === 'rookie') {
       adp = 'rookieAdp';
@@ -298,6 +402,7 @@ export default class DraftMate extends Component {
 
   selectPlayer(e) {
     e.preventDefault();
+    this.props.mixpanel.track('select player search');
     let adp = 'adp';
     if (this.state.draftOptions.format === 'rookie') {
       adp = 'rookieAdp';
@@ -312,8 +417,10 @@ export default class DraftMate extends Component {
     });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
+    currentPick.vsAdp = player[adp] ?
+      this.state.pickNum - player[adp][0][this.props.values.adpKey] :
+      0;
     currentPick.player = player.id;
-    p = this.state.pickNum - player[adp][0][this.state.values.adpKey];
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -342,7 +449,19 @@ export default class DraftMate extends Component {
   }
 
   render() {
-    if (!this.state.draftLoaded) return null;
+    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
+      { 'sk-loading': this.state.updating || this.state.draftUpdating || !this.state.draftLoaded });
+    if (!this.state.draftLoaded) return (
+      <div className={mainclasses}>
+        <div className="sk-spinner sk-spinner-wave">
+          <div cNamelass="sk-rect1"></div>
+          <div className="sk-rect2"></div>
+          <div className="sk-rect3"></div>
+          <div className="sk-rect4"></div>
+          <div className="sk-rect5"></div>
+        </div>
+      </div>
+    );
     const component = this;
     const teamOptions = [];
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
@@ -416,8 +535,6 @@ export default class DraftMate extends Component {
     const draftboardAlert = alertCount > 0 ?
       <span className="label label-info draftBoardAlert">{alertCount}</span> :
         null;
-    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
-      { 'sk-loading': this.state.updating || this.state.draftUpdating });
 
     const teams = this.state.teams;
     const teamMap = new Map(teams.map(team => [team.id, team]));
@@ -436,9 +553,9 @@ export default class DraftMate extends Component {
               const player = pick[0];
               const classes = classnames({
                 'progress-bar': true,
-                'progress-bar-info': pick[1] > 75,
-                'progress-bar-success': pick[1] < 76 && pick[1] > 19,
-                'progress-bar-warning': pick[1] < 20,
+                'progress-bar-info': pick[1] > 65,
+                'progress-bar-success': pick[1] < 66 && pick[1] > 32,
+                'progress-bar-warning': pick[1] < 33,
               });
               return (
                 <tr>
@@ -450,7 +567,7 @@ export default class DraftMate extends Component {
                 </small>
               </td>
               <td>
-                <small>Experts Agree: {`${pick[1]}%`}</small>
+                <small>Liked by {`${pick[1]}%`} of Experts</small>
                 <div className="progress progress-mini">
                   <div style={{ width: `${pick[1]}%` }} className={classes}></div>
                 </div>
@@ -913,10 +1030,18 @@ export default class DraftMate extends Component {
                                 <div className="project-list">
                                   {!teamMap.get(this.state.picks[this.state.pickNum - 1].team).isUser && (
                                     <div>
-                                      <h3>Optionally Simulate the Next Pick</h3>
-                                      <button className="btn btn-md btn-primary" onClick={this.simulatePick}>
-                                        Simulate Pick
-                                      </button>
+                                      <div className="col-sm-6">
+                                        <h3>Simulate Next Pick</h3>
+                                        <button className="btn btn-md btn-primary" onClick={this.simulatePick}>
+                                          Simulate Pick
+                                        </button>
+                                      </div>
+                                      <div className="col-sm-6">
+                                        <h3>Simulate to Next User Pick</h3>
+                                        <button className="btn btn-md btn-primary" onClick={this.simulateToUser}>
+                                          Simulate to User Pick
+                                        </button>
+                                      </div>
                                     </div>
                                   )}
                                   <h2>Search</h2>

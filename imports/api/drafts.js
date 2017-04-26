@@ -10,6 +10,8 @@ Meteor.methods({
     newState.date = new Date();
     newState.user = this.userId;
 
+    newState.title = `${newState.date.toJSON().slice().slice(0, 10)} | ${newState.draftOptions.teamCount} teams | ${newState.draftOptions.roundCount} rounds `
+
     return Drafts.insert(newState);
   },
 
@@ -24,7 +26,7 @@ Meteor.methods({
   'drafts.delete'(draftId) {
     check(draftId, String);
 
-    Drafts.remove(draftId);
+    Drafts.remove({ '_id': draftId });
   },
 
   'drafts.get'(draftMateID) {
@@ -32,6 +34,6 @@ Meteor.methods({
   },
 
   'drafts.getDrafts'() {
-    return Drafts.find({ user: this.userId }).fetch();
+    return Drafts.find({ user: this.userId }, { fields: { title: 1 } }).fetch();
   }
 });

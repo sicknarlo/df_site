@@ -43,6 +43,7 @@ class App extends Component {
     });
 
     Meteor.call('drafts.getDrafts', function(error, result) {
+      console.log(result);
       that.setState({ drafts: result });
     });
     setTimeout(() => {

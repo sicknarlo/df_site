@@ -1,9 +1,42 @@
 import React, { Component, PropTypes } from 'react';
 import 'icheck/skins/all.css';
 import { Link } from 'react-router';
+import { Meteor } from 'meteor/meteor';
+import { Pagination } from 'react-bootstrap';
 
 export default class DashboardLoggedIn extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      drafts: [],
+      activePageDrafts: 1,
+    };
+    this.deleteDraft = this.deleteDraft.bind(this);
+    this.handleDraftPageSelect = this.handleDraftPageSelect.bind(this);
+  }
+
+  componentDidMount() {
+    const that = this;
+    Meteor.call('drafts.getDrafts', function(error, result) {
+      that.setState({ drafts: result });
+    });
+  }
+
+  handleDraftPageSelect(e) {
+    this.setState({ activePageDrafts: e });
+  }
+
+  deleteDraft(draftId) {
+    const result = confirm('Are you sure you want to delete this draft?');
+    const that = this;
+    if (result) {
+      Meteor.call('drafts.delete', draftId, (error) => {
+        const newDrafts = this.state.drafts.filter(x => x._id !== draftId);
+        that.setState({ drafts: newDrafts });
+      });
+    }
+  }
   render() {
     if (!this.props.teamsReady) {
       return (
@@ -21,6 +54,8 @@ export default class DashboardLoggedIn extends Component {
       );
     }
     const user = this.props.currentUser;
+    const draftStartNum = (this.state.activePageDrafts - 1) * 5;
+    const paginatedDrafts = this.state.drafts.slice().slice(draftStartNum, draftStartNum + 5);
     return (
       <div>
         <div className="row  border-bottom white-bg dashboard-header">
@@ -28,7 +63,7 @@ export default class DashboardLoggedIn extends Component {
             <h2>Welcome {user.username}</h2>
           </div>
         </div>
-        <div className="col-sm-12">
+        <div className="col-sm-6">
           <div className="ibox">
             <div className="ibox-title">
               <h5>Your Teams</h5>
@@ -38,11 +73,6 @@ export default class DashboardLoggedIn extends Component {
             </div>
             <div className="ibox-content">
               <table className="table table-hover">
-                <thead>
-                  <th>Team Name</th>
-                  <th># Teams</th>
-                  <th># Assets</th>
-                </thead>
                 <tbody>
                   {this.props.teams && this.props.teams.map(function(t) {
                     const playerCount = t.players.length;
@@ -56,20 +86,14 @@ export default class DashboardLoggedIn extends Component {
                           {t.name}
                         </Link>
                       </td>
-                      <td>
-                        {t.teamCount}
-                      </td>
-                      <td>
-                        {playerCount}
-                      </td>
                     </tr>
-                  )})}
+                  );})}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <div className="col-sm-12">
+        <div className="col-sm-6">
           <div className="ibox">
             <div className="ibox-title">
               <h5>Your Drafts</h5>
@@ -79,22 +103,28 @@ export default class DashboardLoggedIn extends Component {
             </div>
             <div className="ibox-content">
               <table className="table table-hover">
-                <thead>
-                  <th>Draft Date</th>
-                </thead>
                 <tbody>
-                  {this.props.drafts && this.props.drafts.map((t) =>
+                  {this.state.drafts && paginatedDrafts.map((t) =>
                       <tr>
                         <td>
                           <Link to={`/tools/draftmate/${t._id}`}>
-                            {t.date.getDay()}
+                            {t.title}
                           </Link>
                         </td>
+                        <div className="removePlayer" onClick={() => { this.deleteDraft(t._id); } }>
+                          <i className="fa fa-times-circle-o"></i>
+                        </div>
                       </tr>
                     )
                   }
                 </tbody>
               </table>
+              <Pagination
+                bsSize="small"
+                items={Math.ceil(this.state.drafts.length / 5)}
+                activePage={this.state.activePageDrafts}
+                onSelect={this.handleDraftPageSelect}
+              />
             </div>
           </div>
         </div>

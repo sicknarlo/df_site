@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
+import { Meteor } from 'meteor/meteor';
 import $ from 'jquery';
 
 export default class Navigation extends React.Component {
@@ -9,6 +10,7 @@ export default class Navigation extends React.Component {
       open: false,
     };
     this.toggle = this.toggle.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   toggle(e) {
@@ -24,6 +26,12 @@ export default class Navigation extends React.Component {
     }
   }
 
+  handleLogout(e) {
+    Meteor.logout(function(err) {
+      browserHistory.push('/tools/dashboard');
+    })
+  }
+
   renderLoggedIn() {
     // const { open } = this.state;
     const { currentUser } = this.props;
@@ -37,7 +45,7 @@ export default class Navigation extends React.Component {
           <ul className="nav metismenu" id="side-menu">
             <li className="nav-header">
               <div className="dropdown profile-element">
-                <a className="dropdown-toggle" href="#">
+                <a className="dropdown-toggle" data-toggle="dropdown" href="#">
                   <span className="clear">
                     <span className="block m-t-xs">
                       <strong className="font-bold">{currentUser.username}</strong>
@@ -47,12 +55,9 @@ export default class Navigation extends React.Component {
                     </span>
                   </span>
                 </a>
-                {/*<ul className="dropdown-menu animated fadeInRight m-t-xs">
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li className="divider"></li>
-                  <li><a href="#">Item</a></li>
-                </ul>*/}
+                <ul className="dropdown-menu animated fadeInRight m-t-xs">
+                  <li onClick={this.handleLogout}><a href="#" onClick={this.handleLogout}>Log Out</a></li>
+                </ul>
               </div>
               <div className="logo-element">
                 DFFT

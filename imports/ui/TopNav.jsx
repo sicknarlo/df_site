@@ -1,7 +1,5 @@
 import React from 'react';
-import { Link, browserHistory } from 'react-router';
 import $ from 'jquery';
-import { Meteor } from 'meteor/meteor';
 
 export default class TopNav extends React.Component {
   constructor(props) {
@@ -9,17 +7,10 @@ export default class TopNav extends React.Component {
     this.state = {
       open: false,
     };
-    this.handleLogout = this.handleLogout.bind(this);
   }
   componentWillMount() {
     // $('body').addClass('fixed-nav');
     // $('.navbar-static-top').removeClass('navbar-static-top').addClass('navbar-fixed-top');
-  }
-
-  handleLogout() {
-    Meteor.logout(function(err) {
-    })
-    browserHistory.push('/tools/dashboard');
   }
 
   toggleSideNav() {
@@ -51,19 +42,6 @@ export default class TopNav extends React.Component {
     }
   }
 
-  renderLogoutButton() {
-    return (
-      <ul className="nav navbar-top-links navbar-right">
-        <li>
-          <a href="#" onClick={this.handleLogout}>
-            <i className="fa fa-sign-out"></i> Log out
-          </a>
-        </li>
-
-      </ul>
-    );
-  }
-
   render() {
     return (
       <div className="row border-bottom">
@@ -81,8 +59,6 @@ export default class TopNav extends React.Component {
               <h3>DynastyFFTools.com <br /><small>Updated 4/17/2017</small></h3>
             </div>
           </div>
-          {this.props.currentUser && this.renderLogoutButton()}
-
         </nav>
     </div>
     );

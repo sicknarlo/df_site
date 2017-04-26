@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import PValues from './ADPConst.jsx';
 import classnames from 'classnames';
 import { browserHistory } from 'react-router';
+import { Alert } from 'react-bootstrap';
 import 'icheck/skins/all.css';
 
 export default class DraftMateCreate extends Component {
@@ -58,6 +59,7 @@ export default class DraftMateCreate extends Component {
     });
     Meteor.call('draftMateRankings.getStandardRankings', (error, result) => {
       if (!error) {
+        console.log(result);
         this.setState({ standardRankings: result[0].standard });
       }
     });
@@ -69,6 +71,7 @@ export default class DraftMateCreate extends Component {
 
   startDraft(e) {
     e.preventDefault();
+    this.props.mixpanel.track('start draft');
     let userRankings = [];
     let expertRankings = [];
     this.setState({ draftReady: false });
@@ -127,7 +130,8 @@ export default class DraftMateCreate extends Component {
         const round = (i + 1).toString();
         const reverse = i % 2 === 0;
         for (let y = 0; y < t.length; y++) {
-          let pick = reverse ? y + 1 : 12 - y;
+          const teami = reverse ? y : teams - (y + 1);
+          let pick = y + 1;
           if (pick < 10) {
             pick = `0${pick}`;
           } else {
@@ -135,7 +139,7 @@ export default class DraftMateCreate extends Component {
           }
           picks.push({
             draftPick: `${round}.${pick}`,
-            team: t[y].id,
+            team: t[teami].id,
             player: null,
             vsADP: null,
           });
@@ -202,6 +206,9 @@ export default class DraftMateCreate extends Component {
       return (
         <div className="col-lg-12">
           <div className="ibox float-e-margins">
+            <Alert bsStyle="warning">
+             <strong>Make sure you go to the "Draft" tab and set each team's picks beofre you start!</strong>
+           </Alert>
             <div className="ibox-title">
               <h3>Set up <small>Customize Your Draft</small></h3>
             </div>
