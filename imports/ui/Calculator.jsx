@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import { Meteor } from 'meteor/meteor';
 import $ from 'jquery';
 
 class ShareUrl extends Component {
@@ -165,6 +166,25 @@ export default class Calculator extends Component {
     //   that.setState({ shareURL: shortUrl, showResults: true });
     // });
     const that = this;
+    const trade = {};
+    trade.team1 = this.state.team1.map(x => x._id._str);
+    trade.team2 = this.state.team2.map(x => x._id._str);
+    let team1ValueSent = 0;
+    this.state.team1.forEach((player) => {
+      team1ValueSent += player.adp[0][this.props.values.valueKey]
+    });
+    let team2ValueSent = 0;
+    this.state.team2.forEach((player) => {
+      team2ValueSent += player.adp[0][this.props.values.valueKey]
+    });
+    trade.team1ValueGained = team2ValueSent - team1ValueSent;
+    trade.team2ValueGained = team1ValueSent - team2ValueSent;
+    trade.winningTeam = trade.team1ValueGained > trade.team2ValueGained ? 1 : 2;
+    trade.closestPlayer = this.findClosestPlayer(Math.abs(trade.team1ValueGained))._id._str;
+    trade.fairness = Math.round((Math.min(team1ValueSent, team2ValueSent) / Math.max(team1ValueSent, team2ValueSent)) * 100);
+    Meteor.call('trades.create', trade, (error, result) => {
+      if (error) console.log(error);
+    });
     that.setState({ showResults: true })
   }
   addToTeam1(val) {

@@ -164,7 +164,7 @@ export default class PlayerModal extends Component {
       ? 'fa fa-play fa-rotate-270'
       : 'fa fa-play fa-rotate-90';
 
-    const redraftRank = player.rankings[0][this.props.values.redraft]
+    const redraftRank = player.rankings && player.rankings[0][this.props.values.redraft]
       ? player.rankings[0][this.props.values.redraft]
       : 'N/A';
 
@@ -173,7 +173,7 @@ export default class PlayerModal extends Component {
         <div className="ibox-content dataPanel ">
           <h5 className="m-b-md">Rookie Rank</h5>
           <h2 >
-            {player.rankings[0].rookie}
+            {player.rankings && player.rankings[0].rookie}
           </h2>
         </div>
       ) :
@@ -187,7 +187,7 @@ export default class PlayerModal extends Component {
       );
 
 
-    const fpRank = player.rankings[0][this.props.values.rankKey]
+    const fpRank = player.rankings && player.rankings[0][this.props.values.rankKey]
       ? player.rankings[0][this.props.values.rankKey]
       : 'N/A';
 
@@ -230,7 +230,7 @@ export default class PlayerModal extends Component {
     // let valueRemaining = player[this.props.values.past6MonthsValue[4]];
     const buyBtnCls = classnames({ 'primary': this.state.playerVote === 'buy' });
     const sellBtnCls = classnames({ 'danger': this.state.playerVote === 'sell' });
-    const firstRoundPickIndex = (
+    const firstRoundPickIndex = player.rankings && (
         player.rankings[0][this.props.values.valueKey] / firstRoundPick.rankings[0][this.props.values.valueKey]).toFixed(2);
     const communityValue = this.state.communityValue > 0 ? `+${this.state.communityValue}` : this.state.communityValue;
     const communityCls = classnames({
@@ -471,7 +471,7 @@ export default class PlayerModal extends Component {
                     <div className="ibox-content dataPanel">
                       <h5 className="m-b-md">Value</h5>
                       <h2 className="text-success">
-                        <i className="fa fa-tag"></i> {player.rankings[0][this.props.values.valueKey]}
+                        <i className="fa fa-tag"></i> {player.adp[0][this.props.values.valueKey]}
                       </h2>
                     </div>
                   </div>

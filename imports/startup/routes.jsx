@@ -18,6 +18,7 @@ import FAQ from '../ui/FAQ.jsx';
 import DraftMateCreate from '../ui/DraftMateCreate.jsx';
 import DraftMate from '../ui/DraftMate.jsx';
 import DraftMateStart from '../ui/DraftMateStart.jsx';
+import TradeSearch from '../ui/TradeSearch.jsx';
 import ReactGA from 'react-ga';
 
 ReactGA.initialize('UA-67151916-1');
@@ -33,6 +34,7 @@ export const renderRoutes = () => (
     <Redirect from="/players" to="/tools/players" />
     <Redirect from="/calculator" to="/tools/calculator" />
     <Redirect from="/calculator-2qb" to="/tools/calculator" />
+    <Redirect from="/draftmate" to="/tools/draftmate" />
     <Route path="/tools" component={App}>
       <Route path="/tools/dashboard" component={Dashboard} />
       <Route path="/tools/login" component={Login} />
@@ -48,6 +50,7 @@ export const renderRoutes = () => (
       <Route path="/tools/draftmate/create" component={DraftMateCreate} />
       <Route path="/tools/draftmate/:draftMateID" component={DraftMate} />
       <Route path="/tools/draftmate" component={DraftMateStart} />
+      <Route path="/tools/tradesearch" component={TradeSearch} />
     </Route>
   </Router>
 );

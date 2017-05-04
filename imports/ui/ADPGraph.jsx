@@ -36,20 +36,19 @@ export default class ADPGraph extends Component {
 
       rankObj.data = [];
       const key = this.props.values.rankKey;
-
-      const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
-        new Date(a.time).getTime() - new Date(b.time).getTime());
-
-      sortedPlayerRankings.forEach((r) => {
-        const x = r.time;
-        rankObj.data.push([
-          Date.UTC(x.getFullYear(),
-          x.getMonth(),
-          x.getDate()),
-          r[key],
-        ]);
-      });
-
+      if (player.rankings) {
+        const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
+          new Date(a.time).getTime() - new Date(b.time).getTime());
+        sortedPlayerRankings.forEach((r) => {
+          const x = r.time;
+          rankObj.data.push([
+            Date.UTC(x.getFullYear(),
+            x.getMonth(),
+            x.getDate()),
+            r[key],
+          ]);
+        });
+      }
       series.push(rankObj);
     });
 

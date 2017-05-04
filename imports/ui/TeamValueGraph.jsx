@@ -19,7 +19,7 @@ export default class TeamValueGraph extends Component {
     for (var i = 0; i<12; i++) {
       let val = 0;
       for (var g=0; g<this.props.teamPlayers.length; g++) {
-        val += this.props.teamPlayers[g].adp[i][this.props.values.valueKey];
+        if (this.props.teamPlayers[g].adp[i] && this.props.teamPlayers[g].adp[i][this.props.values.valueKey]) val += this.props.teamPlayers[g].adp[i][this.props.values.valueKey];
       }
       chartData.data.push(val);
     }
@@ -58,7 +58,7 @@ export default class TeamValueGraph extends Component {
     };
     return (
       <div className="adpChart">
-        <ReactHighcharts isPureConfig config={config} isPureConfig className="adpChart-container" />
+        <ReactHighcharts isPureConfig config={config} className="adpChart-container" />
       </div>
     );
   }

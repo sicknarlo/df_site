@@ -8,6 +8,7 @@ import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
 import $ from 'jquery';
 import mixpanel from 'mixpanel-browser';
+import { Alert } from 'react-bootstrap';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -27,10 +28,12 @@ class App extends Component {
       players: [],
       rotoData: [],
       drafts: [],
+      showAlert: true,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.setDb = this.setDb.bind(this);
+    this.hideAlert = this.hideAlert.bind(this);
   }
   componentDidMount() {
     const that = this;
@@ -43,7 +46,6 @@ class App extends Component {
     });
 
     Meteor.call('drafts.getDrafts', function(error, result) {
-      console.log(result);
       that.setState({ drafts: result });
     });
     setTimeout(() => {
@@ -168,6 +170,10 @@ class App extends Component {
   //   return true;
   // }
 
+  hideAlert() {
+    this.setState({ showAlert: false });
+  }
+
   render() {
     // let newsAlerts = [];
     // if (this.state.rotoData && this.props.players) {
@@ -183,6 +189,13 @@ class App extends Component {
     // }
 
     const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
+
+    const alert = (
+      <Alert bsStyle="info" onDismiss={this.hideAlert}>
+        <p>ADP Updated 4/17</p>
+        <p>Rankings Updated 5/2</p>
+      </Alert>
+    )
 
     if (!this.state.playersReady) {
       return (
@@ -207,6 +220,7 @@ class App extends Component {
         <Navigation currentUser = {this.props.currentUser} />
         <div id="page-wrapper" className="gray-bg">
           <TopNav currentUser = {this.props.currentUser} />
+          {this.state.showAlert && alert}
           {this.props.children && React.cloneElement(this.props.children, {
             values: v,
             players: this.state.players,

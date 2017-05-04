@@ -35,10 +35,11 @@ export default class DraftMate extends Component {
 
   componentWillMount() {
     const that = this;
-    if (!this.props.currentUser) browserHistory.push('/tools/login');
+    if (!this.props.currentUser) browserHistory.push('/ tools/login');
     Meteor.call('drafts.get', this.props.params.draftMateID, (error, result) => {
       const state = result[0];
-      if (!state.userId === this.props.currentUser['_id']) browserHistory.push('/tools/draftmate/create');
+      if (!state.userId === this.props.currentUser['_id'])
+        browserHistory.push('/tools/draftmate/create');
       state.draftLoaded = true;
       that.setState(state);
     });
@@ -63,6 +64,7 @@ export default class DraftMate extends Component {
 
   simulateToUser(e) {
     e.preventDefault();
+    this.props.mixpanel.track('simulate pick');
     this.setState({ draftUpdating: true });
     const teams = this.state.teams;
     const teamMap = new Map(teams.map(team => [team.id, team]));
@@ -81,16 +83,16 @@ export default class DraftMate extends Component {
       if (this.state.draftOptions.format === 'rookie') {
         adp = 'rookieAdp';
       }
-      const nextBest = expertRanking &&
-        expertRanking.map(x => this.props.playerMap.get(x.players[0]));
-      const aCount = new Map([...new Set(nextBest)].map(
-        x => [x, nextBest.filter(y => y === x).length]
-      ));
+      const nextBest =
+        expertRanking && expertRanking.map(x => this.props.playerMap.get(x.players[0]));
+      const aCount = new Map(
+        [...new Set(nextBest)].map(x => [x, nextBest.filter(y => y === x).length])
+      );
 
       const sortedBest = new Map([...aCount.entries()].sort((a, b) => b[1] > a[1]));
       const expertPicks = [];
       sortedBest.forEach((count, player) => {
-        if (player) expertPicks.push([player, Math.round((count / nextBest.length) * 100)]);
+        if (player) expertPicks.push([player, Math.round(count / nextBest.length * 100)]);
       });
 
       let player = null;
@@ -100,7 +102,7 @@ export default class DraftMate extends Component {
           const val = current + x[1];
           current += x[1];
           return [x, val];
-        })
+        });
         const roll = Math.random() * 100;
         ranges.some(x => {
           if (roll < x[1]) {
@@ -112,7 +114,9 @@ export default class DraftMate extends Component {
       } else {
         const playerPoolSlice = playerPool.slice().slice(0, 5);
         const randomPlayer = playerPoolSlice[Math.floor(Math.random() * playerPoolSlice.length)];
-        player = randomPlayer ? this.props.playerMap.get(randomPlayer) : this.props.playerMap.get(playerPool[0]);
+        player = randomPlayer
+          ? this.props.playerMap.get(randomPlayer)
+          : this.props.playerMap.get(playerPool[0]);
       }
       playerPool = playerPool.filter(x => x !== player.id);
       expertRanking = expertRanking.map(er => {
@@ -123,9 +127,7 @@ export default class DraftMate extends Component {
       });
       const currentPick = this.state.picks[pickNum - 1];
       currentPick.player = player.id;
-      currentPick.vsAdp = player[adp] ?
-        pickNum - player[adp][0][this.props.values.adpKey] :
-        0;
+      currentPick.vsAdp = player[adp] ? pickNum - player[adp][0][this.props.values.adpKey] : 0;
       newPicks[pickNum - 1] = currentPick;
       nextPick = this.state.picks[pickNum];
       newSelectedPlayers.push(player.id);
@@ -153,8 +155,6 @@ export default class DraftMate extends Component {
       that.setState(result[0]);
       if (that.state.pickNum > that.state.picks.length) alert('This draft is complete');
     });
-
-
   }
 
   simulatePick(e) {
@@ -164,16 +164,17 @@ export default class DraftMate extends Component {
     if (this.state.draftOptions.format === 'rookie') {
       adp = 'rookieAdp';
     }
-    const nextBest = this.state.expertRankings &&
+    const nextBest =
+      this.state.expertRankings &&
       this.state.expertRankings.map(x => this.props.playerMap.get(x.players[0]));
-    const aCount = new Map([...new Set(nextBest)].map(
-      x => [x, nextBest.filter(y => y === x).length]
-    ));
+    const aCount = new Map(
+      [...new Set(nextBest)].map(x => [x, nextBest.filter(y => y === x).length])
+    );
 
     const sortedBest = new Map([...aCount.entries()].sort((a, b) => b[1] > a[1]));
     const expertPicks = [];
     sortedBest.forEach((count, player) => {
-      if (player) expertPicks.push([player, Math.round((count / nextBest.length) * 100)]);
+      if (player) expertPicks.push([player, Math.round(count / nextBest.length * 100)]);
     });
 
     let player = null;
@@ -183,7 +184,7 @@ export default class DraftMate extends Component {
         const val = current + x[1];
         current += x[1];
         return [x, val];
-      })
+      });
       const roll = Math.random() * 100;
       ranges.some(x => {
         if (roll < x[1]) {
@@ -193,7 +194,11 @@ export default class DraftMate extends Component {
       });
       if (!player) player = expertPicks[0][0];
     } else {
-      player = this.props.playerMap.get(this.state.playerPool[0]);
+      const playerPoolSlice = this.state.playerPool.slice().slice(0, 5);
+      const randomPlayer = playerPoolSlice[Math.floor(Math.random() * playerPoolSlice.length)];
+      player = randomPlayer
+        ? this.props.playerMap.get(randomPlayer)
+        : this.props.playerMap.get(this.state.playerPool[0]);
     }
 
     const newPlayerPool = this.state.playerPool.filter(x => x !== player.id);
@@ -206,9 +211,9 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp] ?
-      this.state.pickNum - player[adp][0][this.props.values.adpKey] :
-      0;
+    currentPick.vsAdp = player[adp]
+      ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
+      : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -234,7 +239,6 @@ export default class DraftMate extends Component {
       that.setState(result[0]);
       if (that.state.pickNum > that.state.picks.length) alert('This draft is complete');
     });
-
   }
 
   toggleRankingViewer() {
@@ -244,7 +248,7 @@ export default class DraftMate extends Component {
   }
 
   changeTeamName(e) {
-    const teams = this.state.teams
+    const teams = this.state.teams;
     teams.find(x => x.id === this.state.teamInViewer).name = e.target.value;
     this.setState({ tempTeams: teams });
   }
@@ -318,9 +322,9 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp] ?
-      this.state.pickNum - player[adp][0][this.props.values.adpKey] :
-      0;
+    currentPick.vsAdp = player[adp]
+      ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
+      : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -370,9 +374,9 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp] ?
-      this.state.pickNum - player[adp][0][this.state.values.adpKey] :
-      0;
+    currentPick.vsAdp = player[adp]
+      ? this.state.pickNum - player[adp][0][this.state.values.adpKey]
+      : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
     const newSelectedPlayers = this.state.selectedPlayers;
@@ -417,9 +421,9 @@ export default class DraftMate extends Component {
     });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
-    currentPick.vsAdp = player[adp] ?
-      this.state.pickNum - player[adp][0][this.props.values.adpKey] :
-      0;
+    currentPick.vsAdp = player[adp]
+      ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
+      : 0;
     currentPick.player = player.id;
     newPicks[this.state.pickNum - 1] = currentPick;
     const nextPick = this.state.picks[this.state.pickNum];
@@ -449,29 +453,32 @@ export default class DraftMate extends Component {
   }
 
   render() {
-    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate',
-      { 'sk-loading': this.state.updating || this.state.draftUpdating || !this.state.draftLoaded });
-    if (!this.state.draftLoaded) return (
-      <div className={mainclasses}>
-        <div className="sk-spinner sk-spinner-wave">
-          <div cNamelass="sk-rect1"></div>
-          <div className="sk-rect2"></div>
-          <div className="sk-rect3"></div>
-          <div className="sk-rect4"></div>
-          <div className="sk-rect5"></div>
+    const mainclasses = classnames('wrapper wrapper-content animated fadeInRight draftMate', {
+      'sk-loading': this.state.updating || this.state.draftUpdating || !this.state.draftLoaded,
+    });
+    if (!this.state.draftLoaded)
+      return (
+        <div className={mainclasses}>
+          <div className="sk-spinner sk-spinner-wave">
+            <div cNamelass="sk-rect1" />
+            <div className="sk-rect2" />
+            <div className="sk-rect3" />
+            <div className="sk-rect4" />
+            <div className="sk-rect5" />
+          </div>
         </div>
-      </div>
-    );
+      );
     const component = this;
     const teamOptions = [];
     for (let i = 0; i < this.state.draftOptions.teamCount; i++) {
       teamOptions.push(i + 1);
     }
-    const nextBest = this.state.expertRankings &&
+    const nextBest =
+      this.state.expertRankings &&
       this.state.expertRankings.map(x => this.props.playerMap.get(x.players[0]));
-    const aCount = new Map([...new Set(nextBest)].map(
-      x => [x, nextBest.filter(y => y === x).length]
-    ));
+    const aCount = new Map(
+      [...new Set(nextBest)].map(x => [x, nextBest.filter(y => y === x).length])
+    );
 
     let rankingBpa = null;
 
@@ -485,23 +492,21 @@ export default class DraftMate extends Component {
     const sortedBest = new Map([...aCount.entries()].sort((a, b) => b[1] > a[1]));
     const expertPicks = [];
     sortedBest.forEach((count, player) => {
-      if (player) expertPicks.push([player, Math.round((count / nextBest.length) * 100)]);
+      if (player) expertPicks.push([player, Math.round(count / nextBest.length * 100)]);
     });
-    const options = this.state.playerPool.map((playerId) => {
+    const options = this.state.playerPool.map(playerId => {
       const p = this.props.playerMap.get(playerId);
-      return { val: p.id, label: p.name }
+      return { val: p.id, label: p.name };
     });
-    const selectPlayerInViewer =
-      this.state.playerInViewer &&
+    const selectPlayerInViewer = this.state.playerInViewer &&
       !this.state.selectedPlayers.includes(this.state.playerInViewer.id) &&
-      this.state.playerPool.includes(this.state.playerInViewer.id) ?
-      <Button bsStyle="primary"
-        onClick={this.selectPlayerInViewer}>
-        Select Player
-      </Button> :
-      null;
-    const playerModal = this.state.playerInViewer ?
-      <PlayerModal
+      this.state.playerPool.includes(this.state.playerInViewer.id)
+      ? <Button bsStyle="primary" onClick={this.selectPlayerInViewer}>
+          Select Player
+        </Button>
+      : null;
+    const playerModal = this.state.playerInViewer
+      ? <PlayerModal
         player={this.state.playerInViewer}
         players={this.props.players}
         showPlayerViewer={this.state.showPlayerViewer}
@@ -511,8 +516,8 @@ export default class DraftMate extends Component {
         selectPlayerButton={selectPlayerInViewer}
         openPlayerViewer={this.openPlayerViewer}
         isRookie={this.state.draftOptions.format === 'rookie'}
-      /> :
-        null;
+    />
+      : null;
 
     let alertCount = 0;
 
@@ -521,27 +526,31 @@ export default class DraftMate extends Component {
       adp = 'rookieAdp';
     }
 
-    this.state.userRankings.forEach((playerId) => {
+    this.state.userRankings.forEach(playerId => {
       if (
-          (
-            !this.state.selectedPlayers.includes(playerId) &&
-            this.props.playerMap.get(playerId)[adp] &&
-            this.state.pickNum - this.props.playerMap.get(playerId)[adp][0][this.state.values.adpKey] > 1)) alertCount++;
+        !this.state.selectedPlayers.includes(playerId) &&
+        this.props.playerMap.get(playerId)[adp] &&
+        this.state.pickNum - this.props.playerMap.get(playerId)[adp][0][this.state.values.adpKey] >
+          1
+      )
+        alertCount++;
     });
 
-    const alertButton = alertCount > 0 ?
-      <button type="button" className="btn btn-info m-r-sm">{alertCount}</button> :
-      null;
-    const draftboardAlert = alertCount > 0 ?
-      <span className="label label-info draftBoardAlert">{alertCount}</span> :
-        null;
+    const alertButton = alertCount > 0
+      ? <button type="button" className="btn btn-info m-r-sm">{alertCount}</button>
+      : null;
+    const draftboardAlert = alertCount > 0
+      ? <span className="label label-info draftBoardAlert">{alertCount}</span>
+      : null;
 
     const teams = this.state.teams;
     const teamMap = new Map(teams.map(team => [team.id, team]));
 
     const teamPicks = this.state.picks.filter(pick => pick.team === this.state.teamInViewer);
     let teamValue = 0;
-    teamPicks.forEach(x => { if (x.vsAdp) teamValue += x.vsAdp; });
+    teamPicks.forEach(x => {
+      if (x.vsAdp) teamValue += x.vsAdp;
+    });
 
     let pickSuggestionView = null;
 
@@ -559,55 +568,48 @@ export default class DraftMate extends Component {
               });
               return (
                 <tr>
-                <td className="project-title" data-value={player} onClick={this.openPlayerViewer}>
-                  <strong>{player.name}</strong>
-                  <br />
-                <small>
-                  {player.team} | {player.position}
-                </small>
-              </td>
-              <td>
-                <small>Liked by {`${pick[1]}%`} of Experts</small>
-                <div className="progress progress-mini">
-                  <div style={{ width: `${pick[1]}%` }} className={classes}></div>
-                </div>
-              </td>
-              <td className="text-center">
-                ADP
-                <br />
-                <small>
-                  {
-                    player[adp] &&
-                    player[adp][0] &&
-                    player[adp][0][this.state.values.adpKey]
-                  }
-                </small>
-              </td>
-              <td className="text-center">
-                RAR
-                <br />
-                  <small>
-                    {
-                      player.rankings &&
-                      player.rankings[0][this.state.values.rankKey]
-                    }
-                  </small>
-              </td>
-              <td className="project-actions">
-                <a
-                  href="#"
-                  className="btn btn-primary btn-sm"
-                  data-value={player.id}
-                  onClick={this.selectPlayerFromList}
-                >
-                Select
-                </a>
-              </td>
-            </tr>
-          );
+                  <td className="project-title" data-value={player} onClick={this.openPlayerViewer}>
+                    <strong>{player.name}</strong>
+                    <br />
+                    <small>
+                      {player.team} | {player.position}
+                    </small>
+                  </td>
+                  <td>
+                    <small>Liked by {`${pick[1]}%`} of Experts</small>
+                    <div className="progress progress-mini">
+                      <div style={{ width: `${pick[1]}%` }} className={classes} />
+                    </div>
+                  </td>
+                  <td className="text-center">
+                    ADP
+                    <br />
+                    <small>
+                      {player[adp] && player[adp][0] && player[adp][0][this.state.values.adpKey]}
+                    </small>
+                  </td>
+                  <td className="text-center">
+                    RAR
+                    <br />
+                    <small>
+                      {player.rankings && player.rankings[0][this.state.values.rankKey]}
+                    </small>
+                  </td>
+                  <td className="project-actions">
+                    <a
+                      href="#"
+                      className="btn btn-primary btn-sm"
+                      data-value={player.id}
+                      onClick={this.selectPlayerFromList}
+                    >
+                      Select
+                    </a>
+                  </td>
+                </tr>
+              );
             })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
       );
     } else if (this.state.suggestionType === 'topPlayersRank') {
       const tops = ['QB', 'WR', 'RB', 'TE'];
@@ -628,67 +630,63 @@ export default class DraftMate extends Component {
       pickSuggestionView = (
         <table className="table table-hover">
           <tbody>
-            {topPlayersRank.map(player =>
+            {topPlayersRank.map(player => (
               <tr>
                 <td className="project-title">
                   <strong>{player.name}</strong>
                   <br />
-                <small>
-                  {player.team} | {player.position}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP vs Pick
-                <br />
-                <small>
-                  {player[adp] && (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP
-                <br />
-                <small>
-                  {
-                    player[adp] &&
-                    player[adp][0] &&
-                    player[adp][0][this.state.values.adpKey]
-                  }
-                </small>
-              </td>
-              <td className="text-center">
-                RAR
-                <br />
                   <small>
-                    {
-                      player.rankings &&
-                      player.rankings[0][this.state.values.rankKey]
-                    }
+                    {player.team} | {player.position}
                   </small>
-              </td>
-              <td className="project-actions">
-                <a
-                  href="#"
-                  className="btn btn-primary btn-sm"
-                  data-value={player.id}
-                  onClick={this.selectPlayerFromList}
-                >
-                Select
-                </a>
-              </td>
-            </tr>
-            )}
-        </tbody>
-      </table>
-    );
+                </td>
+                <td className="text-center">
+                  ADP vs Pick
+                  <br />
+                  <small>
+                    {player[adp] &&
+                      (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
+                  </small>
+                </td>
+                <td className="text-center">
+                  ADP
+                  <br />
+                  <small>
+                    {player[adp] && player[adp][0] && player[adp][0][this.state.values.adpKey]}
+                  </small>
+                </td>
+                <td className="text-center">
+                  RAR
+                  <br />
+                  <small>
+                    {player.rankings && player.rankings[0][this.state.values.rankKey]}
+                  </small>
+                </td>
+                <td className="project-actions">
+                  <a
+                    href="#"
+                    className="btn btn-primary btn-sm"
+                    data-value={player.id}
+                    onClick={this.selectPlayerFromList}
+                  >
+                    Select
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
     } else if (this.state.suggestionType === 'topPlayersADP') {
       const tops = ['QB', 'WR', 'RB', 'TE'];
       const playerMap = this.props.playerMap;
       const playerPool = this.state.playerPool.slice().sort((a, b) => {
         const playerA = playerMap.get(a);
         const playerB = playerMap.get(b);
-        if (!playerA[adp]) return -1;
-        if (!playerB[adp]) return 1;
-        return playerA[adp][0][this.props.values.adpKey] - playerB[adp][0][this.props.values.adpKey];
+        if (!playerA[adp]) return 1;
+        if (!playerB[adp]) return -1;
+        return (
+          playerA[adp][0][this.props.values.adpKey] - playerB[adp][0][this.props.values.adpKey]
+        );
       });
       let topPlayersADP = tops.map(position => {
         let player = null;
@@ -705,58 +703,52 @@ export default class DraftMate extends Component {
       pickSuggestionView = (
         <table className="table table-hover">
           <tbody>
-            {topPlayersADP.map(player =>
+            {topPlayersADP.map(player => (
               <tr>
                 <td className="project-title">
                   <strong>{player.name}</strong>
                   <br />
-                <small>
-                  {player.team} | {player.position}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP vs Pick
-                <br />
-                <small>
-                  {player[adp] && (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP
-                <br />
-                <small>
-                  {
-                    player[adp] &&
-                    player[adp][0] &&
-                    player[adp][0][this.state.values.adpKey]
-                  }
-                </small>
-              </td>
-              <td className="text-center">
-                RAR
-                <br />
                   <small>
-                    {
-                      player.rankings &&
-                      player.rankings[0][this.state.values.rankKey]
-                    }
+                    {player.team} | {player.position}
                   </small>
-              </td>
-              <td className="project-actions">
-                <a
-                  href="#"
-                  className="btn btn-primary btn-sm"
-                  data-value={player.id}
-                  onClick={this.selectPlayerFromList}
-                >
-                Select
-                </a>
-              </td>
-            </tr>
-            )}
-        </tbody>
-      </table>
-    );
+                </td>
+                <td className="text-center">
+                  ADP vs Pick
+                  <br />
+                  <small>
+                    {player[adp] &&
+                      (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
+                  </small>
+                </td>
+                <td className="text-center">
+                  ADP
+                  <br />
+                  <small>
+                    {player[adp] && player[adp][0] && player[adp][0][this.state.values.adpKey]}
+                  </small>
+                </td>
+                <td className="text-center">
+                  RAR
+                  <br />
+                  <small>
+                    {player.rankings && player.rankings[0][this.state.values.rankKey]}
+                  </small>
+                </td>
+                <td className="project-actions">
+                  <a
+                    href="#"
+                    className="btn btn-primary btn-sm"
+                    data-value={player.id}
+                    onClick={this.selectPlayerFromList}
+                  >
+                    Select
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
     } else {
       const pos = this.state.suggestionType;
       const playerMap = this.props.playerMap;
@@ -768,66 +760,61 @@ export default class DraftMate extends Component {
           players.push(p);
         }
         if (players.length > 4) return true;
-      })
+      });
       pickSuggestionView = (
         <table className="table table-hover">
           <tbody>
-            {players.map(player =>
+            {players.map(player => (
               <tr>
                 <td className="project-title">
                   <strong>{player.name}</strong>
                   <br />
-                <small>
-                  {player.team} | {player.position}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP vs Pick
-                <br />
-                <small>
-                  {player[adp] && (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
-                </small>
-              </td>
-              <td className="text-center">
-                ADP
-                <br />
-                <small>
-                  {
-                    player[adp] &&
-                    player[adp][0] &&
-                    player[adp][0][this.state.values.adpKey]
-                  }
-                </small>
-              </td>
-              <td className="text-center">
-                RAR
-                <br />
                   <small>
-                    {
-                      player.rankings &&
-                      player.rankings[0][this.state.values.rankKey]
-                    }
+                    {player.team} | {player.position}
                   </small>
-              </td>
-              <td className="project-actions">
-                <a
-                  href="#"
-                  className="btn btn-primary btn-sm"
-                  data-value={player.id}
-                  onClick={this.selectPlayerFromList}
-                >
-                Select
-                </a>
-              </td>
-            </tr>
-            )}
-        </tbody>
-      </table>
-    );}
+                </td>
+                <td className="text-center">
+                  ADP vs Pick
+                  <br />
+                  <small>
+                    {player[adp] &&
+                      (this.state.pickNum - player[adp][0][this.state.values.adpKey]).toFixed(2)}
+                  </small>
+                </td>
+                <td className="text-center">
+                  ADP
+                  <br />
+                  <small>
+                    {player[adp] && player[adp][0] && player[adp][0][this.state.values.adpKey]}
+                  </small>
+                </td>
+                <td className="text-center">
+                  RAR
+                  <br />
+                  <small>
+                    {player.rankings && player.rankings[0][this.state.values.rankKey]}
+                  </small>
+                </td>
+                <td className="project-actions">
+                  <a
+                    href="#"
+                    className="btn btn-primary btn-sm"
+                    data-value={player.id}
+                    onClick={this.selectPlayerFromList}
+                  >
+                    Select
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
 
-    const selectedPlayer = this.state.selectedPlayer ?
-      this.props.playerMap.get(this.state.selectedPlayer.val) :
-      null;
+    const selectedPlayer = this.state.selectedPlayer
+      ? this.props.playerMap.get(this.state.selectedPlayer.val)
+      : null;
 
     if (this.state.pickNum > this.state.picks.length) {
       // const teamScoreMap = new Map(teams.map(team => {
@@ -839,7 +826,7 @@ export default class DraftMate extends Component {
       const sortedTeamPicks = teamPicks.slice().sort((a, b) => {
         if (!a.vsAdp) return 1;
         if (!b.vsAdp) return -1;
-        return b.vsAdp - a.vsAdp
+        return b.vsAdp - a.vsAdp;
       });
 
       const bestPick = sortedTeamPicks[0];
@@ -869,7 +856,7 @@ export default class DraftMate extends Component {
                               </tr>
                             </thead>
                             <tbody>
-                              {this.state.picks.map((pick) => {
+                              {this.state.picks.map(pick => {
                                 const team = teamMap.get(pick.team);
                                 const classes = classnames({
                                   info: team.isUser,
@@ -886,103 +873,102 @@ export default class DraftMate extends Component {
                                         value={pick.team}
                                         onChange={component.changeOwner}
                                       >
-                                        {component.state.teams.map(t =>
+                                        {component.state.teams.map(t => (
                                           <option value={t.id}>{t.name}</option>
-                                        )}
+                                        ))}
                                       </select>
                                     </td>
                                   </tr>
-                                );}
-                              )}
+                                );
+                              })}
                             </tbody>
                           </table>
                         </Tab>
                         <Tab eventKey={3} title="Teams">
                           <div className="col-sm-12">
                             <div className="project-list">
-                            <select
-                              className="form-control m-b"
-                              name="teamInViewer"
-                              onChange={this.updateTeamInViewer}
-                              value={this.state.teamInViewer}
-                            >
-                              {this.state.teams.map(team => <option value={parseInt(team.id)}>{team.name}</option>)}
-                            </select>
-                            <hr />
-                            <h2>
-                              Summary
-                            </h2>
-                            <table className="table table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>
-                                    Total Picks vs ADP
-                                  </td>
-                                  <td>
-                                    {(teamValue).toFixed(2)}
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    Best Pick
-                                  </td>
-                                  <td>
-                                    {`${this.props.playerMap.get(bestPick.player).name} (${bestPick.vsAdp.toFixed(2)})`}
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    Worst Pick
-                                  </td>
-                                  <td>
-                                    {`${this.props.playerMap.get(worstPick.player).name} (${worstPick.vsAdp.toFixed(2)})`}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                            <h2>Picks</h2>
-                            <table className="table table-hover">
-                              <tbody>
-                                {teamPicks.map(teamPick => {
-                                  const player = this.props.playerMap.get(teamPick.player);
-                                  return (
-                                    <tr>
-                                      <td className="project-title">
-                                        {teamPick.draftPick}
-                                      </td>
-                                      <td className="project-title">
-                                        <strong>{player && player.name}</strong>
-                                        <br />
-                                      <small>
-                                        {player && `${player.team} | ${player.position}`}
-                                      </small>
+                              <select
+                                className="form-control m-b"
+                                name="teamInViewer"
+                                onChange={this.updateTeamInViewer}
+                                value={this.state.teamInViewer}
+                              >
+                                {this.state.teams.map(team => (
+                                  <option value={parseInt(team.id)}>{team.name}</option>
+                                ))}
+                              </select>
+                              <hr />
+                              <h2>
+                                Summary
+                              </h2>
+                              <table className="table table-hover">
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      Total Picks vs ADP
                                     </td>
-                                    <td className="text-center">
-                                      ADP
-                                      <br />
-                                      <small>
-                                        {
-                                          player &&
-                                          player[adp] &&
-                                          player[adp][0] &&
-                                          player[adp][0][this.state.values.adpKey]
-                                        }
-                                      </small>
-                                    </td>
-                                    <td className="text-center">
-                                      Pick vs ADP
-                                      <br />
-                                      <small>
-                                        {teamPick.vsAdp && (teamPick.vsAdp).toFixed(2)}
-                                      </small>
+                                    <td>
+                                      {teamValue.toFixed(2)}
                                     </td>
                                   </tr>
-                                );
-                                }
-                              )}
-                            </tbody>
-                          </table>
-                          </div>
+                                  <tr>
+                                    <td>
+                                      Best Pick
+                                    </td>
+                                    <td>
+                                      {`${this.props.playerMap.get(bestPick.player).name} (${bestPick.vsAdp.toFixed(2)})`}
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      Worst Pick
+                                    </td>
+                                    <td>
+                                      {`${this.props.playerMap.get(worstPick.player).name} (${worstPick.vsAdp.toFixed(2)})`}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <h2>Picks</h2>
+                              <table className="table table-hover">
+                                <tbody>
+                                  {teamPicks.map(teamPick => {
+                                    const player = this.props.playerMap.get(teamPick.player);
+                                    return (
+                                      <tr>
+                                        <td className="project-title">
+                                          {teamPick.draftPick}
+                                        </td>
+                                        <td className="project-title">
+                                          <strong>{player && player.name}</strong>
+                                          <br />
+                                          <small>
+                                            {player && `${player.team} | ${player.position}`}
+                                          </small>
+                                        </td>
+                                        <td className="text-center">
+                                          ADP
+                                          <br />
+                                          <small>
+                                            {player &&
+                                              player[adp] &&
+                                              player[adp][0] &&
+                                              player[adp][0][this.state.values.adpKey]}
+                                          </small>
+                                        </td>
+                                        <td className="text-center">
+                                          Pick vs ADP
+                                          <br />
+                                          <small>
+                                            {teamPick.vsAdp && teamPick.vsAdp.toFixed(2)}
+                                          </small>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </Tab>
                       </Tabs>
@@ -999,11 +985,11 @@ export default class DraftMate extends Component {
     return (
       <div className={mainclasses}>
         <div className="sk-spinner sk-spinner-wave">
-          <div cNamelass="sk-rect1"></div>
-          <div className="sk-rect2"></div>
-          <div className="sk-rect3"></div>
-          <div className="sk-rect4"></div>
-          <div className="sk-rect5"></div>
+          <div cNamelass="sk-rect1" />
+          <div className="sk-rect2" />
+          <div className="sk-rect3" />
+          <div className="sk-rect4" />
+          <div className="sk-rect5" />
         </div>
         {playerModal}
         <div className="row">
@@ -1011,12 +997,7 @@ export default class DraftMate extends Component {
             <div className="ibox float-e-margins">
               <div className="ibox-title">
                 <h2>
-                  {
-                    `Current Pick: ${this.state.pickNum} | On the Clock: ${
-                      this.state.picks[this.state.pickNum - 1] &&
-                      teamMap.get(this.state.picks[this.state.pickNum - 1].team).name
-                    }`
-                  }
+                  {`Current Pick: ${this.state.pickNum} | On the Clock: ${this.state.picks[this.state.pickNum - 1] && teamMap.get(this.state.picks[this.state.pickNum - 1].team).name}`}
                 </h2>
               </div>
               <div className="ibox-content">
@@ -1025,34 +1006,39 @@ export default class DraftMate extends Component {
                     <Tabs defaultActiveKey={0} id="tabs" className="draftBoard">
                       <Tab eventKey={0} title="Player Select">
                         <div className="ibox-content">
-                            <div className="row m-b-sm m-t-sm">
-                              <div className="col-md-12">
-                                <div className="project-list">
-                                  {!teamMap.get(this.state.picks[this.state.pickNum - 1].team).isUser && (
-                                    <div>
-                                      <div className="col-sm-6">
-                                        <h3>Simulate Next Pick</h3>
-                                        <button className="btn btn-md btn-primary" onClick={this.simulatePick}>
-                                          Simulate Pick
-                                        </button>
-                                      </div>
-                                      <div className="col-sm-6">
-                                        <h3>Simulate to Next User Pick</h3>
-                                        <button className="btn btn-md btn-primary" onClick={this.simulateToUser}>
-                                          Simulate to User Pick
-                                        </button>
-                                      </div>
+                          <div className="row m-b-sm m-t-sm">
+                            <div className="col-md-12">
+                              <div className="project-list">
+                                {!teamMap.get(this.state.picks[this.state.pickNum - 1].team)
+                                  .isUser &&
+                                  <div>
+                                    <div className="col-sm-6">
+                                      <h3>Simulate Next Pick</h3>
+                                      <button
+                                        className="btn btn-md btn-primary"
+                                        onClick={this.simulatePick}
+                                      >
+                                        Simulate Pick
+                                      </button>
                                     </div>
-                                  )}
-                                  <h2>Search</h2>
+                                    <div className="col-sm-6">
+                                      <h3>Simulate to Next User Pick</h3>
+                                      <button
+                                        className="btn btn-md btn-primary"
+                                        onClick={this.simulateToUser}
+                                      >
+                                        Simulate to User Pick
+                                      </button>
+                                    </div>
+                                  </div>}
+                                <h2>Search</h2>
                                 {this.state.playerPool &&
                                   <Select
                                     name="form-field-name"
                                     value={this.state.selectedPlayer}
                                     options={options}
                                     onChange={this.setPick}
-                                  />
-                                }
+                                  />}
                                 {selectedPlayer &&
                                   <table className="table table-hover">
                                     <tbody>
@@ -1060,125 +1046,122 @@ export default class DraftMate extends Component {
                                         <td className="project-title">
                                           {selectedPlayer.name}
                                           <br />
-                                        <small>
-                                          {selectedPlayer.team} | {selectedPlayer.position}
-                                        </small>
-                                      </td>
-                                      <td className="text-center">
-                                        ADP vs Pick
-                                        <br />
-                                        <small>
-                                          {selectedPlayer[adp] && (this.state.pickNum - selectedPlayer[adp][0][this.state.values.adpKey]).toFixed(2)}
-                                        </small>
-                                      </td>
-                                      <td className="text-center">
-                                        ADP
-                                        <br />
-                                        <small>
-                                          {
-                                            selectedPlayer[adp] &&
-                                            selectedPlayer[adp][0] &&
-                                            selectedPlayer[adp][0][this.state.values.adpKey]
-                                          }
-                                        </small>
-                                      </td>
-                                      <td className="text-center">
-                                        RAR
-                                        <br />
                                           <small>
-                                            {
-                                              selectedPlayer.rankings &&
-                                              selectedPlayer.rankings[0][this.state.values.rankKey]
-                                            }
+                                            {selectedPlayer.team} | {selectedPlayer.position}
                                           </small>
-                                      </td>
-                                      <td className="project-actions">
-                                        <a
-                                          href="#"
-                                          className="btn btn-primary btn-sm"
-                                          onClick={this.selectPlayer}
-                                        >
-                                        Select
-                                        </a>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                                }
-                                </div>
+                                        </td>
+                                        <td className="text-center">
+                                          ADP vs Pick
+                                          <br />
+                                          <small>
+                                            {selectedPlayer[adp] &&
+                                              (this.state.pickNum -
+                                                selectedPlayer[adp][0][
+                                                  this.state.values.adpKey
+                                                ]).toFixed(2)}
+                                          </small>
+                                        </td>
+                                        <td className="text-center">
+                                          ADP
+                                          <br />
+                                          <small>
+                                            {selectedPlayer[adp] &&
+                                              selectedPlayer[adp][0] &&
+                                              selectedPlayer[adp][0][this.state.values.adpKey]}
+                                          </small>
+                                        </td>
+                                        <td className="text-center">
+                                          RAR
+                                          <br />
+                                          <small>
+                                            {selectedPlayer.rankings &&
+                                              selectedPlayer.rankings[0][this.state.values.rankKey]}
+                                          </small>
+                                        </td>
+                                        <td className="project-actions">
+                                          <a
+                                            href="#"
+                                            className="btn btn-primary btn-sm"
+                                            onClick={this.selectPlayer}
+                                          >
+                                            Select
+                                          </a>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>}
                               </div>
                             </div>
-                            <hr />
-                            <h2>DynastyFFTools Suggestion</h2>
-                              <table className="table table-hover">
-                                <tbody>
-                                  <tr>
-                                    <td className="project-title">
-                                      <strong>{rankingBpa.name}</strong>
-                                      <br />
-                                    <small>
-                                      {rankingBpa.team} | {rankingBpa.position}
-                                    </small>
-                                  </td>
-                                  <td className="text-center">
-                                    ADP vs Pick
-                                    <br />
-                                    <small>
-                                      {rankingBpa[adp] && (this.state.pickNum - rankingBpa[adp][0][this.state.values.adpKey]).toFixed(2)}
-                                    </small>
-                                  </td>
-                                  <td className="text-center">
-                                    ADP
-                                    <br />
-                                    <small>
-                                      {
-                                        rankingBpa[adp] &&
-                                        rankingBpa[adp][0] &&
-                                        rankingBpa[adp][0][this.state.values.adpKey]
-                                      }
-                                    </small>
-                                  </td>
-                                  <td className="text-center">
-                                    RAR
-                                    <br />
-                                      <small>
-                                        {
-                                          rankingBpa.rankings &&
-                                          rankingBpa.rankings[0][this.state.values.rankKey]
-                                        }
-                                      </small>
-                                  </td>
-                                  <td className="project-actions">
-                                    <a
-                                      href="#"
-                                      className="btn btn-primary btn-sm"
-                                      data-value={rankingBpa.id}
-                                      onClick={this.selectPlayerFromList}
-                                    >
+                          </div>
+                          <hr />
+                          <h2>DynastyFFTools Suggestion</h2>
+                          <table className="table table-hover">
+                            <tbody>
+                              <tr>
+                                <td className="project-title">
+                                  <strong>{rankingBpa.name}</strong>
+                                  <br />
+                                  <small>
+                                    {rankingBpa.team} | {rankingBpa.position}
+                                  </small>
+                                </td>
+                                <td className="text-center">
+                                  ADP vs Pick
+                                  <br />
+                                  <small>
+                                    {rankingBpa[adp] &&
+                                      (this.state.pickNum -
+                                        rankingBpa[adp][0][this.state.values.adpKey]).toFixed(2)}
+                                  </small>
+                                </td>
+                                <td className="text-center">
+                                  ADP
+                                  <br />
+                                  <small>
+                                    {rankingBpa[adp] &&
+                                      rankingBpa[adp][0] &&
+                                      rankingBpa[adp][0][this.state.values.adpKey]}
+                                  </small>
+                                </td>
+                                <td className="text-center">
+                                  RAR
+                                  <br />
+                                  <small>
+                                    {rankingBpa.rankings &&
+                                      rankingBpa.rankings[0][this.state.values.rankKey]}
+                                  </small>
+                                </td>
+                                <td className="project-actions">
+                                  <a
+                                    href="#"
+                                    className="btn btn-primary btn-sm"
+                                    data-value={rankingBpa.id}
+                                    onClick={this.selectPlayerFromList}
+                                  >
                                     Select
-                                    </a>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                            <hr />
-                            <div className="project-list">
-                              <select
-                                className="form-control m-b"
-                                name="pickSuggestionType"
-                                onChange={this.updateSuggestionType}
-                                value={this.state.suggestionType}
-                              >
-                                <option value="expert">Expert Rankings</option>
-                                <option value="topPlayersRank">Top Players By Position (RAR)</option>
-                                <option value="topPlayersADP">Top Players By Position (ADP)</option>
-                                <option value="QB">QBs</option>
-                                <option value="WR">WRs</option>
-                                <option value="RB">RBs</option>
-                                <option value="TE">TEs</option>
-                              </select>
-                              <h2>Other Suggestions</h2>
-                              {pickSuggestionView}
+                                  </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <hr />
+                          <div className="project-list">
+                            <select
+                              className="form-control m-b"
+                              name="pickSuggestionType"
+                              onChange={this.updateSuggestionType}
+                              value={this.state.suggestionType}
+                            >
+                              <option value="expert">Expert Rankings</option>
+                              <option value="topPlayersRank">Top Players By Position (RAR)</option>
+                              <option value="topPlayersADP">Top Players By Position (ADP)</option>
+                              <option value="QB">QBs</option>
+                              <option value="WR">WRs</option>
+                              <option value="RB">RBs</option>
+                              <option value="TE">TEs</option>
+                            </select>
+                            <h2>Other Suggestions</h2>
+                            {pickSuggestionView}
                           </div>
                         </div>
                       </Tab>
@@ -1192,7 +1175,7 @@ export default class DraftMate extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.picks.map((pick) => {
+                            {this.state.picks.map(pick => {
                               const team = teamMap.get(pick.team);
                               const classes = classnames({
                                 info: team.isUser,
@@ -1209,14 +1192,14 @@ export default class DraftMate extends Component {
                                       value={pick.team}
                                       onChange={component.changeOwner}
                                     >
-                                      {component.state.teams.map(t =>
+                                      {component.state.teams.map(t => (
                                         <option value={t.id}>{t.name}</option>
-                                      )}
+                                      ))}
                                     </select>
                                   </td>
                                 </tr>
-                              );}
-                            )}
+                              );
+                            })}
                           </tbody>
                         </table>
                       </Tab>
@@ -1227,63 +1210,79 @@ export default class DraftMate extends Component {
                             Draft Board
                             {draftboardAlert}
                           </div>
-                          }
+                        }
                       >
                         <table className="table table-hover">
                           <thead>
                             <tr>
                               <th>Name</th>
-                              <th></th>
+                              <th />
                               <th>Position</th>
                               <th>ADP</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.userRankings.map((playerId) => {
+                            {this.state.userRankings.map(playerId => {
                               const player = this.props.playerMap.get(playerId);
                               const classes = classnames({
                                 strikeout: this.state.selectedPlayers.includes(playerId),
                               });
                               let valueLabel = null;
                               if (
-                                (!this.state.selectedPlayers.includes(playerId) &&
+                                !this.state.selectedPlayers.includes(playerId) &&
                                 player[adp] &&
                                 this.state.pickNum - player[adp][0][this.props.values.adpKey] > 1 &&
-                                this.state.pickNum - player[adp][0][this.props.values.adpKey] < 10)
-                              ) valueLabel = (
-                                <OverlayTrigger
-                                  trigger={['hover', 'focus', 'click']}
-                                  placement="bottom"
-                                  overlay={
-                                    <Popover title="Good Value Pick">
-                                      This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a good value.
-                                    </Popover>
-                                  }
-                                >
-                                  <span className="label label-info">GOOD VALUE</span>
-                                </OverlayTrigger>
-                              );
+                                this.state.pickNum - player[adp][0][this.props.values.adpKey] < 10
+                              )
+                                valueLabel = (
+                                  <OverlayTrigger
+                                    trigger={['hover', 'focus', 'click']}
+                                    placement="bottom"
+                                    overlay={
+                                      <Popover title="Good Value Pick">
+                                        This player is available
+                                        {' '}
+                                        {this.state.pickNum -
+                                          player[adp][0][this.props.values.adpKey]}
+                                        {' '}
+                                        spots after their rank or ADP. This is a good value.
+                                      </Popover>
+                                    }
+                                  >
+                                    <span className="label label-info">GOOD VALUE</span>
+                                  </OverlayTrigger>
+                                );
 
                               if (
-                                (!this.state.selectedPlayers.includes(playerId) &&
+                                !this.state.selectedPlayers.includes(playerId) &&
                                 player[adp] &&
-                                this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9)
-                              ) valueLabel = (
-                                <OverlayTrigger
-                                  trigger={['hover', 'focus', 'click']}
-                                  placement="bottom"
-                                  overlay={
-                                    <Popover title="Great Value Pick">
-                                      This player is available {this.state.pickNum - player[adp][0][this.props.values.adpKey]} spots after their rank or ADP. This is a great value.
-                                    </Popover>
-                                  }
-                                >
-                                  <span className="label label-danger">GREAT VALUE</span>
-                                </OverlayTrigger>
-                              );
+                                this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9
+                              )
+                                valueLabel = (
+                                  <OverlayTrigger
+                                    trigger={['hover', 'focus', 'click']}
+                                    placement="bottom"
+                                    overlay={
+                                      <Popover title="Great Value Pick">
+                                        This player is available
+                                        {' '}
+                                        {this.state.pickNum -
+                                          player[adp][0][this.props.values.adpKey]}
+                                        {' '}
+                                        spots after their rank or ADP. This is a great value.
+                                      </Popover>
+                                    }
+                                  >
+                                    <span className="label label-danger">GREAT VALUE</span>
+                                  </OverlayTrigger>
+                                );
                               return (
                                 <tr className={classes}>
-                                  <td><a data-value={player.id} onClick={this.openPlayerViewer}>{player.name}</a></td>
+                                  <td>
+                                    <a data-value={player.id} onClick={this.openPlayerViewer}>
+                                      {player.name}
+                                    </a>
+                                  </td>
                                   <td>{valueLabel}</td>
                                   <td>{player.position}</td>
                                   <td>{player[adp] && player[adp][0][this.props.values.adpKey]}</td>
@@ -1296,70 +1295,71 @@ export default class DraftMate extends Component {
                       <Tab eventKey={3} title="Teams">
                         <div className="col-sm-12">
                           <div className="project-list">
-                          <select
-                            className="form-control m-b"
-                            name="teamInViewer"
-                            onChange={this.updateTeamInViewer}
-                            value={this.state.teamInViewer}
-                          >
-                            {this.state.teams.map(team => <option value={parseInt(team.id)}>{team.name}</option>)}
-                          </select>
-                          <hr />
-                          <div className="form-group">
-                            <h2>
-                              Team Name
-                            </h2>
+                            <select
+                              className="form-control m-b"
+                              name="teamInViewer"
+                              onChange={this.updateTeamInViewer}
+                              value={this.state.teamInViewer}
+                            >
+                              {this.state.teams.map(team => (
+                                <option value={parseInt(team.id)}>{team.name}</option>
+                              ))}
+                            </select>
+                            <hr />
+                            <div className="form-group">
+                              <h2>
+                                Team Name
+                              </h2>
                               <input
                                 type="text"
                                 className="form-control"
                                 onChange={this.changeTeamName}
                                 value={teamMap.get(this.state.teamInViewer).name}
                               />
-                            <button className="btn btn-primary" onClick={this.saveTeams}>Save Name</button>
+                              <button className="btn btn-primary" onClick={this.saveTeams}>
+                                Save Name
+                              </button>
+                            </div>
+                            <h2>Picks</h2>
+                            <table className="table table-hover">
+                              <tbody>
+                                {teamPicks.map(teamPick => {
+                                  const player = this.props.playerMap.get(teamPick.player);
+                                  return (
+                                    <tr>
+                                      <td className="project-title">
+                                        {teamPick.draftPick}
+                                      </td>
+                                      <td className="project-title">
+                                        <strong>{player && player.name}</strong>
+                                        <br />
+                                        <small>
+                                          {player && `${player.team} | ${player.position}`}
+                                        </small>
+                                      </td>
+                                      <td className="text-center">
+                                        ADP
+                                        <br />
+                                        <small>
+                                          {player &&
+                                            player[adp] &&
+                                            player[adp][0] &&
+                                            player[adp][0][this.state.values.adpKey]}
+                                        </small>
+                                      </td>
+                                      <td className="text-center">
+                                        Pick vs ADP
+                                        <br />
+                                        <small>
+                                          {teamPick.vsAdp && teamPick.vsAdp.toFixed(2)}
+                                        </small>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
                           </div>
-                          <h2>Picks</h2>
-                          <table className="table table-hover">
-                            <tbody>
-                              {teamPicks.map(teamPick => {
-                                const player = this.props.playerMap.get(teamPick.player);
-                                return (
-                                  <tr>
-                                    <td className="project-title">
-                                      {teamPick.draftPick}
-                                    </td>
-                                    <td className="project-title">
-                                      <strong>{player && player.name}</strong>
-                                      <br />
-                                    <small>
-                                      {player && `${player.team} | ${player.position}`}
-                                    </small>
-                                  </td>
-                                  <td className="text-center">
-                                    ADP
-                                    <br />
-                                    <small>
-                                      {
-                                        player &&
-                                        player[adp] &&
-                                        player[adp][0] &&
-                                        player[adp][0][this.state.values.adpKey]
-                                      }
-                                    </small>
-                                  </td>
-                                  <td className="text-center">
-                                    Pick vs ADP
-                                    <br />
-                                    <small>
-                                      {teamPick.vsAdp && (teamPick.vsAdp).toFixed(2)}
-                                    </small>
-                                  </td>
-                                </tr>
-                              );
-                              }
-                            )}
-                          </tbody>
-                        </table>
-                        </div>
                         </div>
                       </Tab>
                     </Tabs>

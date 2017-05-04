@@ -289,6 +289,7 @@ export default class Player extends Component {
     const badges = [];
 
     if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] > 9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] < 20
     ) {
@@ -309,6 +310,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
       );
     } else if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] >= 20
     ) {
       badges.push(
@@ -327,6 +329,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
         );
     } else if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] <= -20
     ) {
       badges.push(
@@ -347,6 +350,7 @@ export default class Player extends Component {
       )
         );
     } else if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < -9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 20
     ) {
@@ -369,6 +373,7 @@ export default class Player extends Component {
     }
 
     if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] > 19
     ) {
       badges.push(
@@ -388,6 +393,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
         );
     } else if (
+      player.rankings &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] < -19
     ) {
       badges.push(
@@ -613,7 +619,7 @@ export default class Player extends Component {
               }
             </div>
             <div className="col-md-6">
-              {player.position !== "PICK" ? <PlayerStats player={player} /> : null}
+              {player.status !== "R" ? <PlayerStats player={player} /> : null}
             </div>
           </div>
           <div className="row playerRow">
