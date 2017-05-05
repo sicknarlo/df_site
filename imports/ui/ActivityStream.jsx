@@ -13,11 +13,12 @@ export default class ActivityStream extends Component {
   render() {
     const players = this.props.players;
     const filteredData = this.props.rotoData.filter((item) => {
-      const player = players.find((p) => p.rotoworld_id === parseInt(item.pid));
+      const player = players.find((p) => p.rotoworld_id === item.pid);
       return player != null && player != undefined;
     })
+
     const data = filteredData.map((item) => {
-      const player = players.find((p) => p.rotoworld_id === parseInt(item.pid));
+      const player = players.find((p) => p.rotoworld_id === item.pid);
       const newItem = item;
       player ? newItem.player = player : newItem.player = null;
       newItem.imgLoc = !newItem.player
@@ -25,6 +26,7 @@ export default class ActivityStream extends Component {
         : `http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${newItem.player.espn_id}.png&w=350&h=254`;
       return newItem;
     })
+
     return (
       <div className="row">
         <div className="col-xs-12">

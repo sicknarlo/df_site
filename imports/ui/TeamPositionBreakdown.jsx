@@ -24,16 +24,18 @@ export default class TeamPositionBreakdown extends Component {
 
     for (var i=0; i< this.props.teamPlayers.length; i++) {
       const p = this.props.teamPlayers[i];
-      if (p.position === 'QB') {
-        qbTotal += p.rankings[0][this.props.values.valueKey]
-      } else if (p.position === 'WR') {
-        wrTotal += p.rankings[0][this.props.values.valueKey]
-      } else if (p.position === 'RB') {
-        rbTotal += p.rankings[0][this.props.values.valueKey]
-      } else if (p.position === 'TE') {
-        teTotal += p.rankings[0][this.props.values.valueKey]
-      } else if (p.position === 'PICK') {
-        pickTotal += p.rankings[0][this.props.values.valueKey]
+      if (p.adp[0][this.props.values.valueKey]) {
+        if (p.position === 'QB') {
+          qbTotal += p.adp[0][this.props.values.valueKey]
+        } else if (p.position === 'WR') {
+          wrTotal += p.adp[0][this.props.values.valueKey]
+        } else if (p.position === 'RB') {
+          rbTotal += p.adp[0][this.props.values.valueKey]
+        } else if (p.position === 'TE') {
+          teTotal += p.adp[0][this.props.values.valueKey]
+        } else if (p.position === 'PICK') {
+          pickTotal += p.adp[0][this.props.values.valueKey]
+        }
       }
     }
 

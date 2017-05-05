@@ -113,6 +113,7 @@ class App extends Component {
     ).done(
       function(data) {
         if (data) {
+          console.log(data);
           result = data.items.map((x) => {
             var item = x;
             var pid = x.link.split('/')[5];
@@ -192,8 +193,15 @@ class App extends Component {
 
     const alert = (
       <Alert bsStyle="info" onDismiss={this.hideAlert}>
-        <p>ADP Updated 4/17</p>
-        <p>Rankings Updated 5/2</p>
+        <div className="row">
+          <div className="col-sm-6">
+            <p>ADP Updated 4/17</p>
+            <p>Rankings Updated 5/2</p>
+          </div>
+          <div className="col-sm-6">
+            <a href="https://medium.com/dynastyfftools/update-5-5-2017-fc1ea1d76ca2">Change Log</a>
+          </div>
+        </div>
       </Alert>
     )
 
