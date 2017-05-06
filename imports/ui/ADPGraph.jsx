@@ -93,8 +93,10 @@ export default class ADPGraph extends Component {
       },
     };
     return (
-      <div className="adpChart">
-        <ReactHighcharts config={config} className="adpChart-container" isPureConfig={true} />
+      <div className="adpChart2-container">
+        <div className="adpChart2">
+          <ReactHighcharts config={config} className="adpChart-container" isPureConfig={true} />
+        </div>
       </div>
     );
   }
