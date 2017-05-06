@@ -6,6 +6,25 @@ import { Link, browserHistory } from 'react-router';
 import TeamPage from './TeamPage.jsx';
 
 export default class Team extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      team: null,
+    };
+  }
+
+  componentDidMount() {
+    const that = this;
+    Meteor.call('teams.getTeam', {
+      id: this.props.params.teamID,
+      user: this.props.currentUser,
+    }, (error, result) => {
+      if (error) browserHistory.push('/tools/dashboard');
+      if (result[0].owner !== this.props.currentUser._id) browserHistory.push('/tools/dashboard');
+      that.setState({ teamReady: true, team: result[0] });
+    })
+  }
   renderLoggedOut() {
     return (
       <div>
@@ -28,11 +47,10 @@ export default class Team extends Component {
   }
 
   renderLoggedIn() {
-    const team = this.props.teams.find(t => t._id === this.props.params.teamID);
-    if (team) {
+    if (this.state.team) {
       return (
         <TeamPage
-          team={team}
+          team={this.state.team}
           players={this.props.players}
           currentUser={this.props.currentUser}
           newsAlerts={this.props.newsAlerts}
@@ -41,7 +59,7 @@ export default class Team extends Component {
         />
       );
     } else {
-      browserHistory.push('/tools/dashboard');
+      return null;
     }
   }
 

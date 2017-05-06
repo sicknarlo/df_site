@@ -234,9 +234,7 @@ class App extends Component {
             players: this.state.players,
             currentDb: this.state.db,
             setDb: this.setDb,
-            teamsReady: this.props.teamsReady,
             currentUser: this.props.currentUser,
-            teams: this.props.teams,
             rotoData: this.state.rotoData,
             mixpanel,
             playerMap: this.state.playerMap,
@@ -255,14 +253,12 @@ App.propTypes = {
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('teams');
-  const subscribeTeams = Meteor.subscribe('teams');
-  const teamsReady = subscribeTeams.ready();
-  const teams = Teams.find({}).fetch();
+  // Meteor.subscribe('teams');
+  // const subscribeTeams = Meteor.subscribe('teams');
+  // const teamsReady = subscribeTeams.ready();
+  // const teams = Teams.find({}).fetch();
 
   return {
     currentUser: Meteor.user(),
-    teamsReady,
-    teams,
   };
 }, App);

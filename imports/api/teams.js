@@ -9,9 +9,9 @@ import { Players } from './players.js';
 if (Meteor.isServer) {
   // This code only runs on the server
   // Only publish tasks that are public or belong to the current user
-  Meteor.publish('teams', function() {
-    return Teams.find({ owner: this.userId });
-  });
+  // Meteor.publish('teams', function() {
+  //   return Teams.find({ owner: this.userId });
+  // });
 }
 
 Meteor.methods({
@@ -83,6 +83,10 @@ Meteor.methods({
   },
 
   'teams.get'() {
-    Teams.find({ userId: this.userId });
+    return Teams.find({ owner: this.userId }).fetch();
   },
+
+  'teams.getTeam'(data) {
+    return Teams.find({ _id: data.id }).fetch();
+  }
 });

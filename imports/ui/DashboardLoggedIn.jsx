@@ -21,6 +21,11 @@ export default class DashboardLoggedIn extends Component {
     Meteor.call('drafts.getDrafts', function(error, result) {
       that.setState({ drafts: result });
     });
+    Meteor.call('teams.get', (error, result) => {
+      console.log(error);
+      console.log(result);
+      that.setState({ teams: result, teamsReady: true })
+    })
   }
 
   handleDraftPageSelect(e) {
@@ -38,7 +43,7 @@ export default class DashboardLoggedIn extends Component {
     }
   }
   render() {
-    if (!this.props.teamsReady) {
+    if (!this.state.teamsReady) {
       return (
         <div className="sk-spinner sk-spinner-cube-grid">
             <div className="sk-cube"></div>
@@ -74,7 +79,7 @@ export default class DashboardLoggedIn extends Component {
             <div className="ibox-content">
               <table className="table table-hover">
                 <tbody>
-                  {this.props.teams && this.props.teams.map(function(t) {
+                  {this.state.teams && this.state.teams.map(function(t) {
                     const playerCount = t.players.length;
                     const isPPR = t.isPPR ? <span className='label label-warning'>PPR</span> : null;
                     const isIDP = t.isIDP ? <span className='label label-info'>IDP</span> : null;

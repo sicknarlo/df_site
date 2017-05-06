@@ -128,10 +128,10 @@ export default class TeamPage extends Component {
     let last3Value = 0;
     let last6Value = 0;
     for (var i=0; i<teamPlayers.length; i++) {
-      currentValue += teamPlayers[i].adp[0][this.props.values.valueKey];
-      lastValue += teamPlayers[i].adp[1][this.props.values.valueKey];
-      last3Value += teamPlayers[i].adp[2][this.props.values.valueKey];
-      last6Value += teamPlayers[i].adp[5][this.props.values.valueKey];
+      if (teamPlayers[i].adp[0][this.props.values.valueKey]) currentValue += teamPlayers[i].adp[0][this.props.values.valueKey];
+      if (teamPlayers[i].adp[1][this.props.values.valueKey]) lastValue += teamPlayers[i].adp[1][this.props.values.valueKey];
+      if (teamPlayers[i].adp[2][this.props.values.valueKey]) last3Value += teamPlayers[i].adp[2][this.props.values.valueKey];
+      if (teamPlayers[i].adp[5][this.props.values.valueKey]) last6Value += teamPlayers[i].adp[5][this.props.values.valueKey];
     }
 
     const monthDiff1 = currentValue - lastValue;
