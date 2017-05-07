@@ -72,19 +72,19 @@ Meteor.methods({
   },
   'teams.getStandardUnderValuedPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 }};
-    return Players.find(query, { sort: { 'rankings.0.buyindex': -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { 'rankings.0.buyIndex': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBUnderValuedPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
-    return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { 'rankings.0.buyIndex_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardOverValuedPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 } };
-    return Players.find(query, { sort: { 'rankings.0.buyindex': 1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { 'rankings.0.buyIndex': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBOverValuedPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 150 } };
-    return Players.find(query, { sort: { 'rankings.0.buyindex_2qb': -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { 'rankings.0.buyIndex_2qb': 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinNowPlayers'() {
     const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 150 } };
