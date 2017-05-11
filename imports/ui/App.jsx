@@ -191,15 +191,37 @@ class App extends Component {
 
     const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
 
+    const oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+
+    const updated = new Date('April 17 2017');
+    const current = new Date();
+
+    const diffDays = Math.round(Math.abs((updated.getTime() - current.getTime())/(oneDay)));
+
+    const freshness = 100 - (diffDays * 2.85) > 0 ? 100 - (diffDays * 2.85) : 0;
+
+    let classes = 'progress-bar';
+
+    if (freshness > 75) {
+      classes += ' greenBackground';
+    } else if (freshness < 51 && freshness > 25) {
+      classes += ' progress-bar-warning';
+    } else if (freshness < 26) {
+      classes += ' progress-bar-danger';
+    }
+
     const alert = (
       <Alert bsStyle="info" onDismiss={this.hideAlert}>
         <div className="row">
-          <div className="col-sm-6">
-            <p>ADP Updated 4/17</p>
-            <p>Rankings Updated 5/2</p>
-          </div>
-          <div className="col-sm-6">
-            <a href="https://medium.com/dynastyfftools/update-5-5-2017-fc1ea1d76ca2">Change Log</a>
+          <div className="col-lg-12">
+            <div>
+              <span>ADP Freshness</span>
+              <small className="pull-right">Updated 4/17</small>
+            </div>
+            <div className="progress progress-small">
+              <div style={{ width: `${freshness}%` }} className={classes}></div>
+            </div>
+            <a href="https://medium.com/dynastyfftools/back-online-b910d1f0a668">Change Log</a>
           </div>
         </div>
       </Alert>
