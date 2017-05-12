@@ -44,7 +44,6 @@ export default class Login extends Component {
         browserHistory.push('/tools/dashboard');
       });
     } catch (err) {
-      debugger;
     }
   }
   render() {

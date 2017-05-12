@@ -100,6 +100,12 @@ export default class Navigation extends React.Component {
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/upload-adp'}>
+                <i className="fa fa-external-link"></i>
+                <span className="nav-label">MFL Draft List</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
               <Link onClick={this.closeOnMobile} to={'/tools/faq'}>
                 <i className="fa fa-question"></i>
                 <span className="nav-label">FAQ</span>
@@ -174,6 +180,12 @@ export default class Navigation extends React.Component {
               <Link onClick={this.closeOnMobile} to={'/tools/calculator'}>
                 <i className="fa fa-calculator"></i>
                 <span className="nav-label">Trade Calculator</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/upload-adp'}>
+                <i className="fa fa-external-link"></i>
+                <span className="nav-label">MFL Draft List</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">

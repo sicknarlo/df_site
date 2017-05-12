@@ -43,7 +43,10 @@
     "react-reorder": "^3.0.0-alpha.0",
     "react-router": "https://registry.npmjs.org/react-router/-/react-router-2.4.1.tgz",
     "react-select": "^1.0.0-beta13",
-    "react-sparklines": "git+https://github.com/Dem0n3D/react-sparklines.git"
+    "react-sparklines": "git+https://github.com/Dem0n3D/react-sparklines.git",
+    "request-promise": "^4.2.1",
+    "tough-cookie": "^2.3.2",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "enzyme": "^2.3.0",

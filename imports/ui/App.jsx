@@ -221,11 +221,11 @@ class App extends Component {
             <div className="progress progress-small">
               <div style={{ width: `${freshness}%` }} className={classes}></div>
             </div>
-            <a href="https://medium.com/dynastyfftools/back-online-b910d1f0a668">Change Log</a>
+            <a href="https://medium.com/dynastyfftools/update-5-11-2017-fa5cea491e7a">Change Log</a>
           </div>
         </div>
       </Alert>
-    )
+    );
 
     if (!this.state.playersReady) {
       return (
