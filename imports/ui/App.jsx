@@ -193,7 +193,7 @@ class App extends Component {
 
     const oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 
-    const updated = new Date('April 17 2017');
+    const updated = new Date('May 12 2017');
     const current = new Date();
 
     const diffDays = Math.round(Math.abs((updated.getTime() - current.getTime())/(oneDay)));
@@ -216,7 +216,7 @@ class App extends Component {
           <div className="col-lg-12">
             <div>
               <span>ADP Freshness</span>
-              <small className="pull-right">Updated 4/17</small>
+              <small className="pull-right">Updated 5/12</small>
             </div>
             <div className="progress progress-small">
               <div style={{ width: `${freshness}%` }} className={classes}></div>

@@ -20,6 +20,7 @@ function ageCalc(dateString) {
 export default class PlayerRow extends Component {
   render() {
     const player = this.props.player;
+    console.log(player.adp[0], player.adp[2]);
     const trend = player.adp && player.adp[2]
       ? +((player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1))
       : 0;
