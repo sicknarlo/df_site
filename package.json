@@ -21,6 +21,7 @@
     "highstock-browserify": "^1.0.6",
     "icheck": "^1.0.2",
     "jquery": "^3.0.0",
+    "json2csv": "^3.7.3",
     "lodash": "^4.13.1",
     "meteor-node-stubs": "~0.2.0",
     "mixpanel-browser": "^2.9.9",

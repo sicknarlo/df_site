@@ -29,6 +29,7 @@ class App extends Component {
       rotoData: [],
       drafts: [],
       showAlert: true,
+      loadError: false,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
@@ -37,11 +38,22 @@ class App extends Component {
   }
   componentDidMount() {
     const that = this;
+    let load = 0;
+
+    const count = setInterval(() => {
+      load++;
+      if (load > 15) {
+        this.setState({ loadError: true });
+        clearInterval(count);
+      }
+    }, 1000);
+
     Meteor.call('players.getPlayers', function(error, result){
       if (error) {
       } else {
         playerMap = new Map(result.map((x) => [x.id, x]));
-        that.setState({ players: result, playersReady: true, playerMap });
+        clearInterval(count);
+        that.setState({ players: result, playersReady: true, playerMap, loadError: false });
       }
     });
 
@@ -227,9 +239,28 @@ class App extends Component {
       </Alert>
     );
 
+    const loadAlert = (
+      <Alert bsStyle="danger" onDismiss={() => this.setState({ loadError: false })}>
+        <div className="row">
+          <div className="col-lg-12">
+            Sorry for the delay, we're having technical issues. Continue waiting or try again later. If this continues <a href='https://twitter.com/DynastyFFTools'>Send us a tweet and we'll get it resolved.</a>
+          </div>
+        </div>
+      </Alert>
+    );
+
     if (!this.state.playersReady) {
       return (
         <div className="overlay">
+          {this.state.loadError && loadAlert}
+          {!this.state.loadError && <Alert bsStyle="warning">
+            <div className="row">
+              <div className="col-lg-12">
+                Initial load times can be long, but the app is fast once loaded. Thanks for being patient!
+              </div>
+            </div>
+          </Alert>
+        }
           <div className="sk-spinner sk-spinner-cube-grid">
               <div className="sk-cube"></div>
               <div className="sk-cube"></div>

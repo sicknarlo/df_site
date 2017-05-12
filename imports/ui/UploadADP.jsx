@@ -20,6 +20,7 @@ export default class UploadADP extends Component {
 
   uploadAdp(e) {
     e.preventDefault();
+    this.props.mixpanel.track('upload MFL draft list');
     this.setState({ busy: true });
 
     const args = {};
@@ -90,7 +91,7 @@ export default class UploadADP extends Component {
     return (
       <div className={mainclasses}>
         <div className="sk-spinner sk-spinner-wave">
-          <div cNamelass="sk-rect1" />
+          <div className="sk-rect1" />
           <div className="sk-rect2" />
           <div className="sk-rect3" />
           <div className="sk-rect4" />

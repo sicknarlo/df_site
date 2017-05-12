@@ -106,6 +106,12 @@ export default class Navigation extends React.Component {
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/aav-generator'}>
+                <i className="fa fa-dollar"></i>
+                <span className="nav-label">AAV Cheat Sheet Generator</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
               <Link onClick={this.closeOnMobile} to={'/tools/faq'}>
                 <i className="fa fa-question"></i>
                 <span className="nav-label">FAQ</span>
@@ -186,6 +192,12 @@ export default class Navigation extends React.Component {
               <Link onClick={this.closeOnMobile} to={'/tools/upload-adp'}>
                 <i className="fa fa-external-link"></i>
                 <span className="nav-label">MFL Draft List</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/aav-generator'}>
+                <i className="fa fa-dollar"></i>
+                <span className="nav-label">AAV Cheat Sheet Generator</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">

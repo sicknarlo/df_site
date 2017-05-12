@@ -21,6 +21,7 @@ import DraftMateStart from '../ui/DraftMateStart.jsx';
 import TradeSearch from '../ui/TradeSearch.jsx';
 import ReactGA from 'react-ga';
 import UploadADP from '../ui/UploadADP';
+import AAVGenerator from '../ui/AAVGenerator';
 
 ReactGA.initialize('UA-67151916-1');
 
@@ -53,6 +54,7 @@ export const renderRoutes = () => (
       <Route path="/tools/draftmate" component={DraftMateStart} />
       <Route path="/tools/tradesearch" component={TradeSearch} />
       <Route path="/tools/upload-adp" component={UploadADP} />
+      <Route path="/tools/aav-generator" component={AAVGenerator} />
     </Route>
   </Router>
 );
