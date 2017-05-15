@@ -47,8 +47,9 @@ class App extends Component {
         clearInterval(count);
       }
     }, 1000);
-
+    console.time('test');
     Meteor.call('players.getPlayers', function(error, result){
+      console.timeEnd('test');
       if (error) {
       } else {
         playerMap = new Map(result.map((x) => [x.id, x]));
@@ -56,7 +57,6 @@ class App extends Component {
         that.setState({ players: result, playersReady: true, playerMap, loadError: false });
       }
     });
-
     Meteor.call('drafts.getDrafts', function(error, result) {
       that.setState({ drafts: result });
     });
@@ -125,7 +125,6 @@ class App extends Component {
     ).done(
       function(data) {
         if (data) {
-          console.log(data);
           result = data.items.map((x) => {
             var item = x;
             var pid = x.link.split('/')[5];

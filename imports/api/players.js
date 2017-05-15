@@ -1,20 +1,22 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import appcache from './cache.js';
+// import cache from 'memory-cache';
+
+const cache = appcache.cache;
 
 export const Players = new Mongo.Collection('players');
 
-// if (Meteor.isServer) {
-//   // This code only runs on the server
-//   // Only publish tasks that are public or belong to the current user
-//   Meteor.publish('players', function() {
-//     console.log('playas');
-//     return Players.find({});
-//   });
-// }
-
 Meteor.methods({
   'players.getPlayers'() {
-    return Players.find({}).fetch();
+    this.unblock();
+    let p = cache.get('players');
+    if (!p) {
+      p = Players.find({}).fetch();
+      cache.put('players', p, 60000 * 60 * 3);
+    }
+    return p;
+    // return Players.find({}).fetch();
   },
   'players.getSortedStandardPlayers'() {
     const sortQuery = {};
