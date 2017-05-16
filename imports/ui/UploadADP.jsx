@@ -68,7 +68,7 @@ export default class UploadADP extends Component {
       <Alert bsStyle="danger" onDismiss={() => this.setState({ error: false })}>
         <div className="row">
           <div className="col-lg-12">
-            <h2>There was a problem. Check your username, password, and franchise ID and try again.</h2>
+            <h2>There was a problem. Check your username, password, and league ID and try again.</h2>
           </div>
         </div>
       </Alert>
@@ -120,7 +120,7 @@ export default class UploadADP extends Component {
                         <div className="col-sm-10"><input type="password" className="form-control" ref="password" /></div>
                       </div>
                       <div className="hr-line-dashed"></div>
-                      <div className="form-group"><label className="col-sm-2 control-label">Mock Draft Franchise ID</label>
+                      <div className="form-group"><label className="col-sm-2 control-label">Mock Draft League ID</label>
                         <div className="col-sm-10"><input type="text" className="form-control" ref="franchise" /></div>
                       </div>
                       <div className="hr-line-dashed"></div>
