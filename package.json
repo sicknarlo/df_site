@@ -15,6 +15,7 @@
     "chart.js": "^1.1.1",
     "cheerio": "^0.22.0",
     "classnames": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz",
+    "cron": "^1.2.1",
     "google-url": "0.0.4",
     "highcharts": "^4.2.5",
     "highcharts-exporting": "^0.1.2",
