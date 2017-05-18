@@ -6,6 +6,7 @@ import $ from 'jquery';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import PlayerADPRange from './PlayerADPRange.jsx';
 
 export default class Compare extends Component {
   constructor(props) {
@@ -43,7 +44,20 @@ export default class Compare extends Component {
     }
   }
   renderResults() {
-    return <ADPGraph players={this.state.playersToCompare} values={this.props.values} />
+    return (
+        <div>
+            <div className="row playerRow">
+              <div className="col-lg-12 graphContainer">
+                <PlayerADPRange players={this.state.playersToCompare} values={this.props.values} />
+              </div>
+            </div>
+            <div className="row playerRow">
+              <div className="col-lg-12 graphContainer">
+                <ADPGraph players={this.state.playersToCompare} values={this.props.values} />
+              </div>
+            </div>
+        </div>
+    )
   }
   renderInstructions() {
     return (

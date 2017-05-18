@@ -8,6 +8,7 @@ import SimilarPlayersTable from './SimilarPlayersTable.jsx';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import PlayerStats from './PlayerStats.jsx';
+import PlayerADPRange from './PlayerADPRange.jsx';
 
 
 const nextYearsFirst = '2017 1st';
@@ -601,6 +602,11 @@ export default class Player extends Component {
           <div className="row playerRow">
             <div className="col-lg-12 graphContainer">
               <ADPGraph players={[player]} values={this.props.values} />
+            </div>
+          </div>
+          <div className="row playerRow">
+            <div className="col-lg-12 graphContainer">
+              <PlayerADPRange players={[player]} values={this.props.values} />
             </div>
           </div>
           <div className="row playerRow">
