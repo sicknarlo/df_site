@@ -47,16 +47,12 @@ class App extends Component {
         clearInterval(count);
       }
     }, 1000);
-    console.time('test');
-    debugger;
-    Meteor.call('players.getPlayers', function(error, result){
-      if (error) {
-      } else {
+    console.time('load');
+    Meteor.call('players.getPlayers', (error, result) => {
+        console.timeEnd('load');
         playerMap = new Map(result.map((x) => [x.id, x]));
         clearInterval(count);
         that.setState({ players: result, playersReady: true, playerMap, loadError: false });
-        console.timeEnd('test');
-      }
     });
     Meteor.call('drafts.getDrafts', function(error, result) {
       that.setState({ drafts: result });
