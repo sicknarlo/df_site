@@ -13,6 +13,9 @@ const PValues = {
     redraft: 'redraft',
     rookie: 'rookie',
     aav: 'aav',
+    stdev: 'stdev',
+    low: 'low',
+    high: 'high',
   },
   super: {
     adpKey: 'adp_2qb',
@@ -28,6 +31,9 @@ const PValues = {
     redraft: 'redraft_2qb',
     rookie: 'rookie_2qb',
     aav: 'aav_2qb',
+    stdev: 'stdev_2qb',
+    low: 'low_2qb',
+    high: 'high_2qb',
   },
 };
 

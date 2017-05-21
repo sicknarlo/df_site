@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { Link } from 'react-router';
 import PageHeading from './PageHeading.jsx';
 import ADPGraph from './ADPGraph.jsx';
+import PlayerADPRange from './PlayerADPRange.jsx';
 import { Meteor } from 'meteor/meteor';
 import $ from 'jquery';
 
@@ -506,6 +507,11 @@ export default class Calculator extends Component {
                 <div className="row">
                   <div className="col-lg-12">
                     <ADPGraph players={this.state.team1.concat(this.state.team2)} values={this.props.values} />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-lg-12">
+                    <PlayerADPRange players={this.state.team1.concat(this.state.team2)} values={this.props.values} />
                   </div>
                 </div>
                 <div className="row">

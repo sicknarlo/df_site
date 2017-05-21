@@ -10,12 +10,15 @@ export const Players = new Mongo.Collection('players');
 Meteor.methods({
   'players.getPlayers'() {
     this.unblock();
-    let p = cache.get('players');
-    if (!p) {
-      p = Players.find({}).fetch();
-      cache.put('players', p, 60000 * 60 * 3);
+    if (Meteor.isServer) {
+      console.time('mongo');
+      let p = cache.get('players');
+      if (!p) {
+        p = Players.find({}).fetch();
+        cache.put('players', p, 60000 * 60 * 3);
+      }
+      return p;
     }
-    return p;
     // return Players.find({}).fetch();
   },
   'players.getSortedStandardPlayers'() {

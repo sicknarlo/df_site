@@ -127,7 +127,7 @@ export default class DraftMate extends Component {
       });
       const currentPick = this.state.picks[pickNum - 1];
       currentPick.player = player.id;
-      currentPick.vsAdp = player[adp] ? pickNum - player[adp][0][this.props.values.adpKey] : 0;
+      currentPick.vsAdp = player[adp] && player[adp][0] ? pickNum - player[adp][0][this.props.values.adpKey] : 0;
       newPicks[pickNum - 1] = currentPick;
       nextPick = this.state.picks[pickNum];
       newSelectedPlayers.push(player.id);
@@ -211,7 +211,7 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp]
+    currentPick.vsAdp = player[adp] && player[adp][0]
       ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
       : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
@@ -301,6 +301,7 @@ export default class DraftMate extends Component {
   }
 
   setPick(val) {
+      console.log(val);
     this.setState({ selectedPlayer: val });
   }
 
@@ -322,7 +323,7 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp]
+    currentPick.vsAdp = player[adp] && player[adp][0]
       ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
       : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
@@ -374,7 +375,7 @@ export default class DraftMate extends Component {
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
     currentPick.player = player.id;
-    currentPick.vsAdp = player[adp]
+    currentPick.vsAdp = player[adp] && player[adp][0]
       ? this.state.pickNum - player[adp][0][this.state.values.adpKey]
       : 0;
     newPicks[this.state.pickNum - 1] = currentPick;
@@ -421,7 +422,7 @@ export default class DraftMate extends Component {
     });
     const newPicks = this.state.picks;
     const currentPick = this.state.picks[this.state.pickNum - 1];
-    currentPick.vsAdp = player[adp]
+    currentPick.vsAdp = player[adp] && player[adp][0]
       ? this.state.pickNum - player[adp][0][this.props.values.adpKey]
       : 0;
     currentPick.player = player.id;
@@ -1074,7 +1075,7 @@ export default class DraftMate extends Component {
                                           RAR
                                           <br />
                                           <small>
-                                            {selectedPlayer.rankings &&
+                                            {selectedPlayer.rankings && selectedPlayer.rankings[0] &&
                                               selectedPlayer.rankings[0][this.state.values.rankKey]}
                                           </small>
                                         </td>
