@@ -103,20 +103,20 @@ let sortByPosition = {
 
 let sortByTrend = {
   asc: function(a, b) {
-    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] > b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
+    if (a[this.props.values.trend]> b[this.props.values.trend]) {
       return 1;
     }
-    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] < b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
+    if (a[this.props.values.trend]< b[this.props.values.trend]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] > b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
+    if (a[this.props.values.trend] > b[this.props.values.trend]) {
       return -1;
     }
-    if (a.adp[2][this.props.values.adpKey] - a.adp[0][this.props.values.adpKey] < b.adp[2][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]) {
+    if (a[this.props.values.trend] < b[this.props.values.trend]) {
       return 1;
     }
     // a must be equal to b

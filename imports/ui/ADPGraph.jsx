@@ -10,13 +10,19 @@ export default class ADPGraph extends Component {
     this.props.players.forEach((player) => {
       const adpObj = {};
       const rankObj = {};
+      const rangeObj = {};
 
       adpObj.name = `${player.name} ADP`;
       rankObj.name = `${player.name} Rank`;
+      rangeObj.name = `${player.name} Value Range`;
       adpObj.type = 'spline';
       rankObj.type = 'spline';
+      rangeObj.type = 'arearange';
 
       adpObj.data = [];
+      rangeObj.data = [];
+      rangeObj.linkedTo =  ':previous';
+        rangeObj.fillOpacity =  0.3;
 
       const sortedPlayerData = [...player.adp].sort((a, b) =>
         new Date(a.time).getTime() - new Date(b.time).getTime());
@@ -30,13 +36,25 @@ export default class ADPGraph extends Component {
             data[this.props.values.adpKey]
           ]
         );
+        if (data[this.props.values.low] && data[this.props.values.low] && this.props.single) {
+            rangeObj.data.push(
+                [
+                  Date.UTC(x.getFullYear(),
+                  x.getMonth(),
+                  x.getDate()),
+                  data[this.props.values.low],
+                  data[this.props.values.high]
+                ]
+            )
+        }
       });
 
       series.push(adpObj);
+      series.push(rangeObj);
 
       rankObj.data = [];
       const key = this.props.values.rankKey;
-      if (player.rankings) {
+      if (player.rankings && this.props.single) {
         const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
           new Date(a.time).getTime() - new Date(b.time).getTime());
         sortedPlayerRankings.forEach((r) => {

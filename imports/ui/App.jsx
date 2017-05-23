@@ -48,11 +48,19 @@ class App extends Component {
       }
     }, 1000);
     console.time('load');
-    Meteor.call('players.getPlayers', (error, result) => {
-        console.timeEnd('load');
+    Meteor.apply('players.getPlayers', [], {
+      onResultReceived: (err, result) => {
+          console.timeEnd('load');
         playerMap = new Map(result.map((x) => [x.id, x]));
         clearInterval(count);
         that.setState({ players: result, playersReady: true, playerMap, loadError: false });
+      }
+    }, (error, result) => {
+        if (!this.state.players) {
+          playerMap = new Map(result.map((x) => [x.id, x]));
+          clearInterval(count);
+          that.setState({ players: result, playersReady: true, playerMap, loadError: false });
+        }
     });
     Meteor.call('drafts.getDrafts', function(error, result) {
       that.setState({ drafts: result });
@@ -197,44 +205,6 @@ class App extends Component {
     //   }, this);
     // }
 
-    const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
-
-    const oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-
-    const updated = new Date('May 12 2017');
-    const current = new Date();
-
-    const diffDays = Math.round(Math.abs((updated.getTime() - current.getTime())/(oneDay)));
-
-    const freshness = 100 - (diffDays * 2.85) > 0 ? 100 - (diffDays * 2.85) : 0;
-
-    let classes = 'progress-bar';
-
-    if (freshness > 75) {
-      classes += ' greenBackground';
-    } else if (freshness < 51 && freshness > 25) {
-      classes += ' progress-bar-warning';
-    } else if (freshness < 26) {
-      classes += ' progress-bar-danger';
-    }
-
-    const alert = (
-      <Alert bsStyle="info" onDismiss={this.hideAlert}>
-        <div className="row">
-          <div className="col-lg-12">
-            <div>
-              <span>ADP Freshness</span>
-              <small className="pull-right">Updated 5/12</small>
-            </div>
-            <div className="progress progress-small">
-              <div style={{ width: `${freshness}%` }} className={classes}></div>
-            </div>
-            <a href="https://medium.com/dynastyfftools/update-5-11-2017-fa5cea491e7a">Change Log</a>
-          </div>
-        </div>
-      </Alert>
-    );
-
     const loadAlert = (
       <Alert bsStyle="danger" onDismiss={() => this.setState({ loadError: false })}>
         <div className="row">
@@ -272,11 +242,51 @@ class App extends Component {
       );
     }
 
+    const v = this.state.db === 'ppr' ? PValues.ppr : PValues.super;
+
+    const oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+
+    const updated = this.state.players[0] && this.state.players[0].adp[0].time ? new Date(this.state.players[0].adp[0].time) : new Date('May 22 2017');
+    const current = new Date();
+
+    const diffDays = Math.round(Math.abs((updated.getTime() - current.getTime())/(oneDay)));
+
+    const freshness = 100 - (diffDays * 2.85) > 0 ? 100 - (diffDays * 2.85) : 0;
+
+    let classes = 'progress-bar';
+
+    if (freshness > 75) {
+      classes += ' greenBackground';
+    } else if (freshness < 51 && freshness > 25) {
+      classes += ' progress-bar-warning';
+    } else if (freshness < 26) {
+      classes += ' progress-bar-danger';
+    }
+
+    const alert = (
+      <Alert bsStyle="info" onDismiss={this.hideAlert}>
+        <div className="row">
+          <div className="col-lg-12">
+            <div>
+              <span>ADP Freshness</span>
+              <small className="pull-right">{updated.toDateString()}</small>
+            </div>
+            <div className="progress progress-small">
+              <div style={{ width: `${freshness}%` }} className={classes}></div>
+            </div>
+            <a href="https://medium.com/dynastyfftools/update-5-11-2017-fa5cea491e7a">Change Log</a>
+          </div>
+        </div>
+      </Alert>
+    );
+
+
+
     return (
       <div id="wrapper">
-        <Navigation currentUser = {this.props.currentUser} />
+        <Navigation currentUser={this.props.currentUser} />
         <div id="page-wrapper" className="gray-bg">
-          <TopNav currentUser = {this.props.currentUser} />
+          <TopNav currentUser={this.props.currentUser} updated={updated} />
           {this.state.showAlert && alert}
           {this.props.children && React.cloneElement(this.props.children, {
             values: v,

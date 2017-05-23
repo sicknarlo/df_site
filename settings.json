@@ -1,0 +1,8 @@
+{
+  "galaxy.meteor.com": {
+     "env": {
+       "ROOT_URL": "http://dynastyfftools.meteorapp.com",
+       "MONGO_URL": "mongodb://sicknarlo:2ez2no@ds149221.mlab.com:49221/dfftoolstest"
+     }
+   }
+}

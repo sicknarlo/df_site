@@ -185,9 +185,7 @@ export default class Player extends Component {
       i--;
       n++;
     }
-    const trend = player.adp && player.adp[2]
-      ? (player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(1)
-      : 0;
+    const trend = player[this.props.values.trend] || 0;
     const next5 = [];
     i = playerADPRank + 1;
     n = 0;
@@ -290,7 +288,7 @@ export default class Player extends Component {
     const badges = [];
 
     if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] > 9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] < 20
     ) {
@@ -311,7 +309,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
       );
     } else if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] >= 20
     ) {
       badges.push(
@@ -330,7 +328,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
         );
     } else if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] <= -20
     ) {
       badges.push(
@@ -351,7 +349,7 @@ export default class Player extends Component {
       )
         );
     } else if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < -9 &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 20
     ) {
@@ -374,7 +372,7 @@ export default class Player extends Component {
     }
 
     if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] > 19
     ) {
       badges.push(
@@ -394,7 +392,7 @@ export default class Player extends Component {
         </OverlayTrigger>)
         );
     } else if (
-      player.rankings && player.rankings[0] && 
+      player.rankings && player.rankings[0] &&
       player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] < -19
     ) {
       badges.push(
@@ -601,7 +599,7 @@ export default class Player extends Component {
           </div>
           <div className="row playerRow">
             <div className="col-lg-12 graphContainer">
-              <ADPGraph players={[player]} values={this.props.values} />
+              <ADPGraph players={[player]} values={this.props.values} single={true}/>
             </div>
           </div>
           <div className="row playerRow">

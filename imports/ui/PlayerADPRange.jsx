@@ -18,8 +18,8 @@ export default class PlayerADPRange extends Component {
       const high = player.adp[0][values.high];
       const stdev = player.adp[0][values.stdev];
       const adp = player.adp[0][values.adpKey];
-      const stdevplus = adp + stdev > high ? high : adp + stdev;
-      const stdevminus = adp - stdev < low || low === 1 ? low : adp - stdev;
+      const stdevplus = adp + stdev > high ? high : parseFloat((adp + stdev).toFixed(2));
+      const stdevminus = adp - stdev < low || low === 1 ? low : parseFloat((adp - stdev).toFixed(2));
       adpObj.data.push([low, 0]);
 
       if (stdevminus !== low) {
