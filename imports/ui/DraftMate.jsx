@@ -196,7 +196,7 @@ export default class DraftMate extends Component {
     } else {
       const playerPoolSlice = this.state.playerPool.slice().slice(0, 5);
       const randomPlayer = playerPoolSlice[Math.floor(Math.random() * playerPoolSlice.length)];
-      player = randomPlayer
+      player = randomPlayer && this.props.playerMap.get(randomPlayer)
         ? this.props.playerMap.get(randomPlayer)
         : this.props.playerMap.get(this.state.playerPool[0]);
     }
@@ -497,7 +497,7 @@ export default class DraftMate extends Component {
     });
     const options = this.state.playerPool.map(playerId => {
       const p = this.props.playerMap.get(playerId);
-      return { val: p.id, label: p.name };
+      if (p) return { val: p.id, label: p.name };
     });
     const selectPlayerInViewer = this.state.playerInViewer &&
       !this.state.selectedPlayers.includes(this.state.playerInViewer.id) &&
@@ -530,6 +530,7 @@ export default class DraftMate extends Component {
     this.state.userRankings.forEach(playerId => {
       if (
         !this.state.selectedPlayers.includes(playerId) &&
+        this.props.playerMap.get(playerId)&&
         this.props.playerMap.get(playerId)[adp] &&
         this.state.pickNum - this.props.playerMap.get(playerId)[adp][0][this.state.values.adpKey] >
           1
@@ -1225,11 +1226,13 @@ export default class DraftMate extends Component {
                           <tbody>
                             {this.state.userRankings.map(playerId => {
                               const player = this.props.playerMap.get(playerId);
+                              if (!player) return;
                               const classes = classnames({
                                 strikeout: this.state.selectedPlayers.includes(playerId),
                               });
                               let valueLabel = null;
                               if (
+                                player &&
                                 !this.state.selectedPlayers.includes(playerId) &&
                                 player[adp] &&
                                 this.state.pickNum - player[adp][0][this.props.values.adpKey] > 1 &&
@@ -1255,6 +1258,7 @@ export default class DraftMate extends Component {
                                 );
 
                               if (
+                                player &&
                                 !this.state.selectedPlayers.includes(playerId) &&
                                 player[adp] &&
                                 this.state.pickNum - player[adp][0][this.props.values.adpKey] > 9

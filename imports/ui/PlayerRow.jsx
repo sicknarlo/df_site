@@ -20,7 +20,7 @@ function ageCalc(dateString) {
 export default class PlayerRow extends Component {
   render() {
     const player = this.props.player;
-    const trend = player[this.props.values.trend] || 0;
+    const trend = player[this.props.values.trend3] || 0;
     const trendCls = classnames('hide-xs', 'playerCol',
                                 { trendDanger: trend < 0,
                                   trendPositive: trend > 0,

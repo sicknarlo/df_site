@@ -12,7 +12,7 @@ Meteor.methods({
     this.unblock();
     // if (Meteor.isServer) {
     let p = cache.get('players');
-    if (!p) {
+    if (!p || p.length < 500) {
       p = Players.find({ inactive: false }, {}).fetch();
       cache.put('players', p, 60000 * 60 * 3);
     }
@@ -47,7 +47,7 @@ Meteor.methods({
         $lt: 151,
       }
     };
-    return Players.find(query, { sort: { trend: -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend3: -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBTopTrenders'() {
     const query = {
@@ -58,7 +58,7 @@ Meteor.methods({
         $lt: 151,
       },
     };
-    return Players.find(query, { sort: { trend_2qb: -1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend3_2qb: -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardBottomTrenders'() {
     const query = {
@@ -69,7 +69,7 @@ Meteor.methods({
         $lt: 151,
       }
     };
-    return Players.find(query, { sort: { trend: 1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend3: 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBBottomTrenders'() {
     const query = {
@@ -80,39 +80,39 @@ Meteor.methods({
         $lt: 151,
       }
     };
-    return Players.find(query, { sort: { trend_2qb: 1 }, limit: 10 }).fetch();
+    return Players.find(query, { sort: { trend3_2qb: 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardUnderValuedPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 100 }};
-    return Players.find(query, { sort: { 'rankings.0.buyIndex': -1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp': { '$lt': 100 }};
+    return Players.find(query, { sort: { 'buy_index': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBUnderValuedPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.buyIndex_2qb': -1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp_2qb': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'buy_index_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardOverValuedPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.buyIndex': 1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'buy_index': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBOverValuedPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.buyIndex_2qb': 1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp_2qb': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'buy_index_2qb': 1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinNowPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.win_now': -1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'win_now': -1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinNowPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp_2qb': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'teams.getStandardWinLaterPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.win_now': 1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'win_now': 1 }, limit: 10 }).fetch();
   },
   'teams.get2QBWinLaterPlayers'() {
-    const query = { 'status': { '$ne': 'R' }, 'rankings.0.rank_2qb': { '$lt': 100 } };
-    return Players.find(query, { sort: { 'rankings.0.win_now_2qb': -1 }, limit: 10 }).fetch();
+    const query = { 'status': { '$ne': 'R' }, 'adp.0.adp_2qb': { '$lt': 100 } };
+    return Players.find(query, { sort: { 'win_now_2qb': -1 }, limit: 10 }).fetch();
   },
   'players.getPlayer'({ playerId }) {
     const id = new Meteor.Collection.ObjectID(playerId);

@@ -103,20 +103,20 @@ let sortByPosition = {
 
 let sortByTrend = {
   asc: function(a, b) {
-    if (a[this.props.values.trend]> b[this.props.values.trend]) {
+    if (a[this.props.values.trend3]> b[this.props.values.trend3]) {
       return 1;
     }
-    if (a[this.props.values.trend]< b[this.props.values.trend]) {
+    if (a[this.props.values.trend3]< b[this.props.values.trend3]) {
       return -1;
     }
     // a must be equal to b
     return 0;
   },
   desc: function(a, b) {
-    if (a[this.props.values.trend] > b[this.props.values.trend]) {
+    if (a[this.props.values.trend3] > b[this.props.values.trend3]) {
       return -1;
     }
-    if (a[this.props.values.trend] < b[this.props.values.trend]) {
+    if (a[this.props.values.trend3] < b[this.props.values.trend3]) {
       return 1;
     }
     // a must be equal to b
@@ -351,7 +351,7 @@ export default class Players extends Component {
             <div
               className="sortToggle"
               onClick={this.toggleSort.bind(this, sortByADP)}>
-              ADP <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByADP })}></i>
+              ECR <i className={classnames('fa', 'fa-unsorted', { active: this.state.sortGrp === sortByADP })}></i>
             </div>
           </th>
           <th className="hide-xs">

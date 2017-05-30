@@ -175,21 +175,21 @@ export default class Dashboard extends Component {
             <div className="col-md-6">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>Top 3 Month Risers</h5>
+                  <h5>Top Risers</h5>
                 </div>
                 <div className="ibox-content">
                   <table className="table">
                     <thead>
                       <th>Name</th>
-                      <th>ADP</th>
-                      <th>3mo Trend</th>
+                      <th>ECR</th>
+                      <th>3 Mo. Trend</th>
                     </thead>
                     <tbody>
                       {risers.map((player) =>
                         <tr>
                           <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                           <td>{player.adp[0][this.props.values.adpKey]}</td>
-                          <td>+{(player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(2)}</td>
+                          <td>+{player[this.props.values.trend3].toFixed(2)}</td>
                         </tr>
                       )}
                     </tbody>
@@ -200,21 +200,21 @@ export default class Dashboard extends Component {
             <div className="col-md-6">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>Top 3 Month Fallers</h5>
+                  <h5>Top Fallers</h5>
                 </div>
                 <div className="ibox-content">
                 <table className="table">
                   <thead>
                     <th>Name</th>
-                    <th>ADP</th>
-                    <th>3mo Trend</th>
+                    <th>ECR</th>
+                    <th>3 Mo. Trend</th>
                   </thead>
                   <tbody>
                     {fallers.map((player) =>
                       <tr>
                         <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
                         <td>{player.adp[0][this.props.values.adpKey]}</td>
-                        <td>{(player.adp[2][this.props.values.adpKey] - player.adp[0][this.props.values.adpKey]).toFixed(2)}</td>
+                        <td>{player[this.props.values.trend3].toFixed(2)}</td>
                       </tr>
                     )}
                   </tbody>
@@ -233,7 +233,7 @@ export default class Dashboard extends Component {
                   <table className="table">
                     <thead>
                       <th>Name</th>
-                      <th>ADP</th>
+                      <th>ECR</th>
                       <th>Rank</th>
                     </thead>
                     <tbody>
@@ -258,7 +258,7 @@ export default class Dashboard extends Component {
                 <table className="table">
                   <thead>
                     <th>Name</th>
-                    <th>ADP</th>
+                    <th>ECR</th>
                     <th>Rank</th>
                   </thead>
                   <tbody>
@@ -275,7 +275,7 @@ export default class Dashboard extends Component {
               </div>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <div className="col-md-6 col-md-offset-3">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
@@ -285,7 +285,7 @@ export default class Dashboard extends Component {
                   <table className="table">
                     <thead>
                       <th>Name</th>
-                      <th>ADP</th>
+                      <th>FP Rank</th>
                       <th>Redraft Rank</th>
                     </thead>
                     <tbody>
@@ -301,7 +301,7 @@ export default class Dashboard extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
   );

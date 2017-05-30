@@ -16,6 +16,8 @@ const PValues = {
     stdev: 'stdev',
     low: 'low',
     high: 'high',
+    trend3: 'trend3',
+    trend6: 'trend6',
   },
   super: {
     adpKey: 'adp_2qb',
@@ -34,6 +36,8 @@ const PValues = {
     stdev: 'stdev_2qb',
     low: 'low_2qb',
     high: 'high_2qb',
+    trend3: 'trend3_2qb',
+    trend6: 'trend6_2qb',
   },
 };
 

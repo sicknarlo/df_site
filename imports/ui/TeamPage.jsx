@@ -345,9 +345,22 @@ export default class TeamPage extends Component {
                                 'label-danger': t.type.toUpperCase() === 'DROP',
                                 'label-warning': t.type.toUpperCase() === 'OTHER',
                               })}>{t.type.toUpperCase()}</p>
-                              <p><strong>ADD: </strong>{addPlayers.map((p) =>
-                                <span className="greenText">{p.name} (+{p[t.valueMonth]}) / </span>)};</p>
-                              <p><strong>REMOVE: </strong>{removePlayers.map((p) => <span className="redText">{p.name} (-{p[t.valueMonth]}) / </span>)};</p>
+                              <p>
+                                  <strong>ADD: </strong>
+                                  {addPlayers.map((p) => {
+                                      if (p) {
+                                          return <span className="greenText">{p.name} (+{p[t.valueMonth]}) / </span>
+                                      }
+                                  })}
+                              ;</p>
+                              <p>
+                                  <strong>REMOVE: </strong>
+                                  {removePlayers.map((p) => {
+                                      if (p) {
+                                          return <span className="redText">{p.name} (-{p[t.valueMonth]}) / </span>
+                                      }
+                                  })}
+                                  ;</p>
                             </li>
                           )
                         })}
