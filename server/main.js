@@ -11,9 +11,11 @@ import { Meteor } from 'meteor/meteor';
 import cron from 'cron';
 import rp from 'request-promise';
 import cheerio from 'cheerio';
+import cache from 'memory-cache';
 
 function cleanName(name) {
   if (name === 'Mitchell Trubisky') return 'Mitch Trubisky';
+  if (name === 'Robert Kelley') return 'Rob Kelley';
   return name.replace(' Jr.', '').replace(/\./g, '');
 }
 
@@ -2669,6 +2671,7 @@ function getFantasyProsRankings() {
             //     val = parseInt(val * 0.985);
             //   }
             // }
+            // if (playersFinal[y].name === 'Corey Davis') console.log(playersFinal[y]);
             playersFinal[y].aav = parseFloat((aav[y] / 1000).toFixed(5));
             playersFinal[y].value = parseInt(10500 * Math.pow(2.71828182845904, (-0.03 * playersFinal[y].rank)));
             // last = playersFinal[y];
@@ -4141,7 +4144,7 @@ function getFantasyProsRankings() {
                 ? newRank.adp_2qb - newPlayer.rankings[0].win_now_2qb
                 : 0;
               newPlayer.adp.unshift(newRank);
-              //   newPlayer.adp[0] = newRank;
+                // newPlayer.adp[0] = newRank;
               Players.update({ id: newPlayer.id }, newPlayer);
             } else {
               const match = pickRanks.find(x => x.name === p.name);
@@ -4184,7 +4187,7 @@ function getFantasyProsRankings() {
                     ? parseInt(newPlayer.adp[5].adp_2qb - match.rank.adp)
                     : 0;
                 //   newPlayer.adp = newPlayer.adp.slice(0, newPlayer.adp.length - 1);
-                // newPlayer.adp[0]
+                // newPlayer.adp[0] = match.rank;
                 newPlayer.adp.unshift(match.rank);
                 Players.update({ id: newPlayer.id }, newPlayer);
               }
@@ -5662,7 +5665,7 @@ function getFantasyProsRankings() {
 //     );
 // }
 // //
-getFantasyProsRankings();
+// getFantasyProsRankings();
 // //
 // // // const job1 = new cron.CronJob({
 // // //   // cronTime: '00 30 2 * * *',
@@ -5765,3 +5768,5 @@ const job2 = new cron.CronJob({
   start: true,
   timeZone: 'America/Los_Angeles',
 });
+
+cache.clear();
