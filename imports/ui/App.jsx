@@ -14,6 +14,7 @@ const CONNECTION_ISSUE_TIMEOUT = 5000;
 
 let playerMap = null;
 
+
 mixpanel.init("b3957d78fe49d65a13ad277d691d3a8b")
 // App component - represents the whole app
 class App extends Component {
