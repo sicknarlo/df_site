@@ -240,7 +240,7 @@ export default class Player extends Component {
           <div className="ibox">
             <div className="ibox-content dataPanel">
               <h5 className="m-b-md textCenter">
-                At an ADP of {player.adp[0][this.props.values.adpKey]}, are you buying or selling?
+                At an ECR of {player.adp[0][this.props.values.adpKey]}, are you buying or selling?
               </h5>
               <div className="buysellContainer">
                 <ButtonGroup>
@@ -289,7 +289,7 @@ export default class Player extends Component {
           placement="bottom"
           overlay={
             <Popover title="Good Value Buy">
-              This player's average ranking is over 10 spots greater than their current ADP. They could be a good buy.
+              This player's average ranking is over 10 spots greater than their current ECR. They could be a good buy.
             </Popover>
           }
         >
@@ -309,7 +309,7 @@ export default class Player extends Component {
           placement="bottom"
           overlay={
             <Popover title="Great Value Buy">
-              This player's average ranking is over 20 spots greater than their current ADP. They are a great buy at this value.
+              This player's average ranking is over 20 spots greater than their current ECR. They are a great buy at this value.
             </Popover>
           }
         >
@@ -329,7 +329,7 @@ export default class Player extends Component {
           placement="bottom"
           overlay={
             <Popover title="Great Sell Target">
-              This player's average ranking is over 20 spots worse than their current ADP. They are being overvalued and should be sold at this value.
+              This player's average ranking is over 20 spots worse than their current ECR. They are being overvalued and should be sold at this value.
             </Popover>
           }
         >
@@ -351,7 +351,7 @@ export default class Player extends Component {
           placement="bottom"
           overlay={
             <Popover title="Good Sell Target">
-              This player's average ranking is over 10 spots worse than their current ADP. They are possibly being overvalued and could be a good guy to move.
+              This player's average ranking is over 10 spots worse than their current ECR. They are possibly being overvalued and could be a good guy to move.
             </Popover>
           }
         >
@@ -513,7 +513,7 @@ export default class Player extends Component {
                           placement="bottom"
                           overlay={
                             <Popover title="Community Value Rating">
-                              Net users who would buy or draft this player at the current ADP. Votes expire after 7 days.
+                              Net users who would buy or draft this player at the current ECR. Votes expire after 7 days.
                             </Popover>
                           }
                         >
@@ -548,7 +548,7 @@ export default class Player extends Component {
                 <div className="col-xs-6 col-lg-3">
                   <div className="ibox">
                     <div className="ibox-content dataPanel ">
-                      <h5 className="m-b-md">ADP</h5>
+                      <h5 className="m-b-md">ECR</h5>
                       <h2 className={adpColorCls}>
                         {player.adp[0][this.props.values.adpKey]}
                       </h2>
@@ -559,18 +559,7 @@ export default class Player extends Component {
                   <div className="ibox">
                     <div className="ibox-content dataPanel ">
                       <h5 className="m-b-md">
-                        RAR Rank&nbsp;
-                        <OverlayTrigger
-                          trigger={['hover', 'focus', 'click']}
-                          placement="bottom"
-                          overlay={
-                            <Popover title="Rolling Aggregated Rank">
-                              The player's average ranking based on aggregated data from FantasyPros ECR.
-                            </Popover>
-                          }
-                        >
-                          <i className="fa fa-question-circle text-navy" />
-                        </OverlayTrigger>
+                        Staff Rank
                       </h5>
                       <h2>
                         {fpRank}

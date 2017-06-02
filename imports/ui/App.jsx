@@ -246,7 +246,7 @@ class App extends Component {
 
     const oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 
-    const updated = this.state.players[0] && this.state.players[0].adp[0].time ? new Date(this.state.players[0].adp[0].time) : new Date('May 22 2017');
+    const updated = this.state.players[0] && this.state.players[0].adp[0].time ? new Date(this.state.players[0].adp[0].time) : new Date('June 1 2017');
     const current = new Date();
 
     const diffDays = Math.round(Math.abs((updated.getTime() - current.getTime())/(oneDay)));
@@ -267,14 +267,14 @@ class App extends Component {
       <Alert bsStyle="info" onDismiss={this.hideAlert}>
         <div className="row">
           <div className="col-lg-12">
-            <div>
+            {/* <div>
               <span>ADP Freshness</span>
               <small className="pull-right">{updated.toDateString()}</small>
             </div>
             <div className="progress progress-small">
               <div style={{ width: `${freshness}%` }} className={classes}></div>
-            </div>
-            <a href="https://medium.com/dynastyfftools/update-5-11-2017-fa5cea491e7a">Change Log</a>
+            </div> */}
+            <a href="https://medium.com/dynastyfftools/update-6-1-2017-1381dd09809c">Change Log</a>
           </div>
         </div>
       </Alert>

@@ -3,7 +3,7 @@ import ReactHighcharts from 'react-highcharts';
 import PValues from './ADPConst.jsx';
 
 // ADPGraph component - represents a ADPGraph profile
-export default class PlayerADPRange extends Component {
+export default class AdvancedPlayerADPRange extends Component {
   render() {
     const series = [];
     const values = this.props.values;
@@ -56,6 +56,59 @@ export default class PlayerADPRange extends Component {
         '#E0294E',
         '#1938B3',
       ],
+      xAxis: {
+        plotLines: [
+          {
+            "value": this.props.players[0].adp[0][this.props.values.adpKey],
+            "width": 2,
+            "color": "#666",
+            "zIndex": 10,
+            "dashStyle": "Dash",
+            "label": {
+              "text": "avg",
+              "rotation": 0,
+              "align": "center",
+              "x": 0,
+              "y": -5,
+              "style": {
+                "fontSize": "10px"
+              }
+            }
+          }
+        ],
+        plotBands: [
+          {
+            "from": this.props.players[0].adp[0][this.props.values.adpKey] - this.props.players[0].adp[0][this.props.values.stdev],
+            "to": this.props.players[0].adp[0][this.props.values.adpKey] + this.props.players[0].adp[0][this.props.values.stdev],
+            "color": "rgba(184,210,236,.3)",
+            "zIndex": -1,
+            label: {
+                text: 'Fair Value',
+                style: {
+                    color: '#606060'
+                }
+            }
+          },
+          // {
+          //   "from": this.props.players[0].adp[0][this.props.values.adpKey],
+          //   "to": this.props.players[0].adp[0][this.props.values.adpKey] + this.props.players[0].adp[0][this.props.values.stdev],
+          //   "color": "rgba(184,210,236,.3)",
+          //   "zIndex": -1
+          // },
+          // {
+          //   "from": -1.8520831491109,
+          //   "to": 1.9575671712092,
+          //   "color": "rgba(184,210,236,.1)",
+          //   "zIndex": 0
+          // },
+          // {
+          //   "from": -2.8044957291909,
+          //   "to": 2.9099797512892,
+          //   "color": "rgba(184,210,236,.1)",
+          //   "zIndex": 0
+          // }
+        ]
+      },
         // xAxis: {
         //   type: 'datetime',
         //   dateTimeLabelFormats: { // don't display the dummy year
@@ -70,45 +123,11 @@ export default class PlayerADPRange extends Component {
         reversed: false,
         enabled: false,
         title: {
-          text: 'Probability to be Valued',
+          text: "Confidence at Value",
         },
-        gridLineWidth: 0,
         labels: {
           enabled: false,
-        },
-        plotBands: [
-          { // Light air
-            from: 0,
-            to: 0.25,
-            color: 'rgba(237,85,101, 0.1)',
-            label: {
-                text: 'Low',
-                style: {
-                    color: '#606060'
-                }
-            }
-          }, { // Light air
-              from: 0.25,
-              to: 0.75,
-              color: 'rgba(248,172,89, 0.1)',
-              label: {
-                  text: 'Medium',
-                  style: {
-                      color: '#606060'
-                  }
-              }
-          }, { // Light air
-              from: 0.75,
-              to: 1.25,
-              color: 'rgba(26,179,148, 0.1)',
-              label: {
-                  text: 'High',
-                  style: {
-                      color: '#606060'
-                  }
-              }
-          }
-        ],
+        }
       },
       plotOptions: {
         spline: {
@@ -132,7 +151,7 @@ export default class PlayerADPRange extends Component {
   }
 }
 
-PlayerADPRange.propTypes = {
+AdvancedPlayerADPRange.propTypes = {
   // This component gets the task to display through a React prop.
   // We can use propTypes to indicate it is required
   player: PropTypes.object.isRequired,

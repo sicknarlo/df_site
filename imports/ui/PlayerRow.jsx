@@ -21,53 +21,49 @@ export default class PlayerRow extends Component {
   render() {
     const player = this.props.player;
     const trend = player[this.props.values.trend3] || 0;
-    const trendCls = classnames('hide-xs', 'playerCol',
-                                { trendDanger: trend < 0,
-                                  trendPositive: trend > 0,
-                                  sorted: this.props.sortGrp === 'sortByTrend' });
+    const trendCls = classnames('hide-xs', 'playerCol', {
+      trendDanger: trend < 0,
+      trendPositive: trend > 0,
+      sorted: this.props.sortGrp === 'sortByTrend',
+    });
     const trendLabel = trend > 0 ? `+${trend}` : trend;
     const profileLink = `/tools/players/${player._id._str}`;
     return (
-        <tr>
-          <td
-            className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByName' })}
-          >
-            <Link to={profileLink}>{player.name}</Link>
-          </td>
-          <td
-            className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByPosition' })}
-          >
-            {player.position}
-          </td>
-          <td
-            className={classnames('playerCol', 'hide-xs', { sorted: this.props.sortGrp === 'sortByAge' })}
-          >
-            {player.birthdate
-              ? ageCalc(player.birthdate)
-              : null
-            }
-          </td>
-          {/* <td
+      <tr>
+        <td className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByName' })}>
+          <Link to={profileLink}>{player.name}</Link>
+        </td>
+        <td
+          className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByPosition' })}
+        >
+          {player.position}
+        </td>
+        <td
+          className={classnames('playerCol', 'hide-xs', {
+            sorted: this.props.sortGrp === 'sortByAge',
+          })}
+        >
+          {player.birthdate ? ageCalc(player.birthdate) : null}
+        </td>
+        {/* <td
             className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByRank' })}
           >
             {player.rankings && player.rankings[0][this.props.values.rankKey]}
           </td> */}
-          <td
-            className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}
-          >
-            {player.adp[0][this.props.values.adpKey]}
-          </td>
-          <td
-            className={trendCls}
-          >
-            {trendLabel}
-          </td>
-          <td
-            className={classnames('hide-xs', 'playerCol', { sorted: this.props.sortGrp === 'sortByValue' })}
-          >
-            {player.adp[0][this.props.values.valueKey]}
-          </td>
-        </tr>
+        <td className={classnames('playerCol', { sorted: this.props.sortGrp === 'sortByADP' })}>
+          {player.adp[0][this.props.values.adpKey]}
+        </td>
+        <td className={trendCls}>
+          {trendLabel}
+        </td>
+        <td
+          className={classnames('hide-xs', 'playerCol', {
+            sorted: this.props.sortGrp === 'sortByValue',
+          })}
+        >
+          {player.adp[0][this.props.values.valueKey]}
+        </td>
+      </tr>
     );
   }
 }

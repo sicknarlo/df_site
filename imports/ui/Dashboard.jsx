@@ -27,64 +27,64 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     const that = this;
-    Meteor.call('teams.getStandardTopTrenders', function(error, result){
+    Meteor.call('teams.getStandardTopTrenders', function (error, result) {
       if (error) {
       } else {
-        that.setState({ topTrendersPPR: result })
+        that.setState({ topTrendersPPR: result });
       }
     });
-    Meteor.call('teams.get2QBTopTrenders', function(error, result){
+    Meteor.call('teams.get2QBTopTrenders', function (error, result) {
       if (error) {
       } else {
-        that.setState({ topTrendersSuper: result })
+        that.setState({ topTrendersSuper: result });
       }
     });
-    Meteor.call('teams.getStandardBottomTrenders', function(error, result){
+    Meteor.call('teams.getStandardBottomTrenders', function (error, result) {
       if (error) {
       } else {
-        that.setState({ bottomTrendersPPR: result })
+        that.setState({ bottomTrendersPPR: result });
       }
     });
-    Meteor.call('teams.get2QBBottomTrenders', function(error, result){
+    Meteor.call('teams.get2QBBottomTrenders', function (error, result) {
       if (error) {
       } else {
-        that.setState({ bottomTrendersSuper: result })
+        that.setState({ bottomTrendersSuper: result });
       }
     });
-    Meteor.call('teams.getStandardUnderValuedPlayers', function(error, result){
+    Meteor.call('teams.getStandardUnderValuedPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ underValuedPPR: result })
+        that.setState({ underValuedPPR: result });
       }
     });
-    Meteor.call('teams.get2QBUnderValuedPlayers', function(error, result){
+    Meteor.call('teams.get2QBUnderValuedPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ underValuedSuper: result })
+        that.setState({ underValuedSuper: result });
       }
     });
-    Meteor.call('teams.getStandardOverValuedPlayers', function(error, result){
+    Meteor.call('teams.getStandardOverValuedPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ overValuedPPR: result })
+        that.setState({ overValuedPPR: result });
       }
     });
-    Meteor.call('teams.get2QBOverValuedPlayers', function(error, result){
+    Meteor.call('teams.get2QBOverValuedPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ overValuedSuper: result })
+        that.setState({ overValuedSuper: result });
       }
     });
-    Meteor.call('teams.getStandardWinNowPlayers', function(error, result){
+    Meteor.call('teams.getStandardWinNowPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ winNowPPR: result })
+        that.setState({ winNowPPR: result });
       }
     });
-    Meteor.call('teams.get2QBWinNowPlayers', function(error, result){
+    Meteor.call('teams.get2QBWinNowPlayers', function (error, result) {
       if (error) {
       } else {
-        that.setState({ winNowSuper: result })
+        that.setState({ winNowSuper: result });
       }
     });
   }
@@ -112,62 +112,74 @@ export default class Dashboard extends Component {
 
   render() {
     if (
-      this.state.topTrendersPPR.length === 0
-      && this.state.bottomTrendersPPR.length === 0
-      && this.state.topTrendersSuper.length === 0
-      && this.state.bottomTrendersSuper.length === 0
+      this.state.topTrendersPPR.length === 0 &&
+      this.state.bottomTrendersPPR.length === 0 &&
+      this.state.topTrendersSuper.length === 0 &&
+      this.state.bottomTrendersSuper.length === 0
     ) {
       return (
-          <div className="sk-spinner sk-spinner-double-bounce">
-            <div className="sk-double-bounce1"></div>
-            <div className="sk-double-bounce2"></div>
-          </div>
+        <div className="sk-spinner sk-spinner-double-bounce">
+          <div className="sk-double-bounce1" />
+          <div className="sk-double-bounce2" />
+        </div>
       );
     }
 
-    const risers = this.props.currentDb === 'ppr' ? this.state.topTrendersPPR : this.state.topTrendersSuper;
-    const fallers = this.props.currentDb === 'ppr' ? this.state.bottomTrendersPPR : this.state.bottomTrendersSuper;
-    const overs = this.props.currentDb === 'ppr' ? this.state.overValuedPPR : this.state.overValuedSuper;
-    const unders = this.props.currentDb === 'ppr' ? this.state.underValuedPPR : this.state.underValuedSuper;
+    const risers = this.props.currentDb === 'ppr'
+      ? this.state.topTrendersPPR
+      : this.state.topTrendersSuper;
+    const fallers = this.props.currentDb === 'ppr'
+      ? this.state.bottomTrendersPPR
+      : this.state.bottomTrendersSuper;
+    const overs = this.props.currentDb === 'ppr'
+      ? this.state.overValuedPPR
+      : this.state.overValuedSuper;
+    const unders = this.props.currentDb === 'ppr'
+      ? this.state.underValuedPPR
+      : this.state.underValuedSuper;
     const nows = this.props.currentDb === 'ppr' ? this.state.winNowPPR : this.state.winNowSuper;
     const dashboard = this.props.currentUser
-    ? <DashboardLoggedIn
+      ? <DashboardLoggedIn
         teamsReady={this.props.teamsReady}
         newsAlerts={this.props.newsAlerts}
         currentUser={this.props.currentUser}
         teams={this.props.teams}
         currentDb={this.props.currentDb}
-        drafts={this.props.drafts} />
-    : <DashboardLoggedOut
+        drafts={this.props.drafts}
+    />
+      : <DashboardLoggedOut
         players={this.props.players}
         newsAlerts={this.props.newsAlerts}
-        currentDb={this.props.currentDb} />
+        currentDb={this.props.currentDb}
+    />;
     const pprButtonActive = this.props.currentDb === 'ppr' ? 'primary' : '';
     const qbButtonActive = this.props.currentDb === '2qb' ? 'primary' : '';
     return (
       <div>
-          <div className="row dbToggle">
-            <div className="flex justifyCenter">
-                <ButtonGroup>
-                    <Button
-                        className="tradeButton"
-                        bsSize="large"
-                        bsStyle={pprButtonActive}
-                        value="ppr"
-                        onClick={this.updateDb.bind(this, 'ppr')}>
-                          Standard
-                     </Button>
-                     <Button
-                         className="tradeButton"
-                         bsSize="large"
-                         bsStyle={qbButtonActive}
-                         value="2qb"
-                         onClick={this.updateDb.bind(this, '2qb')}>
-                           2QB
-                     </Button>
-                </ButtonGroup>
-            </div>
+        <div className="row dbToggle">
+          <div className="flex justifyCenter">
+            <ButtonGroup>
+              <Button
+                className="tradeButton"
+                bsSize="large"
+                bsStyle={pprButtonActive}
+                value="ppr"
+                onClick={this.updateDb.bind(this, 'ppr')}
+              >
+                Standard
+              </Button>
+              <Button
+                className="tradeButton"
+                bsSize="large"
+                bsStyle={qbButtonActive}
+                value="2qb"
+                onClick={this.updateDb.bind(this, '2qb')}
+              >
+                2QB
+              </Button>
+            </ButtonGroup>
           </div>
+        </div>
         {dashboard}
         <div className="wrapper wrapper-content">
           <ActivityStream players={this.props.players} rotoData={this.props.rotoData} />
@@ -185,13 +197,20 @@ export default class Dashboard extends Component {
                       <th>3 Mo. Trend</th>
                     </thead>
                     <tbody>
-                      {risers.map((player) =>
+                      {risers.map(player => (
                         <tr>
-                          <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td>
+                            <Link
+                              onClick={this.trackClick}
+                              to={`/tools/players/${player._id._str}`}
+                            >
+                              {player.name}
+                            </Link>
+                          </td>
                           <td>{player.adp[0][this.props.values.adpKey]}</td>
                           <td>+{player[this.props.values.trend3].toFixed(2)}</td>
                         </tr>
-                      )}
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -203,22 +222,29 @@ export default class Dashboard extends Component {
                   <h5>Top Fallers</h5>
                 </div>
                 <div className="ibox-content">
-                <table className="table">
-                  <thead>
-                    <th>Name</th>
-                    <th>ECR</th>
-                    <th>3 Mo. Trend</th>
-                  </thead>
-                  <tbody>
-                    {fallers.map((player) =>
-                      <tr>
-                        <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                        <td>{player.adp[0][this.props.values.adpKey]}</td>
-                        <td>{player[this.props.values.trend3].toFixed(2)}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                  <table className="table">
+                    <thead>
+                      <th>Name</th>
+                      <th>ECR</th>
+                      <th>3 Mo. Trend</th>
+                    </thead>
+                    <tbody>
+                      {fallers.map(player => (
+                        <tr>
+                          <td>
+                            <Link
+                              onClick={this.trackClick}
+                              to={`/tools/players/${player._id._str}`}
+                            >
+                              {player.name}
+                            </Link>
+                          </td>
+                          <td>{player.adp[0][this.props.values.adpKey]}</td>
+                          <td>{player[this.props.values.trend3].toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -237,13 +263,20 @@ export default class Dashboard extends Component {
                       <th>Rank</th>
                     </thead>
                     <tbody>
-                      {overs.map((player) =>
+                      {overs.map(player => (
                         <tr>
-                          <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
+                          <td>
+                            <Link
+                              onClick={this.trackClick}
+                              to={`/tools/players/${player._id._str}`}
+                            >
+                              {player.name}
+                            </Link>
+                          </td>
                           <td>{player.adp[0][this.props.values.adpKey]}</td>
                           <td>{player.rankings[0][this.props.values.rankKey]}</td>
                         </tr>
-                      )}
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -255,22 +288,29 @@ export default class Dashboard extends Component {
                   <h5>Under Valued Players</h5>
                 </div>
                 <div className="ibox-content">
-                <table className="table">
-                  <thead>
-                    <th>Name</th>
-                    <th>ECR</th>
-                    <th>Rank</th>
-                  </thead>
-                  <tbody>
-                    {unders.map((player) =>
-                      <tr>
-                        <td><Link onClick={this.trackClick} to={`/tools/players/${player._id._str}`}>{player.name}</Link></td>
-                        <td>{player.adp[0][this.props.values.adpKey]}</td>
-                        <td>{player.rankings[0][this.props.values.rankKey]}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                  <table className="table">
+                    <thead>
+                      <th>Name</th>
+                      <th>ECR</th>
+                      <th>Rank</th>
+                    </thead>
+                    <tbody>
+                      {unders.map(player => (
+                        <tr>
+                          <td>
+                            <Link
+                              onClick={this.trackClick}
+                              to={`/tools/players/${player._id._str}`}
+                            >
+                              {player.name}
+                            </Link>
+                          </td>
+                          <td>{player.adp[0][this.props.values.adpKey]}</td>
+                          <td>{player.rankings[0][this.props.values.rankKey]}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -304,7 +344,7 @@ export default class Dashboard extends Component {
           </div> */}
         </div>
       </div>
-  );
+    );
   }
 }
 

@@ -4,15 +4,14 @@ import PValues from './ADPConst.jsx';
 
 // ADPGraph component - represents a ADPGraph profile
 export default class ADPGraph extends Component {
-
   render() {
     const series = [];
-    this.props.players.forEach((player) => {
+    this.props.players.forEach(player => {
       const adpObj = {};
       const rankObj = {};
       const rangeObj = {};
 
-      adpObj.name = `${player.name} ADP`;
+      adpObj.name = `${player.name} ECR`;
       rankObj.name = `${player.name} Rank`;
       rangeObj.name = `${player.name} Value Range`;
       adpObj.type = 'spline';
@@ -21,31 +20,24 @@ export default class ADPGraph extends Component {
 
       adpObj.data = [];
       rangeObj.data = [];
-      rangeObj.linkedTo =  ':previous';
-        rangeObj.fillOpacity =  0.3;
+      rangeObj.linkedTo = ':previous';
+      rangeObj.fillOpacity = 0.3;
 
-      const sortedPlayerData = [...player.adp].sort((a, b) =>
-        new Date(a.time).getTime() - new Date(b.time).getTime());
+      const sortedPlayerData = [...player.adp].sort(
+        (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+      );
       sortedPlayerData.forEach(data => {
         const x = data.time;
-        adpObj.data.push(
-          [
-            Date.UTC(x.getFullYear(),
-            x.getMonth(),
-            x.getDate()),
-            data[this.props.values.adpKey]
-          ]
-        );
+        adpObj.data.push([
+          Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()),
+          data[this.props.values.adpKey],
+        ]);
         if (data[this.props.values.low] && data[this.props.values.low] && this.props.single) {
-            rangeObj.data.push(
-                [
-                  Date.UTC(x.getFullYear(),
-                  x.getMonth(),
-                  x.getDate()),
-                  data[this.props.values.low],
-                  data[this.props.values.high]
-                ]
-            )
+          rangeObj.data.push([
+            Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()),
+            data[this.props.values.low],
+            data[this.props.values.high],
+          ]);
         }
       });
 
@@ -55,16 +47,12 @@ export default class ADPGraph extends Component {
       rankObj.data = [];
       const key = this.props.values.rankKey;
       if (player.rankings && this.props.single) {
-        const sortedPlayerRankings = [...player.rankings].sort((a, b) =>
-          new Date(a.time).getTime() - new Date(b.time).getTime());
-        sortedPlayerRankings.forEach((r) => {
+        const sortedPlayerRankings = [...player.rankings].sort(
+          (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+        );
+        sortedPlayerRankings.forEach(r => {
           const x = r.time;
-          rankObj.data.push([
-            Date.UTC(x.getFullYear(),
-            x.getMonth(),
-            x.getDate()),
-            r[key],
-          ]);
+          rankObj.data.push([Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), r[key]]);
         });
       }
       series.push(rankObj);
@@ -72,7 +60,7 @@ export default class ADPGraph extends Component {
 
     const config = {
       chart: {
-        backgroundColor: "rgba(0,0,0,0)",
+        backgroundColor: 'rgba(0,0,0,0)',
         type: 'areaspline',
         style: {
           fontFamily: 'open sans',
@@ -81,29 +69,41 @@ export default class ADPGraph extends Component {
       title: {
         text: 'Average Draft Position',
       },
-      colors: ['rgba(26,179,148,0.5)', '#1c84c6', '#23c6c8', '#f8ac59', '#ed5565', '#4719B3', '#B39419', '#1985B3', '#E0294E', '#1938B3'],
+      colors: [
+        'rgba(26,179,148,0.5)',
+        '#1c84c6',
+        '#23c6c8',
+        '#f8ac59',
+        '#ed5565',
+        '#4719B3',
+        '#B39419',
+        '#1985B3',
+        '#E0294E',
+        '#1938B3',
+      ],
       xAxis: {
         type: 'datetime',
-        dateTimeLabelFormats: { // don't display the dummy year
-          month: '%m-%Y'
+        dateTimeLabelFormats: {
+          // don't display the dummy year
+          month: '%m-%Y',
         },
         title: {
-          text: 'Date'
-        }
+          text: 'Date',
+        },
       },
       series,
       yAxis: {
         reversed: true,
         title: {
           text: undefined,
-        }
+        },
       },
       plotOptions: {
         spline: {
           marker: {
-            enabled: true
-          }
-        }
+            enabled: true,
+          },
+        },
       },
       tooltip: {
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
@@ -113,7 +113,7 @@ export default class ADPGraph extends Component {
     return (
       <div className="adpChart2-container">
         <div className="adpChart2">
-          <ReactHighcharts config={config} className="adpChart-container" isPureConfig={true} />
+          <ReactHighcharts config={config} className="adpChart-container" isPureConfig />
         </div>
       </div>
     );

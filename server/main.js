@@ -2662,32 +2662,29 @@ function getFantasyProsRankings() {
           let val = 10000;
           let last = null;
           for (let y = 0; y < playersFinal.length; y++) {
-            if (last && playersFinal[y].rank !== last.rank) {
-              if (val > 2000) {
-                val = parseInt(val * 0.971);
-              } else {
-                val = parseInt(val * 0.985);
-              }
-            }
+            // if (last && playersFinal[y].rank !== last.rank) {
+            //   if (val > 2000) {
+            //     val = parseInt(val * 0.971);
+            //   } else {
+            //     val = parseInt(val * 0.985);
+            //   }
+            // }
             playersFinal[y].aav = parseFloat((aav[y] / 1000).toFixed(5));
-            playersFinal[y].value = val;
-            last = playersFinal[y];
+            playersFinal[y].value = parseInt(10500 * Math.pow(2.71828182845904, (-0.03 * playersFinal[y].rank)));
+            // last = playersFinal[y];
           }
 
           // Sort players by 2qb rank and assign values
           playersFinal.sort((a, b) => a.super - b.super);
           val = 10000;
           last = null;
+          let rank = 1;
           for (let y = 0; y < playersFinal.length; y++) {
             if (last && playersFinal[y].super !== last.super) {
-              if (val > 2000) {
-                val = parseInt(val * 0.971);
-              } else {
-                val = parseInt(val * 0.987);
-              }
+              rank++;
             }
             playersFinal[y].aav_2qb = parseFloat((aav[y] / 1000).toFixed(5));
-            playersFinal[y].value_2qb = val;
+            playersFinal[y].value_2qb = parseInt(10500 * Math.pow(2.71828182845904, (-0.03 * rank)));
             last = playersFinal[y];
           }
 
@@ -4075,17 +4072,26 @@ function getFantasyProsRankings() {
                 newPlayer.adp[0].adp
                 ? parseFloat((newPlayer.adp[0].adp - newRank.adp).toFixed(1))
                 : 0;
+              const curr3 = new Date();
+              curr3.setMonth(curr3.getMonth() - 3);
+              const curr6 = new Date();
+              curr6.setMonth(curr6.getMonth() - 3);
+
+              const month3 = newPlayer.adp.filter(x => x.time.getMonth() === curr3.getMonth())[0];
+              const month6 = newPlayer.adp.filter(x => x.time.getMonth() === curr6.getMonth())[0];
+              // console.log(month3);
+
               newPlayer.trend3 = newRank.adp &&
                 newPlayer.adp &&
-                newPlayer.adp[2] &&
-                newPlayer.adp[2].adp
-                ? parseFloat((newPlayer.adp[2].adp - newRank.adp).toFixed(1))
+                month3 &&
+                month3.adp
+                ? parseFloat((month3.adp - newRank.adp).toFixed(1))
                 : 0;
               newPlayer.trend6 = newRank.adp &&
                 newPlayer.adp &&
-                newPlayer.adp[5] &&
-                newPlayer.adp[5].adp
-                ? parseFloat((newPlayer.adp[5].adp - newRank.adp).toFixed(1))
+                month6 &&
+                month6.adp
+                ? parseFloat((month6.adp - newRank.adp).toFixed(1))
                 : 0;
               newPlayer.trend_2qb = newRank.adp_2qb &&
                 newPlayer.adp &&
@@ -4095,15 +4101,15 @@ function getFantasyProsRankings() {
                 : 0;
               newPlayer.trend3_2qb = newRank.adp_2qb &&
                 newPlayer.adp &&
-                newPlayer.adp[2] &&
-                newPlayer.adp[2].adp_2qb
-                ? parseFloat((newPlayer.adp[2].adp_2qb - newRank.adp_2qb).toFixed(1))
+                month3 &&
+                month3.adp_2qb
+                ? parseFloat((month3.adp_2qb - newRank.adp_2qb).toFixed(1))
                 : 0;
               newPlayer.trend6_2qb = newRank.adp_2qb &&
                 newPlayer.adp &&
-                newPlayer.adp[5] &&
-                newPlayer.adp[5].adp_2qb
-                ? parseFloat((newPlayer.adp[5].adp_2qb - newRank.adp_2qb).toFixed(1))
+                month6 &&
+                month6.adp_2qb
+                ? parseFloat((month6.adp_2qb - newRank.adp_2qb).toFixed(1))
                 : 0;
               // newPlayer.adp = newPlayer.adp.slice(0, newPlayer.adp.length - 1);
 
@@ -5660,7 +5666,7 @@ getFantasyProsRankings();
 // //
 // // // const job1 = new cron.CronJob({
 // // //   // cronTime: '00 30 2 * * *',
-// // //   cronTime: '00 30 2 * * 3',
+// // //   cronTime: '00 30 2 * * 3',P
 // // //   onTick: Meteor.bindEnvironment(function () {
 // // //     getFantasyProsRankings();
 // // //   }),

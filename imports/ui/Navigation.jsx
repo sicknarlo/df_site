@@ -88,6 +88,12 @@ export default class Navigation extends React.Component {
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/tradewizard'}>
+                <i className="fa fa-magic"></i>
+                <span className="nav-label">Trade Wizard</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
               <Link onClick={this.closeOnMobile} to={'/tools/compare'}>
                 <i className="fa fa-compass"></i>
                 <span className="nav-label">Player Comparison</span>
@@ -174,6 +180,12 @@ export default class Navigation extends React.Component {
               <Link onClick={this.closeOnMobile} to={'/tools/tradesearch'}>
                 <i className="fa fa-search"></i>
                 <span className="nav-label">Trade Search</span>
+              </Link>
+            </li>
+            <li onClick={this.handleNavClick} className="">
+              <Link onClick={this.closeOnMobile} to={'/tools/tradewizard'}>
+                <i className="fa fa-magic"></i>
+                <span className="nav-label">Trade Wizard</span>
               </Link>
             </li>
             <li onClick={this.handleNavClick} className="">

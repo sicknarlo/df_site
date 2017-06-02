@@ -22,6 +22,8 @@ import TradeSearch from '../ui/TradeSearch.jsx';
 import ReactGA from 'react-ga';
 import UploadADP from '../ui/UploadADP';
 import AAVGenerator from '../ui/AAVGenerator';
+import TradeFinder from '../ui/TradeFinder';
+import PlayerDeepDive from '../ui/PlayerDeepDive';
 
 ReactGA.initialize('UA-67151916-1');
 
@@ -55,6 +57,8 @@ export const renderRoutes = () => (
       <Route path="/tools/tradesearch" component={TradeSearch} />
       <Route path="/tools/upload-adp" component={UploadADP} />
       <Route path="/tools/aav-generator" component={AAVGenerator} />
+      <Route path="/tools/tradewizard" component={TradeFinder} />
+      <Route path="/tools/deepdive" component={PlayerDeepDive} />
     </Route>
   </Router>
 );
