@@ -2673,7 +2673,7 @@ function getFantasyProsRankings() {
             // }
             // if (playersFinal[y].name === 'Corey Davis') console.log(playersFinal[y]);
             playersFinal[y].aav = parseFloat((aav[y] / 1000).toFixed(5));
-            playersFinal[y].value = parseInt(10500 * Math.pow(2.71828182845904, (-0.03 * playersFinal[y].rank)));
+            playersFinal[y].value = parseInt(10500 * Math.pow(2.71828182845904, (-0.0234 * playersFinal[y].rank)));
             // last = playersFinal[y];
           }
 
@@ -2687,7 +2687,7 @@ function getFantasyProsRankings() {
               rank++;
             }
             playersFinal[y].aav_2qb = parseFloat((aav[y] / 1000).toFixed(5));
-            playersFinal[y].value_2qb = parseInt(10500 * Math.pow(2.71828182845904, (-0.03 * rank)));
+            playersFinal[y].value_2qb = parseInt(10500 * Math.pow(2.71828182845904, (-0.0234 * rank)));
             last = playersFinal[y];
           }
 
@@ -2715,11 +2715,13 @@ function getFantasyProsRankings() {
           const round3 = [];
           const round4 = [];
 
+          let lastDefined = null;
           for (var y = 0; y < 48; y++) {
-            if (y < 12) round1.push([rookies[y], rookies_2qb[y]]);
-            if (y > 11 && y < 24) round2.push([rookies[y], rookies_2qb[y]]);
-            if (y > 23 && y < 36) round3.push([rookies[y], rookies_2qb[y]]);
-            if (y > 35 && y < 48) round4.push([rookies[y], rookies_2qb[y]]);
+            if (rookies[y] && rookies_2qb[y]) lastDefined = y;
+            if (y < 12) round1.push([rookies[lastDefined], rookies_2qb[lastDefined]]);
+            if (y > 11 && y < 24) round2.push([rookies[lastDefined], rookies_2qb[lastDefined]]);
+            if (y > 23 && y < 36) round3.push([rookies[lastDefined], rookies_2qb[lastDefined]]);
+            if (y > 35 && y < 48) round4.push([rookies[lastDefined], rookies_2qb[lastDefined]]);
           }
 
           const year1 = [];
@@ -4143,8 +4145,8 @@ function getFantasyProsRankings() {
                 newPlayer.rankings[0].win_now_2qb
                 ? newRank.adp_2qb - newPlayer.rankings[0].win_now_2qb
                 : 0;
-              newPlayer.adp.unshift(newRank);
-                // newPlayer.adp[0] = newRank;
+              // newPlayer.adp.unshift(newRank);
+                newPlayer.adp[0] = newRank;
               Players.update({ id: newPlayer.id }, newPlayer);
             } else {
               const match = pickRanks.find(x => x.name === p.name);
@@ -4187,8 +4189,8 @@ function getFantasyProsRankings() {
                     ? parseInt(newPlayer.adp[5].adp_2qb - match.rank.adp)
                     : 0;
                 //   newPlayer.adp = newPlayer.adp.slice(0, newPlayer.adp.length - 1);
-                // newPlayer.adp[0] = match.rank;
-                newPlayer.adp.unshift(match.rank);
+                newPlayer.adp[0] = match.rank;
+                // newPlayer.adp.unshift(match.rank);
                 Players.update({ id: newPlayer.id }, newPlayer);
               }
             }
@@ -5665,7 +5667,7 @@ function getFantasyProsRankings() {
 //     );
 // }
 // //
-// getFantasyProsRankings();
+getFantasyProsRankings();
 // //
 // // // const job1 = new cron.CronJob({
 // // //   // cronTime: '00 30 2 * * *',
