@@ -280,8 +280,8 @@ export default class Player extends Component {
     if (
       player.rankings &&
       player.rankings[0] &&
-      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] > 9 &&
-      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] < 20
+      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 9 &&
+      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < 20
     ) {
       badges.push(
         <OverlayTrigger
@@ -301,7 +301,7 @@ export default class Player extends Component {
     } else if (
       player.rankings &&
       player.rankings[0] &&
-      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] >= 20
+      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] >= 20
     ) {
       badges.push(
         <OverlayTrigger
@@ -321,7 +321,7 @@ export default class Player extends Component {
     } else if (
       player.rankings &&
       player.rankings[0] &&
-      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.rankKey] <= -20
+      player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] <= -20
     ) {
       badges.push(
         <OverlayTrigger

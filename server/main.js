@@ -98,9 +98,11 @@ function getFantasyProsRankings() {
   const draftYears = ['2017', '2018', '2019', '2020', '2021'];
 
   const options = {
-    uri: 'https://www.fantasypros.com/nfl/rankings/dynasty-overall.php',
+    // uri: 'https://www.fantasypros.com/nfl/rankings/dynasty-overall.php',
+    uri: 'http://partners.fantasypros.com/api/v1/consensus-rankings.php?experts=show&sport=NFL&year=2017&week=0&id=1015&position=ALL&type=STK&scoring=&filters=1015:1016:1017:1024:405',
     transform(body) {
-      return cheerio.load(body);
+      // return cheerio.load(body);
+      return JSON.parse(body);
     },
   };
 
@@ -2615,33 +2617,48 @@ function getFantasyProsRankings() {
 
   rp(options)
     .then(
-      Meteor.bindEnvironment(function ($) {
+      Meteor.bindEnvironment(function (json) {
         // Process html like you would with jQuery...
-        const raw = $('[class^="mpb-player"]');
-
-        const players = raw
-          .map((i, x) => {
-            if (x.children[2].children[0].children[0]) {
-              const name = cleanName(x.children[2].children[0].children[0].data);
-              const best = parseInt(x.children[8].children[0].data);
-              const worst = parseInt(x.children[10].children[0].data);
-              const rank = parseFloat(x.children[12].children[0].data);
-              const stdev = parseFloat(x.children[14].children[0].data);
-              const pos = x.children[4].children[0].data;
-              const isQb = x.children[4].children[0].data.indexOf('QB') > -1;
-              const superScore = isQb ? rank - 35 : rank;
-              return {
-                name,
-                best,
-                worst,
-                rank,
-                stdev,
-                pos,
-                superScore,
-              };
-            }
-          })
-          .toArray();
+        // const raw = $('[class^="mpb-player"]');
+        const players = json.players
+          .map((x, i) => {
+            const name = cleanName(x.player_name);
+            const best = parseInt(x.rank_min);
+            const worst = parseInt(x.rank_max);
+            const rank = parseFloat(x.rank_ave);
+            const stdev = parseFloat(x.rank_std);
+            const pos = x.player_position_id;
+            const isQb = x.player_position_id.indexOf('QB') > -1;
+            const superScore = isQb ? rank - 35 : rank;
+            return {
+              name,
+              best,
+              worst,
+              rank,
+              stdev,
+              pos,
+              superScore,
+            };
+            // if (x.children[2].children[0].children[0]) {
+            //   const name = cleanName(x.children[2].children[0].children[0].data);
+            //   const best = parseInt(x.children[8].children[0].data);
+            //   const worst = parseInt(x.children[10].children[0].data);
+            //   const rank = parseFloat(x.children[12].children[0].data);
+            //   const stdev = parseFloat(x.children[14].children[0].data);
+            //   const pos = x.children[4].children[0].data;
+            //   const isQb = x.children[4].children[0].data.indexOf('QB') > -1;
+            //   const superScore = isQb ? rank - 35 : rank;
+            //   return {
+            //     name,
+            //     best,
+            //     worst,
+            //     rank,
+            //     stdev,
+            //     pos,
+            //     superScore,
+            //   };
+            // }
+          });
         const playersSuper = players.slice().sort((a, b) => a.superScore - b.superScore);
         let playersFinal = playersSuper.map((x, i) => {
           const obj = x;
