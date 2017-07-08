@@ -91,6 +91,7 @@ export default class Calculator extends Component {
       longURL: null,
       shouldShare: false,
       gettingShareURL: false,
+      startUpMode: false,
     };
     this.closeInstructions = this.closeInstructions.bind(this);
     this.closeResults = this.closeResults.bind(this);
@@ -241,7 +242,7 @@ export default class Calculator extends Component {
               <p>
                 Not sure if a trade is fair? DynastyFF Tool's Trade Calculator was
                 created to help players make informed trade decisions based on
-                FantasyPros Expert Consensus Rankings..
+                FantasyPros Expert Consensus Rankings.
               </p>
               <p>
                 The values in the database are based on Expert Consensus Rankings, which
@@ -282,9 +283,28 @@ export default class Calculator extends Component {
 
 
   render() {
-    const options = this.props.players.map((player) => {
-      return { val: player, label: player.name }
-    })
+    let options = [];
+    if (this.state.startUpMode) {
+      const sortedPlayers = this.props.players
+        .slice()
+        .sort((a, b) => a.adp[0][this.props.values.adpKey] - b.adp[0][this.props.values.adpKey]);
+      let currentPick = 1;
+      sortedPlayers.forEach(player => {
+        options.push({ val: player, label: player.name });
+        if (player.position !== 'PICK') {
+          const pick = {};
+          Object.assign(pick, player);
+          pick.name = `Startup Pick ${currentPick}`;
+          options.push({ val: pick, label: pick.name });
+          currentPick ++;
+        }
+      })
+    } else {
+      options = this.props.players.map((player) => {
+        return { val: player, label: player.name }
+      })
+    }
+
     let team1ValueSent = 0;
     this.state.team1.forEach((player) => {
       team1ValueSent += player.adp[0][this.props.values.valueKey]
@@ -352,6 +372,17 @@ export default class Calculator extends Component {
         <PageHeading current={"Trade Calculator"} db={this.props.currentDb} />
         {this.state.showInstructions && this.renderInstructions()}
         <div className="wrapper wrapper-content animated fadeIn">
+          <div className="row textCenter">
+            <h1>Startup Mode (Enable Startup Picks)</h1>
+            <label className="switch">
+              <input
+                type="checkbox"
+                value={this.state.startUpMode}
+                onClick={() => this.setState({ startUpMode: !this.state.startUpMode })}
+              />
+              <div className="slider round"></div>
+            </label>
+          </div>
           <div className="row">
             <div className="col-md-6 col-sm-12">
               <div className="ibox float-e-margins">
@@ -457,7 +488,7 @@ export default class Calculator extends Component {
                             player.rankings[0] &&
                             player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 9
                           ) badges.push(
-                            (<div><i className="fa fa-thumbs-o-up"></i> This player is ranked higher ({player.rankings[0][this.props.values.rankKey]}) than his current ECR ({player.adp[0][this.props.values.adpKey]})</div>)
+                            (<div><i className="fa fa-thumbs-o-up"></i> `This player is ranked higher (${player.rankings[0][this.props.values.rankKey]}) than his current ECR (${player.adp[0][this.props.values.adpKey]})`</div>)
                           )
 
                           if (
@@ -465,7 +496,7 @@ export default class Calculator extends Component {
                             player.rankings[0] &&
                             player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < -9
                           ) badges.push(
-                            (<div><i className="fa fa-thumbs-o-down"></i> This player is ranked lower ({player.rankings[0][this.props.values.rankKey]}) than his current ECR ({player.adp[0][this.props.values.adpKey]})</div>)
+                            (<div><i className="fa fa-thumbs-o-down"></i> `This player is ranked lower (${player.rankings[0][this.props.values.rankKey]}) than his current ECR (${player.adp[0][this.props.values.adpKey]})`</div>)
                           )
 
                           if (
@@ -474,7 +505,7 @@ export default class Calculator extends Component {
                             player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] >
                               19
                           ) badges.push(
-                            (<div><i className="fa fa-clock-o"></i> This player's redraft rank is higher ({player.rankings[0][this.props.values.redraftRank]}) than his current ECR ({player.adp[0][this.props.values.adpKey]}). They could drop in value significantly</div>)
+                            (<div><i className="fa fa-clock-o"></i> `This player's redraft rank is higher (${player.rankings[0][this.props.values.redraftRank]}) than his current ECR ({player.adp[0][this.props.values.adpKey]}). They could drop in value significantly</div>)
                           )
 
                           if (
@@ -533,78 +564,15 @@ export default class Calculator extends Component {
                         {team2ValueGained}
                       </div>
                     </div>
-                        {this.state.team1.map((player) => {
-                          const badges = [];
-                          if (
-                            player.rankings &&
-                            player.rankings[0] &&
-                            player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] > 9
-                          ) badges.push(
-                            (<div><i className="fa fa-thumbs-o-up"></i> This player is ranked higher ({player.rankings[0][this.props.values.rankKey]}) than his current ECR ({player.adp[0][this.props.values.adpKey]})</div>)
-                          )
-
-                          if (
-                            player.rankings &&
-                            player.rankings[0] &&
-                            player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.rankKey] < -9
-                          ) badges.push(
-                            (<div><i className="fa fa-thumbs-o-down"></i> This player is ranked lower ({player.rankings[0][this.props.values.rankKey]}) than his current ECR ({player.adp[0][this.props.values.adpKey]})</div>)
-                          )
-
-                          if (
-                            player.rankings &&
-                            player.rankings[0] &&
-                            player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] >
-                              19
-                          ) badges.push(
-                            (<div><i className="fa fa-clock-o"></i> This player's redraft rank is higher ({player.rankings[0][this.props.values.redraftRank]}) than his current ECR ({player.adp[0][this.props.values.adpKey]}). They could drop in value significantly</div>)
-                          )
-
-                          if (
-                            player.rankings &&
-                            player.rankings[0] &&
-                            player.adp[0][this.props.values.adpKey] - player.rankings[0][this.props.values.redraftRank] <
-                              19
-                          ) badges.push(
-                            (<div><i className="fa fa-clock-o"></i> This player's redraft rank is lower ({player.rankings[0][this.props.values.redraftRank]}) than his current ECR ({player.adp[0][this.props.values.adpKey]}). They may not justify their cost immediately.</div>)
-                          )
-
-                          if (player[this.props.values.trend3] > 9) badges.push(
-                            (<div><i className="fa fa-rocket"></i> This player's ECR has increased significantly in the past 3 months ({player[this.props.values.trend3]}). They could continue to increase in value.</div>)
-                          )
-
-                          if (player[this.props.values.trend3] < -9) badges.push(
-                            (<div><i className="fa fa-warning"></i> This player's ECR has decreased significantly in the past 3 months ({player[this.props.values.trend3]}). They could continue to decrease in value.</div>)
-                          )
-
-                          const warnCount = badges.length;
-
-                          const warnBox = warnCount > 0 ? (
-                            <OverlayTrigger
-                              trigger={['hover', 'focus', 'click']}
-                              placement="bottom"
-                              overlay={
-                                <Popover title="Call Outs" className="callouts">
-                                  {badges.map(x => x)}
-                                </Popover>
-                              }
-                            >
-                              <span className="label label-warning">{warnCount}</span>
-                            </OverlayTrigger>
-                          ) : null;
-
-                          return (
-                            <div className="calcResultRow">
-                              <div>
-                                <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>&nbsp;
-                                {warnBox}
-                              </div>
-                              <div>
-                                {player.adp[0][this.props.values.valueKey]}
-                              </div>
+                        {this.state.team1.map((player) =>
+                          <div className="calcResultRow">
+                            <div>
+                              <Link to={`/tools/players/${player._id._str}`}>{player.name}</Link>
                             </div>
-                          )
-                        }
+                            <div>
+                              {player.adp[0][this.props.values.valueKey]}
+                            </div>
+                          </div>
                         )}
                   </div>
                 </div>

@@ -50,8 +50,8 @@ let sortByName = {
 };
 let sortByADP = {
   asc: function(a, b) {
-      if (!a.adp[0][this.props.values.adpKey]) return 1;
-      if (!b.adp[0][this.props.values.adpKey]) return -1;
+    if (!a.adp[0][this.props.values.adpKey]) return 1;
+    if (!b.adp[0][this.props.values.adpKey]) return -1;
     if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
       return 1;
     }

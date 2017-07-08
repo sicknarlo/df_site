@@ -8,14 +8,11 @@ export default class ADPGraph extends Component {
     const series = [];
     this.props.players.forEach(player => {
       const adpObj = {};
-      const rankObj = {};
       const rangeObj = {};
 
       adpObj.name = `${player.name} ECR`;
-      rankObj.name = `${player.name} Rank`;
-      rangeObj.name = `${player.name} Value Range`;
+      rangeObj.name = `Range`;
       adpObj.type = 'spline';
-      rankObj.type = 'spline';
       rangeObj.type = 'arearange';
 
       adpObj.data = [];
@@ -44,18 +41,18 @@ export default class ADPGraph extends Component {
       series.push(adpObj);
       series.push(rangeObj);
 
-      rankObj.data = [];
-      const key = this.props.values.rankKey;
-      if (player.rankings && this.props.single) {
-        const sortedPlayerRankings = [...player.rankings].sort(
-          (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-        );
-        sortedPlayerRankings.forEach(r => {
-          const x = r.time;
-          rankObj.data.push([Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), r[key]]);
-        });
-      }
-      series.push(rankObj);
+      // rankObj.data = [];
+      // const key = this.props.values.rankKey;
+      // if (player.rankings && this.props.single) {
+      //   const sortedPlayerRankings = [...player.rankings].sort(
+      //     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+      //   );
+      //   sortedPlayerRankings.forEach(r => {
+      //     const x = r.time;
+      //     rankObj.data.push([Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()), r[key]]);
+      //   });
+      // }
+      // series.push(rankObj);
     });
 
     const config = {
@@ -106,8 +103,9 @@ export default class ADPGraph extends Component {
         },
       },
       tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
         valueDecimals: 1,
+        crosshairs: true,
+        shared: true,
       },
     };
     return (

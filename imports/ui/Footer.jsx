@@ -11,11 +11,11 @@ export default class Footer extends React.Component {
 
   render() {
     return (
-      <div className="footer">
+      <div className="footer fixed">
         <div className="pull-right">
         </div>
         <div>
-            <strong>Copyright</strong> dynastyfftools.com &copy; 2016
+            <strong>Copyright</strong> dynastyfftools.com &copy; 2017
         </div>
     </div>
     );
