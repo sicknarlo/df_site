@@ -15,6 +15,7 @@ export default class AAVGenerator extends Component {
       teamCount: 12,
       teamBudget: 100,
       is2qb: false,
+      rosterSize: 20,
     };
     this.downloadAAV = this.downloadAAV.bind(this);
     this.updateOption = this.updateOption.bind(this);
@@ -47,25 +48,36 @@ export default class AAVGenerator extends Component {
         adpKey: 'adp',
         aav: 'aav',
       };
-
-    this.props.players.slice().filter(x => x.position !== 'PICK').sort((a, b) => {
-      if (a.adp[0][values.adpKey] > b.adp[0][values.adpKey]) {
-        return 1;
-      }
-      if (a.adp[0][values.adpKey] < b.adp[0][values.adpKey]) {
-        return -1;
-      }
-      // a must be equal to b
-      return 0;
-    }).some(p => {
-      data.push({
-        name: p.name,
-        position: p.position,
-        aav: `$${(p.adp[0][values.aav] * totalBudget).toFixed(0)}`,
+    let adjustedBudget = 0;
+    const sortedPlayers = this.props.players
+        .slice()
+        .filter(x => x.position !== 'PICK')
+        .sort((a, b) => {
+          if (a.adp[0][values.adpKey] > b.adp[0][values.adpKey]) {
+            return 1;
+          }
+          if (a.adp[0][values.adpKey] < b.adp[0][values.adpKey]) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
       });
-      count ++;
-      if (count > 200) return true;
-    });
+    sortedPlayers
+      .some((p) => {
+        adjustedBudget += p.adp[0][values.aav] * 1000;
+        count ++;
+        if (count > this.state.rosterSize * this.state.teamCount) return true;
+      })
+    count = 0;
+    sortedPlayers.some(p => {
+        data.push({
+          name: p.name,
+          position: p.position,
+          aav: `$${((p.adp[0][values.aav] * 1000 / adjustedBudget) * totalBudget).toFixed(0)}`,
+        });
+        count ++;
+        if (count > 250) return true;
+      });
     let result = null;
     try {
       result = json2csv({ data: data, fields: fields });
@@ -153,6 +165,17 @@ export default class AAVGenerator extends Component {
                             className="form-control"
                             onChange={this.updateOption}
                             value={this.state.teamCount}
+                          />
+                        </div>
+                      </div>
+                      <div className="hr-line-dashed"></div>
+                      <div className="form-group"><label className="col-sm-2 control-label">Roster Size</label>
+                        <div className="col-sm-10">
+                          <input type="number"
+                            name="trosterSize"
+                            className="form-control"
+                            onChange={this.updateOption}
+                            value={this.state.rosterSize}
                           />
                         </div>
                       </div>

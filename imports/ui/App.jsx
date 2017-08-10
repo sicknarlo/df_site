@@ -275,7 +275,7 @@ class App extends Component {
             <div className="progress progress-small">
               <div style={{ width: `${freshness}%` }} className={classes}></div>
             </div> */}
-            <a href="https://medium.com/dynastyfftools/update-6-1-2017-1381dd09809c">Change Log</a>
+            <a href="https://medium.com/dynastyfftools/update-8-10-2017-aav-fixed-89916d8d82b0">Change Log</a>
           </div>
         </div>
       </Alert>
