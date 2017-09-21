@@ -16,7 +16,7 @@ import cache from 'memory-cache';
 function cleanName(name) {
   if (name === 'Mitchell Trubisky') return 'Mitch Trubisky';
   if (name === 'Robert Kelley') return 'Rob Kelley';
-  return name.replace(' Jr.', '').replace(/\./g, '');
+  return name.replace(' Jr.', '').replace(/\./g, '').replace(/\\/g, '');
 }
 
 const positions = ['QB', 'WR', 'RB', 'TE'];
@@ -30,6 +30,7 @@ function updatePlayers() {
   rp(options).then(
     Meteor.bindEnvironment(x => {
       const players = JSON.parse(x).players.player.filter(y => positions.indexOf(y.position) > -1);
+      const usedPlayers = [];
       Meteor.call('players.getPlayers', (err, result) => {
         result.forEach(p => {
           if (p.position !== 'PICK') {
@@ -37,6 +38,7 @@ function updatePlayers() {
             const match = players.find(z => parseInt(z.id) === parseInt(newPlayer.id));
             if (match) {
               n++;
+              usedPlayers.push(match.name);
               newPlayer.birthdate = new Date(parseInt(match.birthdate) * 1000);
               newPlayer.draft_year = match.draft_year;
               newPlayer.nfl_id = match.nfl_id;
@@ -62,6 +64,39 @@ function updatePlayers() {
             Players.update({ id: newPlayer.id }, newPlayer);
           }
         });
+      });
+    //   console.log(usedPlayers);
+      players.forEach(p => {
+        //   console.log(usedPlayers.indexOf(p.name) > -1);
+        if (usedPlayers.indexOf(p.name) === -1) {
+            console.log(p.name);
+          const newPlayer = {};
+          newPlayer.id = p.id;
+          newPlayer.name = cleanName(`${p.name.split(', ')[1]} ${p.name.split(', ')[0]}`);
+          newPlayer.birthdate = new Date(parseInt(p.birthdate) * 1000);
+          newPlayer.draft_year = p.draft_year;
+          newPlayer.nfl_id = p.nfl_id;
+          newPlayer.rotoworld_id = p.rotoworld_id;
+          newPlayer.stats_id = p.stats_id;
+          newPlayer.position = p.position;
+          newPlayer.stats_global_id = p.stats_global_id;
+          newPlayer.espn_id = p.espn_id;
+          newPlayer.kffl_id = p.kffl_id;
+          newPlayer.weight = p.weight;
+          newPlayer.draft_team = p.draft_team;
+          newPlayer.draft_pick = p.draft_pick;
+          newPlayer.college = p.college;
+          newPlayer.height = p.height;
+          newPlayer.jersey = p.jersey;
+          newPlayer.twitter_username = p.twitter_username;
+          newPlayer.sportsdata_id = p.sportsdata_id;
+          newPlayer.team = p.team;
+          newPlayer.cbs_id = p.cbs_id;
+          newPlayer.inactive = false;
+          newPlayer.rankings = [];
+          newPlayer.adp = [];
+          Players.insert(newPlayer);
+        }
       });
     })
   );
@@ -12609,7 +12644,7 @@ function updateRedraft() {
     );
 }
 
-// updatePlayers();
+updatePlayers();
 // getFantasyProsRankings();
 // updateRankings();
 // updateRedraft();
