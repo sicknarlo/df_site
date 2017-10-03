@@ -263,7 +263,7 @@ export default class Players extends Component {
     };
   }
   render() {
-
+    console.log(this.props.players);
     const filteredData = this.props.players && this.props.players.filter((player) => {
       if (this.state.filter.length == 0) {
         return true;

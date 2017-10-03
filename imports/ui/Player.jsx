@@ -10,7 +10,7 @@ import { Button, ButtonGroup } from 'react-bootstrap';
 import PlayerStats from './PlayerStats.jsx';
 import PlayerADPRange from './PlayerADPRange.jsx';
 
-const nextYearsFirst = '2017 1st';
+const nextYearsFirst = '2018 1st';
 
 function _calculateAge(dateString) {
   if (dateString) {

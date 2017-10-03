@@ -5,7 +5,9 @@ import appcache from './cache.js';
 
 const cache = appcache.cache;
 
-export const Players = new Mongo.Collection('players');
+export const Players = new Mongo.Collection('players', {
+  idGeneration: 'MONGO',
+});
 
 Meteor.methods({
   'players.getPlayers'() {
@@ -13,7 +15,7 @@ Meteor.methods({
     // if (Meteor.isServer) {
     let p = cache.get('players');
     if (!p || p.length < 500) {
-      p = Players.find({ inactive: false }, {}).fetch();
+      p = Players.find({ inactive: { $ne: true } }, {}).fetch();
       cache.put('players', p, 60000 * 60 * 3);
     }
     return p;

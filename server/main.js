@@ -58,8 +58,24 @@ function updatePlayers() {
               newPlayer.sportsdata_id = match.sportsdata_id;
               newPlayer.team = match.team;
               newPlayer.cbs_id = match.cbs_id;
+              newPlayer.inactive = false;
             } else {
               newPlayer.inactive = true;
+            }
+            if (newPlayer.adp.length === 0) {
+                newPlayer.adp = [{
+                    time: new Date(),
+                    "adp" : 460.3,
+                    "adp_2qb" : 566,
+                    "low" : 404.4,
+                    "low_2qb" : 489.4,
+                    "high" : 483.1,
+                    "high_2qb" : 601.1,
+                    "stdev" : 14.71,
+                    "stdev_2qb" : 20.65,
+                    "value" : 26,
+                    "value_2qb" : 24
+                }];
             }
             Players.update({ id: newPlayer.id }, newPlayer);
           }
@@ -95,6 +111,7 @@ function updatePlayers() {
           newPlayer.inactive = false;
           newPlayer.rankings = [];
           newPlayer.adp = [];
+          newPlayer.status = p.status;
           Players.insert(newPlayer);
         }
       });
@@ -127,7 +144,7 @@ function average(data) {
 }
 
 function getFantasyProsRankings() {
-  const draftYears = ['2017', '2018', '2019', '2020', '2021'];
+  const draftYears = ['2018', '2019', '2020', '2021', '2022'];
 
   const options = {
     uri: 'http://partners.fantasypros.com/api/v1/consensus-rankings.php?experts=show&sport=NFL&year=2017&week=0&id=1015&scoring=PPR&position=ALL&type=STK',
@@ -10962,7 +10979,7 @@ function getFantasyProsRankings() {
 
           round1.forEach((x, index) =>
             year1.push({
-              name: `2017 Pick ${index + 1}`,
+              name: `2018 Pick ${index + 1}`,
               round: 1,
               rank: {
                 time: new Date(),
@@ -10982,7 +10999,7 @@ function getFantasyProsRankings() {
 
           round2.forEach((x, index) =>
             year1.push({
-              name: `2017 Pick ${index + 1 + 12}`,
+              name: `2018 Pick ${index + 1 + 12}`,
               round: 2,
               rank: {
                 time: new Date(),
@@ -11002,7 +11019,7 @@ function getFantasyProsRankings() {
 
           round3.forEach((x, index) =>
             year1.push({
-              name: `2017 Pick ${index + 1 + 24}`,
+              name: `2018 Pick ${index + 1 + 24}`,
               round: 3,
               rank: {
                 time: new Date(),
@@ -11022,7 +11039,7 @@ function getFantasyProsRankings() {
 
           round4.forEach((x, index) =>
             year1.push({
-              name: `2017 Pick ${index + 1 + 36}`,
+              name: `2018 Pick ${index + 1 + 36}`,
               round: 4,
               rank: {
                 time: new Date(),
@@ -11043,7 +11060,7 @@ function getFantasyProsRankings() {
           const pickRanks = [...year1];
 
           pickRanks.push({
-            name: '2017 1st',
+            name: '2018 1st',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11098,7 +11115,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Early 1st',
+            name: '2018 Early 1st',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11153,7 +11170,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Mid 1st',
+            name: '2018 Mid 1st',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11208,7 +11225,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Late 1st',
+            name: '2018 Late 1st',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11264,7 +11281,7 @@ function getFantasyProsRankings() {
 
           // Second round
           pickRanks.push({
-            name: '2017 2nd',
+            name: '2018 2nd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11319,7 +11336,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Early 2nd',
+            name: '2018 Early 2nd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11374,7 +11391,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Mid 2nd',
+            name: '2018 Mid 2nd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11429,7 +11446,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Late 2nd',
+            name: '2018 Late 2nd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11485,7 +11502,7 @@ function getFantasyProsRankings() {
 
           // Third round
           pickRanks.push({
-            name: '2017 3rd',
+            name: '2018 3rd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11540,7 +11557,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Early 3rd',
+            name: '2018 Early 3rd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11595,7 +11612,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Mid 3rd',
+            name: '2018 Mid 3rd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11650,7 +11667,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Late 3rd',
+            name: '2018 Late 3rd',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11706,7 +11723,7 @@ function getFantasyProsRankings() {
 
           // Fourth round
           pickRanks.push({
-            name: '2017 4th',
+            name: '2018 4th',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11761,7 +11778,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Early 4th',
+            name: '2018 Early 4th',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11816,7 +11833,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Mid 4th',
+            name: '2018 Mid 4th',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11871,7 +11888,7 @@ function getFantasyProsRankings() {
           });
 
           pickRanks.push({
-            name: '2017 Late 4th',
+            name: '2018 Late 4th',
             rank: {
               time: new Date(),
               adp: Math.round(
@@ -11925,7 +11942,7 @@ function getFantasyProsRankings() {
             },
           });
 
-          const futureYears = ['2018', '2019', '2020', '2021'];
+          const futureYears = ['2019', '2020', '2021', '2022'];
 
           const absolutePicks = pickRanks.slice(0, 48);
 
@@ -12281,7 +12298,7 @@ function getFantasyProsRankings() {
           });
 
           //   console.log(pickRanks.map((x, i) => [x.name, i]))
-
+          const usedPicks = [];
           result.forEach(p => {
             if (p.position !== 'PICK') {
               const newPlayer = p;
@@ -12385,6 +12402,7 @@ function getFantasyProsRankings() {
             } else {
               const match = pickRanks.find(x => x.name === p.name);
               if (match) {
+                usedPicks.push(match.name);
                 const newPlayer = p;
                 newPlayer.trend = match.rank.adp &&
                   newPlayer.adp &&
@@ -12424,10 +12442,29 @@ function getFantasyProsRankings() {
                     : 0;
                 //   newPlayer.adp = newPlayer.adp.slice(0, newPlayer.adp.length - 1);
                 // newPlayer.adp[0] = match.rank;
+                const id = newPlayer.id ? newPlayer.id : newPlayer._id.str;
+                const updateObj = newPlayer.id ? { id: newPlayer.id } : { _id: newPlayer._id };
                 newPlayer.adp.unshift(match.rank);
-                Players.update({ id: newPlayer.id }, newPlayer);
+                Players.update(updateObj, newPlayer);
               }
             }
+          });
+          pickRanks.forEach(pick => {
+              if (usedPicks.indexOf(pick.name) === -1) {
+                  console.log(pick.name);
+                  const newPick = pick;
+                  newPick.position = 'PICK';
+                  newPick.team = 'PICK';
+                  newPick.status = 'R';
+                  newPick.trend_2qb = 0;
+                  newPick.trend = 0;
+                  newPick.adp = [pick.rank];
+                  newPick.trend3 = 0;
+                  newPick.trend3_2qb = 0;
+                  newPick.trend6 = 0;
+                  newPick.trend6_2qb = 0;
+                  Players.insert(newPick);
+              }
           });
         });
       })
@@ -12645,9 +12682,9 @@ function updateRedraft() {
 }
 
 updatePlayers();
-// getFantasyProsRankings();
-// updateRankings();
-// updateRedraft();
+getFantasyProsRankings();
+updateRankings();
+updateRedraft();
 
 
 const job1 = new cron.CronJob({
