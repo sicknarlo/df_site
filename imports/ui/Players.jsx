@@ -50,8 +50,8 @@ let sortByName = {
 };
 let sortByADP = {
   asc: function(a, b) {
-    if (!a.adp[0][this.props.values.adpKey]) return 1;
-    if (!b.adp[0][this.props.values.adpKey]) return -1;
+    if (!a.adp[0] || !a.adp[0][this.props.values.adpKey]) return 1;
+    if (!b.adp[0] || !b.adp[0][this.props.values.adpKey]) return -1;
     if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
       return 1;
     }
@@ -62,16 +62,16 @@ let sortByADP = {
     return 0;
   },
   desc: function(a, b) {
-      if (!a.adp[0][this.props.values.adpKey]) return -1;
-      if (!b.adp[0][this.props.values.adpKey]) return 1;
-    if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
-      return -1;
-    }
-    if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
-      return 1;
-    }
-    // a must be equal to b
-    return 0;
+    if (!a.adp[0] || !a.adp[0][this.props.values.adpKey]) return -1;
+    if (!b.adp[0] || !b.adp[0][this.props.values.adpKey]) return 1;
+      if (a.adp[0][this.props.values.adpKey] > b.adp[0][this.props.values.adpKey]) {
+        return -1;
+      }
+      if (a.adp[0][this.props.values.adpKey] < b.adp[0][this.props.values.adpKey]) {
+        return 1;
+      }
+      // a must be equal to b
+      return 0;
   },
   _str: 'sortByADP',
 };

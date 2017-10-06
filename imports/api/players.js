@@ -25,10 +25,10 @@ Meteor.methods({
   'players.getAllPlayers'() {
     this.unblock();
     // if (Meteor.isServer) {
-    const p = Players.find({}, {}).fetch();
-    return p;
+    // const p = Players.find({}, {}).fetch();
+    // return p;
     // }
-    // return Players.find({}).fetch();
+    return Players.find({}).fetch();
   },
   'players.getSortedStandardPlayers'() {
     const sortQuery = {};
